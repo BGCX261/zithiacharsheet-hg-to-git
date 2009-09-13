@@ -48,6 +48,17 @@ public class ZithiaSkill {
         return hasRoll;
     }
     
+    public int getBaseCost() {
+        return baseCost;
+    }
+    
+    /**
+     * Returns the first level cost IF there is one, and returns 0 if not.
+     */
+    public int getFirstLevelCost() {
+        return firstLevelCost;
+    }
+    
     /**
      * Returns what the roll would be if someone had the indicated number
      * of levels in the skill and the indicated value for the stat.

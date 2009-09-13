@@ -1,8 +1,5 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 
 /**
  * Contains a single value, and can be observed. Someday

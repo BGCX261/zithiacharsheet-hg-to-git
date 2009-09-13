@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.model.SkillCatalog;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
 /**
@@ -25,6 +26,7 @@ public class ZithiaCharsheet implements EntryPoint {
     private final ZithiaCharacter zithiaCharacter;
 	private final ZithiaStatsTable zithiaStatsTable;
 	private final ZithiaSkillsSection zithiaSkillsSection;
+	private final SkillCatalogDisplay skillCatalogDisplay;
 	private final VerticalPanel mainPanel;
 	
 	
@@ -32,6 +34,7 @@ public class ZithiaCharsheet implements EntryPoint {
 	    zithiaCharacter = new ZithiaCharacter();
 	    zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
 	    zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
+	    skillCatalogDisplay = new SkillCatalogDisplay(SkillCatalog.getSingleton());
 	    mainPanel = new VerticalPanel();
 	}
 
@@ -42,6 +45,7 @@ public class ZithiaCharsheet implements EntryPoint {
     public void onModuleLoad() {
         mainPanel.add(zithiaStatsTable);
         mainPanel.add(zithiaSkillsSection);
+        mainPanel.add(skillCatalogDisplay);
         RootPanel.get("charsheet").add(mainPanel);
     }
     
