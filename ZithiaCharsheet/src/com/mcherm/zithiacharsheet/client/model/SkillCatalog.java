@@ -132,13 +132,33 @@ public class SkillCatalog {
     
     private String[][] getData() {
         return new String[][] {
-                {"Everyman Skills"},
+                {"Arts Skills"},
+                {"acting", "Pre", "4", "3", "Acting"},
+                {"bard", "Int", "6", "3", "Bard"},
+                {"calligraphy", "Dex", "3", "1", "Calligraphy"},
+                {"dance", "Dex", "3", "2", "Dance"},
+                {"choreography", "Int", "3", "2", "Dance Choreography"},
+                {"drawing", "Dex", "3", "2", "Drawing"},
+                {"flowers", "Obs", "3", "1", "Flower Arranging"},
+                {"landscaping", "Obs", "3", "2", "Landscaping"},
+                {"musiccomposition", "Int", "3", "3", "Music, Composition"},
+                {"musicgeneral", "Pre", "3", "2", "Music, General"},
+                {"musicinstrument", "Dex", "3", "2", "Music, Instrument"},
+                {"oratory", "Pre", "3", "2", "Oratory"},
+                {"origami", "Pre", "3", "2", "Origami"},
+                {"painting", "Dex", "3", "2", "Painting"},
+                {"epicpoetry", "Int", "3", "2", "Poetry, Epic"},
+                {"lyricpoetry", "Int", "3", "2", "Poetry, Lyric"},
+                {"sculpting", "Dex", "3", "3", "Sculpting"},
+                {"singing", "Pre", "3", "1", "Singing"},
+                {"writingfiction", "Int", "3", "2", "Writing, Fiction"},
+                {"writinghistorical", "Int", "3", "2", "Writing, Historical"},
+                {"writingjokes", "Pre", "2", "2", "Writing, Jokes"},
+                {"writingpersuasive", "Pre", "3", "2", "Writing, Persuasive"},
+                {"Athletic Skills"},
                 {"climbing", "Dex", "0", "2", "Climbing"},
+                {"Thief/Spy Skills"},
                 {"stealth", "Dex", "0", "2", "Stealth"},
-                {"Game Skills"},
-                {"bowling", "Str", "1", "2", "Bowling"},
-                {"Spy Skills"},
-                {"spymaster", "Int", "4", "3", "Spymaster"},
         };
     }
 
