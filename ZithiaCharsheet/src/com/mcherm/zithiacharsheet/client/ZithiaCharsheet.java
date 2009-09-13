@@ -24,14 +24,14 @@ public class ZithiaCharsheet implements EntryPoint {
 
     private final ZithiaCharacter zithiaCharacter;
 	private final ZithiaStatsTable zithiaStatsTable;
-	private final ZithiaSkillsTable zithiaSkillsTable;
+	private final ZithiaSkillsSection zithiaSkillsSection;
 	private final VerticalPanel mainPanel;
 	
 	
 	public ZithiaCharsheet() {
 	    zithiaCharacter = new ZithiaCharacter();
 	    zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
-	    zithiaSkillsTable = new ZithiaSkillsTable(zithiaCharacter);
+	    zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
 	    mainPanel = new VerticalPanel();
 	}
 
@@ -41,7 +41,7 @@ public class ZithiaCharsheet implements EntryPoint {
      */
     public void onModuleLoad() {
         mainPanel.add(zithiaStatsTable);
-        mainPanel.add(zithiaSkillsTable);
+        mainPanel.add(zithiaSkillsSection);
         RootPanel.get("charsheet").add(mainPanel);
     }
     

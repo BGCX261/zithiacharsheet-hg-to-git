@@ -15,7 +15,7 @@ public class SkillCatalog {
         return singletonInstance;
     }
     
-    public static ZithiaSkill getSkillX(String id) {
+    public static ZithiaSkill get(String id) {
         return getSingleton().getSkill(id);
     }
     

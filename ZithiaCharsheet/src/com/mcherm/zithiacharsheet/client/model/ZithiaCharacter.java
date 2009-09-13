@@ -8,7 +8,7 @@ import java.util.List;
 public class ZithiaCharacter {
 
     private final List<StatValue> stats;
-    private final List<SkillValue> skills;
+    private final SkillList skills;
     
     /**
      * Creates a default blank character sheet.
@@ -22,16 +22,16 @@ public class ZithiaCharacter {
         stats = Collections.unmodifiableList(statList);
         
         // -- starting skills --
-        skills = new ArrayList<SkillValue>();
-        skills.add(new SkillValue(SkillCatalog.getSkillX("climbing"), this));
-        skills.add(new SkillValue(SkillCatalog.getSkillX("stealth"), this));
+        skills = new SkillList();
+        skills.addSkillValue(new SkillValue(SkillCatalog.get("climbing"), this));
+        skills.addSkillValue(new SkillValue(SkillCatalog.get("stealth"), this));
     }
     
     public List<StatValue> getStats() {
         return stats;
     }
     
-    public List<SkillValue> getSkills() {
+    public SkillList getSkills() {
         return skills;
     }
     
@@ -40,6 +40,14 @@ public class ZithiaCharacter {
      */
     public StatValue getStat(ZithiaStat stat) {
         return stats.get(stat.ordinal());
+    }
+    
+    /**
+     * Call this to add a new skill to the character.
+     */
+    public void addNewSkill(ZithiaSkill skill) {
+        SkillValue skillValue = new SkillValue(skill, this);
+        skills.addSkillValue(skillValue);
     }
 
 }

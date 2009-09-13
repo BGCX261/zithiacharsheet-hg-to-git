@@ -6,9 +6,9 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TextBox;
 import com.mcherm.zithiacharsheet.client.model.Observable;
+import com.mcherm.zithiacharsheet.client.model.SkillList;
 import com.mcherm.zithiacharsheet.client.model.SkillValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
-
 
 // FIXME: Can this share code with stats table? I'm thinking probably not, but right now it's nearly a perfect duplicate
 public class ZithiaSkillsTable extends FlexTable {
@@ -16,7 +16,7 @@ public class ZithiaSkillsTable extends FlexTable {
     public ZithiaSkillsTable(final ZithiaCharacter zithiaCharacter) {
         this.addStyleName("skills");
         int row = 0;
-        // -- Header --
+        // -- Draw Header --
         setText(row, 0, "Cost");
         getFlexCellFormatter().addStyleName(row, 0, "costCol");
         setText(row, 1, "Skill");
@@ -27,9 +27,30 @@ public class ZithiaSkillsTable extends FlexTable {
         getFlexCellFormatter().addStyleName(row, 3, "rollCol");
         getRowFormatter().addStyleName(row, "header");
         row++;
-        
-        // -- Rows --
-        for (final SkillValue skillValue : zithiaCharacter.getSkills()) {
+        // -- Fill in Skills --
+        final SkillList skillList = zithiaCharacter.getSkills();
+        repopulateSkillTable(skillList);
+        // -- Subscribe to future changes to the set of skills --
+        skillList.addObserver(new Observable.Observer() {
+            public void onChange() {
+                repopulateSkillTable(skillList);
+            }
+        });
+    }
+    
+    
+    /**
+     * Called to wipe out the full table and repopulate it.
+     */
+    private void repopulateSkillTable(final SkillList skills) {
+        int row;
+        // -- Remove existing rows --
+        for (row = getRowCount() - 1; row > 0; row--) {
+            removeRow(row);
+        }
+        row++;
+        // -- Re-insert all skills as rows --
+        for (final SkillValue skillValue : skills.getSkillValues()) {
             // -- Name --
             getFlexCellFormatter().addStyleName(row, 1, "nameCol");
             setText(row, 1, skillValue.getSkill().getName());
@@ -78,12 +99,9 @@ public class ZithiaSkillsTable extends FlexTable {
                     }
                 }
             });
-            // reset to trigger initial value calculation // FIXME: Because of this I didn't need to set it above
-            skillValue.setLevels(skillValue.getLevels());
             // -- Continue loop --
             row++;
         }
-        
     }
 
 }

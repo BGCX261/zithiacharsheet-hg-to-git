@@ -10,9 +10,8 @@ import java.util.LinkedList;
  * an int, but for now it is.
  * 
  */
-public class ObservableValue implements Observable {
+public class ObservableValue extends SimpleObservable {
     
-    private LinkedList<Observer> observers = new LinkedList<Observer>();
     private int value;
     
     public ObservableValue(int initialValue) {
@@ -25,15 +24,7 @@ public class ObservableValue implements Observable {
     
     public void setValue(int value) {
         this.value = value;
-        Iterator<Observer> iter = observers.iterator();
-        while (iter.hasNext()) {
-            Observer observer = iter.next();
-            observer.onChange();
-        }
-    }
-    
-    public void addObserver(Observer observer) {
-        observers.add(observer);
+        alertObservers();
     }
     
 }
