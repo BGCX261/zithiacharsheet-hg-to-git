@@ -1,0 +1,71 @@
+/** Add css rules here for your application. */
+
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #777777;
+  margin: 40px 0px 70px;
+  text-align: center;
+}
+
+.sendButton {
+  display: block;
+  font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+  width: 400px;
+}
+
+.dialogVPanel {
+  margin: 5px;
+}
+
+.serverResponseLabelError {
+  color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+  margin: 15px 6px 6px;
+}
+
+table.stats, table.skills {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table.stats td, table.skills td {
+  border: 1px solid black;
+  padding: 2px;
+}
+
+table.stats .header td, table.skills .header td {
+  background: #AAAAAA;
+}
+
+table.stats td.costCol input {
+  width: 45px;
+}
+table.stats td.valueCol input {
+  width: 45px;
+}
+table.stats td.rollCol input {
+  width: 45px;
+}
+
+table.skills td.costCol input {
+  width: 45px;
+}
+table.skills td.nameCol {
+  width: 250px;
+}
+table.skills td.levelsCol input {
+  width: 45px;
+}
+table.skills td.rollCol input {
+  width: 45px;
+}
