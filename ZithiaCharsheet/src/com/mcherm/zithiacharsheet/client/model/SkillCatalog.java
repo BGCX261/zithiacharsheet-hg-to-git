@@ -35,6 +35,7 @@ public class SkillCatalog {
     /**
      * Constructor. For now it initializes the data.
      */
+    @SuppressWarnings("serial")
     private SkillCatalog() {
         String[][] skillData = getData();
         
