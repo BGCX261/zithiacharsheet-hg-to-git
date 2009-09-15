@@ -69,7 +69,7 @@ public class SkillCatalog {
                 }
                 final String statKey = skillDataRow[1];
                 final ZithiaStat stat = STAT_MAP.get(statKey);
-                if (stat == null && statKey != "n/a") {
+                if (stat == null && statKey != "None") {
                     throw new RuntimeException("Syntax error in line " + lineNum);
                 }
                 final boolean hasRoll = stat != null;
@@ -156,7 +156,20 @@ public class SkillCatalog {
                 {"writingjokes", "Pre", "2", "2", "Writing, Jokes"},
                 {"writingpersuasive", "Pre", "3", "2", "Writing, Persuasive"},
                 {"Athletic Skills"},
+                {"acrobatics", "Dex", "5", "3", "Acrobatics"},
+                {"breakfall", "Dex", "3", "2", "Breakfall"},
+                {"breathcontrol", "Con", "6", "2", "Breath Control"},
                 {"climbing", "Dex", "0", "2", "Climbing"},
+                {"diving", "Dex", "1", "1", "Diving"},
+                {"drinking", "Con", "1", "1", "Drinking"},
+                {"juggling", "Dex", "3", "2", "Juggling"},
+                {"jumping", "Str", "0", "2", "Jumping"},
+                {"running", "Con", "2", "1", "Running, Distance"},
+                {"sprinting", "Str", "3", "1", "Running, Sprinting"},
+                {"skiing", "Dex", "4", "2", "Skiing"},
+                {"sleeponthego", "None", "5", "0", "Sleep on the Go"},
+                {"sport", "Dex", "1", "2", "Sport, Specific"},
+                {"swimming", "None", "4", "0", "Swimming"},
                 {"Thief/Spy Skills"},
                 {"stealth", "Dex", "0", "2", "Stealth"},
         };
