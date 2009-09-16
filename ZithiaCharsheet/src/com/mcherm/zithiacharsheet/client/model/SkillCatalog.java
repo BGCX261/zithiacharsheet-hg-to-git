@@ -176,7 +176,7 @@ public class SkillCatalog {
                 {"charioteering", "Dex", "4", "2", "Charioteering"},
                 {"disarm", "Str", "3", "3", "Disarm"},
                 {"horsebackcombat", "Dex", "4", "2", "Horseback Combat"},
-                {"horsebackarchery", "Des", "4", "2", "Horseback Archery"},
+                {"horsebackarchery", "Dex", "4", "2", "Horseback Archery"},
                 {"pronefighting", "Dex", "3", "1", "Prone Fighting"},
                 {"quickdraw", "Dex", "3", "1", "Quick Draw"},
                 {"surpriseattack", "Dex", "4", "3", "Suprise Attack"},
