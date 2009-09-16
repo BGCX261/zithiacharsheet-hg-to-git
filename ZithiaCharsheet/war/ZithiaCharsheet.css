@@ -70,13 +70,16 @@ table.skills td.rollCol input {
   width: 45px;
 }
 
-table.skillCatalog {
+table.skillCatalog, table.skillCatalog table {
   border: 1px solid black;
   border-collapse: collapse;
 }
 table.skillCatalog td {
   border: 1px solid black;
   padding: 2px;
+}
+table.skillCatalog td.subtable {
+  padding: 0;
 }
 table.skillCatalog td.categoryRow {
   background: #AAAAAA;

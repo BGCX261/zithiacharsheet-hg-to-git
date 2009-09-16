@@ -2,8 +2,6 @@ package com.mcherm.zithiacharsheet.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.mcherm.zithiacharsheet.client.model.SkillCatalog;
@@ -12,7 +10,7 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaSkill;
 
 /**
  * A graphical element that displays the skill catalog. If a callback is provided, then
- * it will allow a single row at a time to tbe selected and will invoke the callback
+ * it will allow a single row at a time to the selected and will invoke the callback
  * passing the selected skill.
  */
 public class SkillCatalogDisplay extends FlexTable {
@@ -34,44 +32,56 @@ public class SkillCatalogDisplay extends FlexTable {
             Label categoryLabel = new Label(skillCategory.getName());
             ClickHandler categoryClickHandler = new ClickHandler() {
                 public void onClick(ClickEvent event) {
-                    onSkillCategoryClicked(event, skillCategory, CATEGORY_ROW);
+                    // toggle visibility of the next row
+                    formatter.setVisible(CATEGORY_ROW + 1, 0, 
+                            ! formatter.isVisible(CATEGORY_ROW + 1, 0));
                 }
             };
             categoryLabel.addClickHandler(categoryClickHandler);
             this.setWidget(CATEGORY_ROW, 0, categoryLabel);
             categoryRow++;
             
-            // FIXME: Make this a subroutine
-            FlexTable subTable = new FlexTable();
-            final FlexCellFormatter subFormatter = subTable.getFlexCellFormatter();
-            int skillRow = 0;
-            for (final ZithiaSkill skill : skillCategory.getSkills()) {
-                final int SKILL_ROW = skillRow;
-                ClickHandler rowClickHandler = new ClickHandler() {
-                    public void onClick(ClickEvent event) {
-                        onSkillClicked(event, skill, SKILL_ROW);
-                    }
-                };
-                String statsText;
-                if (skill.hasRoll()) {
-                    statsText = skill.getStat().getName() + "/" + 
-                            skill.getBaseCost() + "/" + skill.getFirstLevelCost();
-                } else {
-                    statsText = Integer.toString(skill.getBaseCost());
-                }
-                subFormatter.addStyleName(SKILL_ROW, 0, "statsCol");
-                Label statsLabel = new Label(statsText);
-                statsLabel.addClickHandler(rowClickHandler);
-                subTable.setWidget(SKILL_ROW, 0, statsLabel);
-                subFormatter.addStyleName(SKILL_ROW, 1, "nameCol");
-                Label nameLabel = new Label(skill.getName());
-                nameLabel.addClickHandler(rowClickHandler);
-                subTable.setWidget(SKILL_ROW, 1, nameLabel);
-                skillRow++;
-            }
-            setWidget(categoryRow, 0, subTable);
+            formatter.addStyleName(CATEGORY_ROW, 0, "subtable");
+            formatter.setVisible(categoryRow, 0, false);
+            setWidget(categoryRow, 0, makeCategorySkillsSubtable(skillCategory));
             categoryRow++;
         }
+    }
+
+    /**
+     * Subroutine of constructor to set up a smaller table with the skills
+     * from an individual category.
+     */
+    private FlexTable makeCategorySkillsSubtable(final SkillCatalog.SkillCategory skillCategory) {
+        // FIXME: Make this a subroutine
+        FlexTable subTable = new FlexTable();
+        final FlexCellFormatter subFormatter = subTable.getFlexCellFormatter();
+        int skillRow = 0;
+        for (final ZithiaSkill skill : skillCategory.getSkills()) {
+            final int SKILL_ROW = skillRow;
+            ClickHandler rowClickHandler = new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    onSkillClicked(event, skill, SKILL_ROW);
+                }
+            };
+            String statsText;
+            if (skill.hasRoll()) {
+                statsText = skill.getStat().getName() + "/" + 
+                        skill.getBaseCost() + "/" + skill.getFirstLevelCost();
+            } else {
+                statsText = Integer.toString(skill.getBaseCost());
+            }
+            subFormatter.addStyleName(SKILL_ROW, 0, "statsCol");
+            Label statsLabel = new Label(statsText);
+            statsLabel.addClickHandler(rowClickHandler);
+            subTable.setWidget(SKILL_ROW, 0, statsLabel);
+            subFormatter.addStyleName(SKILL_ROW, 1, "nameCol");
+            Label nameLabel = new Label(skill.getName());
+            nameLabel.addClickHandler(rowClickHandler);
+            subTable.setWidget(SKILL_ROW, 1, nameLabel);
+            skillRow++;
+        }
+        return subTable;
     }
 
     /**
@@ -86,17 +96,6 @@ public class SkillCatalogDisplay extends FlexTable {
             skillSelectCallback.newSkillSelected(skill);
         }
     }
-    
-    /**
-     * This gets called when the user clicks on a category header.
-    * 
-    * @param event the click event
-    * @param skill the skill that was selected.
-    * @param row the number of the row that got clicked.
-    */
-   private void onSkillCategoryClicked(ClickEvent event, SkillCatalog.SkillCategory skillCategory, int row) {
-       Window.alert("User clicked in row " + row + " for skillCategory " + skillCategory);
-   }
     
     public static interface SkillSelectCallback {
         public void newSkillSelected(ZithiaSkill skill);
