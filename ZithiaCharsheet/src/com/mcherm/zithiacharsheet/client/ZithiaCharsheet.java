@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -15,8 +16,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.SkillCatalogDisplay;
 import com.mcherm.zithiacharsheet.client.model.SkillCatalog;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
+import com.mcherm.zithiacharsheet.client.model.ZithiaSkill;
+
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -35,6 +39,12 @@ public class ZithiaCharsheet implements EntryPoint {
 	    zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
 	    zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
 	    skillCatalogDisplay = new SkillCatalogDisplay(SkillCatalog.getSingleton());
+	    skillCatalogDisplay.setSkillSelectCallback(
+	            new SkillCatalogDisplay.SkillSelectCallback() {
+                    public void newSkillSelected(ZithiaSkill skill) {
+                        Window.alert("The skill picked was: " + skill.getName());
+                    }
+	            });
 	    mainPanel = new VerticalPanel();
 	}
 

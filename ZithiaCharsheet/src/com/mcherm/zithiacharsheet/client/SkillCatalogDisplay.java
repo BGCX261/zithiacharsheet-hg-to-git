@@ -21,28 +21,32 @@ public class SkillCatalogDisplay extends FlexTable {
      * The callback to invoke when a skill is selected, or null to
      * indicate that selection is not permitted. Defaults to null.
      */
-    private static SkillSelectCallback skillSelectCallback = null;
+    private SkillSelectCallback skillSelectCallback = null;
     
     public SkillCatalogDisplay(SkillCatalog skillCatalog) {
-        final FlexCellFormatter formatter = getFlexCellFormatter();
+        final FlexCellFormatter formatter = this.getFlexCellFormatter();
         this.addStyleName("skillCatalog");
-        int row = 0;
+        int categoryRow = 0;
         for (final SkillCatalog.SkillCategory skillCategory : skillCatalog.getSkillCategories()) {
-            formatter.setColSpan(row, 0, 2); // This spans 2 columns
-            formatter.addStyleName(row, 0, "categoryRow");
+            final int CATEGORY_ROW = categoryRow;
+            formatter.setColSpan(CATEGORY_ROW, 0, 2); // This spans 2 columns
+            formatter.addStyleName(CATEGORY_ROW, 0, "categoryRow");
             Label categoryLabel = new Label(skillCategory.getName());
-            final int CATEGORY_ROW = row;
             ClickHandler categoryClickHandler = new ClickHandler() {
                 public void onClick(ClickEvent event) {
                     onSkillCategoryClicked(event, skillCategory, CATEGORY_ROW);
                 }
             };
             categoryLabel.addClickHandler(categoryClickHandler);
-            setWidget(row, 0, categoryLabel);
-            row++;
-            // FIXME: Should add Category name here
+            this.setWidget(CATEGORY_ROW, 0, categoryLabel);
+            categoryRow++;
+            
+            // FIXME: Make this a subroutine
+            FlexTable subTable = new FlexTable();
+            final FlexCellFormatter subFormatter = subTable.getFlexCellFormatter();
+            int skillRow = 0;
             for (final ZithiaSkill skill : skillCategory.getSkills()) {
-                final int SKILL_ROW = row;
+                final int SKILL_ROW = skillRow;
                 ClickHandler rowClickHandler = new ClickHandler() {
                     public void onClick(ClickEvent event) {
                         onSkillClicked(event, skill, SKILL_ROW);
@@ -50,20 +54,23 @@ public class SkillCatalogDisplay extends FlexTable {
                 };
                 String statsText;
                 if (skill.hasRoll()) {
-                    statsText = skill.getStat().getName() + "/" + skill.getBaseCost() + "/" + skill.getFirstLevelCost();
+                    statsText = skill.getStat().getName() + "/" + 
+                            skill.getBaseCost() + "/" + skill.getFirstLevelCost();
                 } else {
                     statsText = Integer.toString(skill.getBaseCost());
                 }
-                formatter.addStyleName(row, 0, "statsCol");
+                subFormatter.addStyleName(SKILL_ROW, 0, "statsCol");
                 Label statsLabel = new Label(statsText);
                 statsLabel.addClickHandler(rowClickHandler);
-                setWidget(row, 0, statsLabel);
-                formatter.addStyleName(row, 1, "nameCol");
+                subTable.setWidget(SKILL_ROW, 0, statsLabel);
+                subFormatter.addStyleName(SKILL_ROW, 1, "nameCol");
                 Label nameLabel = new Label(skill.getName());
                 nameLabel.addClickHandler(rowClickHandler);
-                setWidget(row, 1, nameLabel);
-                row++;
+                subTable.setWidget(SKILL_ROW, 1, nameLabel);
+                skillRow++;
             }
+            setWidget(categoryRow, 0, subTable);
+            categoryRow++;
         }
     }
 
@@ -75,7 +82,9 @@ public class SkillCatalogDisplay extends FlexTable {
      * @param row the number of the row that got clicked.
      */
     private void onSkillClicked(ClickEvent event, ZithiaSkill skill, int row) {
-        Window.alert("User clicked in row " + row + " for skill " + skill);
+        if (skillSelectCallback != null) {
+            skillSelectCallback.newSkillSelected(skill);
+        }
     }
     
     /**
