@@ -2,3 +2,4 @@ syntax: glob
 *.class
 *.cache.html
 regexp:ZithiaCharsheet/war/WEB-INF/classes/.*
+regexp:ZithiaCharsheet/war/zithiacharsheet/.*
