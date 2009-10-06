@@ -21,7 +21,7 @@ public class SkillCatalog {
     public static ZithiaSkill get(String id) {
         ZithiaSkill result = getSingleton().getSkill(id);
         if (result == null) {
-            throw new RuntimeException("Skill '" + id + "' not found in catelog.");
+            throw new RuntimeException("Skill '" + id + "' not found in catalog.");
         } else {
             return result;
         }
