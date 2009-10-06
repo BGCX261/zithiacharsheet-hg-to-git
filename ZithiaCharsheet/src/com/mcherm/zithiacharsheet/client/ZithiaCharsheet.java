@@ -7,7 +7,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -16,10 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.mcherm.zithiacharsheet.client.SkillCatalogDisplay;
-import com.mcherm.zithiacharsheet.client.model.SkillCatalog;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
-import com.mcherm.zithiacharsheet.client.model.ZithiaSkill;
 
 
 /**
@@ -30,6 +26,7 @@ public class ZithiaCharsheet implements EntryPoint {
     private final ZithiaCharacter zithiaCharacter;
 	private final ZithiaStatsTable zithiaStatsTable;
 	private final ZithiaSkillsSection zithiaSkillsSection;
+	private final ZithiaWeaponSkillsSection zithiaWeaponSkillsSection;
 	private final VerticalPanel mainPanel;
 	
 	
@@ -37,6 +34,7 @@ public class ZithiaCharsheet implements EntryPoint {
 	    zithiaCharacter = new ZithiaCharacter();
 	    zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
 	    zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
+	    zithiaWeaponSkillsSection = new ZithiaWeaponSkillsSection(zithiaCharacter);
 	    mainPanel = new VerticalPanel();
 	}
 
@@ -47,6 +45,8 @@ public class ZithiaCharsheet implements EntryPoint {
     public void onModuleLoad() {
         mainPanel.add(zithiaStatsTable);
         mainPanel.add(zithiaSkillsSection);
+        mainPanel.add(zithiaWeaponSkillsSection);
+        com.mcherm.zithiacharsheet.client.model.weapon.EmptyClass.test();
         RootPanel.get("charsheet").add(mainPanel);
     }
     

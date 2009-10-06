@@ -70,4 +70,5 @@ public class WeaponTraining {
     public static WeaponTraining createAllCombatTraining() {
         return new WeaponTraining(null, WeaponsCatalog.getSingleton().getAllCombatSkill());
     }
+    
 }

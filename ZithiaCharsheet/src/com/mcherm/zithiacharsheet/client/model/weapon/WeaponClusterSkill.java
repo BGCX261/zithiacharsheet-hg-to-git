@@ -23,6 +23,11 @@ public class WeaponClusterSkill extends WeaponSkill {
     }
 
     @Override
+    public String getName() {
+        return weaponCluster.getName();
+    }
+
+    @Override
     public int getBasicTrainingCost() {
         return basicTrainingCost;
     }

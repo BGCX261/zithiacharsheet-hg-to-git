@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.mcherm.zithiacharsheet.client.model.weapon.WeaponTraining;
+import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
+
 
 public class ZithiaCharacter {
 
     private final List<StatValue> stats;
     private final SkillList skills;
+    private final WeaponTraining weaponTraining;
     
     /**
      * Creates a default blank character sheet.
@@ -25,6 +29,9 @@ public class ZithiaCharacter {
         skills = new SkillList();
         skills.addSkillValue(new SkillValue(SkillCatalog.get("climbing"), this));
         skills.addSkillValue(new SkillValue(SkillCatalog.get("stealth"), this));
+        
+        // -- weapon training --
+        weaponTraining = WeaponTraining.createAllCombatTraining();
     }
     
     public List<StatValue> getStats() {
@@ -48,6 +55,13 @@ public class ZithiaCharacter {
     public void addNewSkill(ZithiaSkill skill) {
         SkillValue skillValue = new SkillValue(skill, this);
         skills.addSkillValue(skillValue);
+    }
+    
+    /**
+     * Obtains the WeaponTraining.
+     */
+    public WeaponTraining getWeaponTraining() {
+        return weaponTraining;
     }
 
 }

@@ -61,5 +61,5 @@ public class WeaponsCatalog {
     public WeaponSkill getAllCombatSkill() {
         return allCombatSkill;
     }
-
+    
 }

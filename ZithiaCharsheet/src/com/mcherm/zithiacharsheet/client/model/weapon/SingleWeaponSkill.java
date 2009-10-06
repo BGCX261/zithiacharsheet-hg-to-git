@@ -21,6 +21,11 @@ public class SingleWeaponSkill extends WeaponSkill {
     }
     
     @Override
+    public String getName() {
+        return weapon.getName();
+    }
+    
+    @Override
     public int getBasicTrainingCost() {
         return basicTrainingCost;
     }

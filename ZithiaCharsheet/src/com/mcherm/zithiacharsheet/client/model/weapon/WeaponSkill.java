@@ -9,6 +9,7 @@ package com.mcherm.zithiacharsheet.client.model.weapon;
  */
 public abstract class WeaponSkill {
 
+    public abstract String getName();
     public abstract int getBasicTrainingCost();
     public abstract int getFirstLevelCost();
     public abstract int getSpan();

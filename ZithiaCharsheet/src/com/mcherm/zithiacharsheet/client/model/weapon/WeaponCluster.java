@@ -24,7 +24,7 @@ public class WeaponCluster {
     
     public WeaponCluster(WeaponCluster parent, String name, int span) {
         assert parent != null || span == 4;
-        assert span + 1 == parent.getSpan();
+        assert parent == null || span + 1 == parent.getSpan();
         this.parent = parent;
         this.name = name;
         this.span = span;
