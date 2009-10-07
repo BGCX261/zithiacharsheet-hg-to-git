@@ -46,7 +46,6 @@ public class ZithiaCharsheet implements EntryPoint {
         mainPanel.add(zithiaStatsTable);
         mainPanel.add(zithiaSkillsSection);
         mainPanel.add(zithiaWeaponSkillsSection);
-        com.mcherm.zithiacharsheet.client.model.weapon.EmptyClass.test();
         RootPanel.get("charsheet").add(mainPanel);
     }
     

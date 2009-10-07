@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponTraining;
-import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
 
 
 public class ZithiaCharacter {
