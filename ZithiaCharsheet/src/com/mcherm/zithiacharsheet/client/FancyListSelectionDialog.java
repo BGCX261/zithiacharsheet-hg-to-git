@@ -19,13 +19,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class FancyListSelectionDialog<T> extends DialogBox {
     
-    public interface ItemDisplay<T> {
-        public Widget contents(int column);
-    }
-    
     public static interface ItemDisplayCallback<T> {
-        public int getNumColumns();
-        public ItemDisplay<T> getDisplay(T item);
+        public List<Widget> getDisplay(T item);
     }
     
     public static interface ItemSelectCallback<T> {
@@ -64,7 +59,6 @@ public class FancyListSelectionDialog<T> extends DialogBox {
         final FlexTable table = new FlexTable();
         table.addStyleName(tableStyle);
         
-        final int numColumns = itemDisplayCallback.getNumColumns();
         int row = 0;
         for (final T item : items) {
             ClickHandler rowClickHandler = new ClickHandler() {
@@ -73,14 +67,15 @@ public class FancyListSelectionDialog<T> extends DialogBox {
                     dialogCompleted();
                 }
             };
-            final ItemDisplay<T> itemDisplay = itemDisplayCallback.getDisplay(item);
-            for (int col = 0; col < numColumns; col++) {
-                final Widget widget = itemDisplay.contents(col);
+            final List<Widget> widgets = itemDisplayCallback.getDisplay(item);
+            int col = 0;
+            for (final Widget widget : widgets) {
                 if (widget instanceof HasClickHandlers) {
                     final HasClickHandlers hch = (HasClickHandlers)  widget;
                     hch.addClickHandler(rowClickHandler);
                 }
                 table.setWidget(row, col, widget);
+                col++;
             }
             row++;
         }

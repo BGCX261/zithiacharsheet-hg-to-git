@@ -1,5 +1,6 @@
 package com.mcherm.zithiacharsheet.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,21 +63,28 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
                 final WeaponClusterSkill weaponClusterSkill = (WeaponClusterSkill) wt.getWeaponSkill();
                 Button newChildButton = new Button("Add", new ClickHandler() {
                     public void onClick(ClickEvent event) {
-                        // FIXME: There's no chooser yet, so we add ALL of them!
-                        for (WeaponSkill weaponSkill : WeaponsCatalog.getSingleton().getChildren(weaponClusterSkill)) {
-                            WeaponTraining newWT = wt.createChild(weaponSkill);
-                            // FIXME: There's no observation yet, so we'll manually re-create it
-                            showWT(newWT, false, 0);
-                        }
-                        List<String> values = Arrays.asList("abc", "def", "ghi");
-                        StringSelectionDialog ssd = new StringSelectionDialog(values, 
-                            new ItemSelectCallback<String>() {
-                                public void newItemSelected(String item) {
-                                    Window.alert("Selected the string '" + item + "'.");
+                        List<WeaponSkill> eligibleSkills = WeaponsCatalog.getSingleton().getChildren(weaponClusterSkill);
+                        final FancyListSelectionDialog<WeaponSkill> selector = new FancyListSelectionDialog<WeaponSkill>(
+                            eligibleSkills,
+                            new ItemDisplayCallback<WeaponSkill>() {
+                                @Override
+                                public List<Widget> getDisplay(WeaponSkill weaponSkill) {
+                                    final List<Widget> result = new ArrayList<Widget>(2);
+                                    String name = weaponSkill.getName();
+                                    result.add(new Label(name));
+                                    return result;
+                                }
+                            },
+                            new ItemSelectCallback<WeaponSkill>() {
+                                @Override
+                                public void newItemSelected(WeaponSkill weaponSkill) {
+                                    WeaponTraining newWT = wt.createChild(weaponSkill);
+                                    // FIXME: There's no observation yet, so we'll manually re-create it
+                                    showWT(newWT, false, 0);
                                 }
                              }
                         );
-                        ssd.show();
+                        selector.show();
                     }
                 });
                 this.add(newChildButton);
@@ -85,29 +93,18 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
     }
     
     
-    private static class StringSelectionDialog extends FancyListSelectionDialog<String> {
-
-        public StringSelectionDialog(List<String> items,
-                ItemSelectCallback<String> itemSelectCallback)
+    private static class WeaponSkillSelectionDialog extends FancyListSelectionDialog<WeaponSkill> {
+        public WeaponSkillSelectionDialog(List<WeaponSkill> items,
+                ItemSelectCallback<WeaponSkill> itemSelectCallback)
         {
             super(
                 items,
-                new ItemDisplayCallback<String>() {
-
+                new ItemDisplayCallback<WeaponSkill>() {
                     @Override
-                    public FancyListSelectionDialog.ItemDisplay<String> getDisplay(final String item) {
-                        return new FancyListSelectionDialog.ItemDisplay<String>() {
-                            public Widget contents(int column) {
-                                switch(column) {
-                                case 0: return new Label("X");
-                                case 1: return new Label(item);
-                                default: throw new ArrayIndexOutOfBoundsException();
-                                }
-                            }
-                        };
-                    }
-                    public int getNumColumns() {
-                        return 2;
+                    public List<Widget> getDisplay(WeaponSkill weaponSkill) {
+                        final List<Widget> result = new ArrayList<Widget>(2);
+                        
+                        return result;
                     }
                 },
                 itemSelectCallback
