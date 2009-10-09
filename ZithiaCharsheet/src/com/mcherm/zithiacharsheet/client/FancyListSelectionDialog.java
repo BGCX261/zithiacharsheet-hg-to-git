@@ -30,6 +30,7 @@ public class FancyListSelectionDialog<T> extends DialogBox {
     private final List<T> items;
     private final ItemDisplayCallback<T> itemDisplayCallback;
     private final ItemSelectCallback<T> itemSelectCallback;
+    private final boolean destroyOnClose;
     private final String title;
     private final String tableStyle;
     
@@ -39,14 +40,19 @@ public class FancyListSelectionDialog<T> extends DialogBox {
     public FancyListSelectionDialog(
             List<T> items,
             ItemDisplayCallback<T> itemDisplayCallback, 
-            ItemSelectCallback<T> itemSelectCallback)
+            ItemSelectCallback<T> itemSelectCallback,
+            boolean destroyOnClose,
+            String title)
     {
         this.items = items;
         this.itemDisplayCallback = itemDisplayCallback;
         this.itemSelectCallback = itemSelectCallback;
-        title = "Select one:"; // FIXME: Don't hardcode
+        this.destroyOnClose = destroyOnClose;
+        this.title = title;
         tableStyle = "skillCatalog";
         setupDialogContents();
+        setModal(true);
+        center();
     }
     
     /**
@@ -97,6 +103,9 @@ public class FancyListSelectionDialog<T> extends DialogBox {
      */
     private void dialogCompleted() {
         hide(); // FIXME: Do we hide on close, or delete? Perhaps a constructor flag to control this?
+        if (destroyOnClose) {
+            this.removeFromParent();
+        }
     }
 
 }

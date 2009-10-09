@@ -82,7 +82,9 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
                                     // FIXME: There's no observation yet, so we'll manually re-create it
                                     showWT(newWT, false, 0);
                                 }
-                             }
+                             },
+                             true,
+                             "Select a skill:"
                         );
                         selector.show();
                     }
@@ -92,24 +94,4 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
         }
     }
     
-    
-    private static class WeaponSkillSelectionDialog extends FancyListSelectionDialog<WeaponSkill> {
-        public WeaponSkillSelectionDialog(List<WeaponSkill> items,
-                ItemSelectCallback<WeaponSkill> itemSelectCallback)
-        {
-            super(
-                items,
-                new ItemDisplayCallback<WeaponSkill>() {
-                    @Override
-                    public List<Widget> getDisplay(WeaponSkill weaponSkill) {
-                        final List<Widget> result = new ArrayList<Widget>(2);
-                        
-                        return result;
-                    }
-                },
-                itemSelectCallback
-            );
-        }
-        
-    }
 }
