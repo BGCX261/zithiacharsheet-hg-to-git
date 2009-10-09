@@ -1,11 +1,19 @@
 package com.mcherm.zithiacharsheet.client;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.mcherm.zithiacharsheet.client.FancyListSelectionDialog.ItemDisplayCallback;
+import com.mcherm.zithiacharsheet.client.FancyListSelectionDialog.ItemSelectCallback;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponClusterSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
@@ -60,10 +68,51 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
                             // FIXME: There's no observation yet, so we'll manually re-create it
                             showWT(newWT, false, 0);
                         }
+                        List<String> values = Arrays.asList("abc", "def", "ghi");
+                        StringSelectionDialog ssd = new StringSelectionDialog(values, 
+                            new ItemSelectCallback<String>() {
+                                public void newItemSelected(String item) {
+                                    Window.alert("Selected the string '" + item + "'.");
+                                }
+                             }
+                        );
+                        ssd.show();
                     }
                 });
                 this.add(newChildButton);
             }
         }
+    }
+    
+    
+    private static class StringSelectionDialog extends FancyListSelectionDialog<String> {
+
+        public StringSelectionDialog(List<String> items,
+                ItemSelectCallback<String> itemSelectCallback)
+        {
+            super(
+                items,
+                new ItemDisplayCallback<String>() {
+
+                    @Override
+                    public FancyListSelectionDialog.ItemDisplay<String> getDisplay(final String item) {
+                        return new FancyListSelectionDialog.ItemDisplay<String>() {
+                            public Widget contents(int column) {
+                                switch(column) {
+                                case 0: return new Label("X");
+                                case 1: return new Label(item);
+                                default: throw new ArrayIndexOutOfBoundsException();
+                                }
+                            }
+                        };
+                    }
+                    public int getNumColumns() {
+                        return 2;
+                    }
+                },
+                itemSelectCallback
+            );
+        }
+        
     }
 }
