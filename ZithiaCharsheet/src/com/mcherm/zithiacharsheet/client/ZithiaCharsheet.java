@@ -27,6 +27,7 @@ public class ZithiaCharsheet implements EntryPoint {
 	private final ZithiaStatsTable zithiaStatsTable;
 	private final ZithiaSkillsSection zithiaSkillsSection;
 	private final ZithiaWeaponSkillsSection zithiaWeaponSkillsSection;
+	private final ZithiaCostsSection zithiaCostsSection;
 	private final VerticalPanel mainPanel;
 	
 	
@@ -35,6 +36,7 @@ public class ZithiaCharsheet implements EntryPoint {
 	    zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
 	    zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
 	    zithiaWeaponSkillsSection = new ZithiaWeaponSkillsSection(zithiaCharacter);
+	    zithiaCostsSection = new ZithiaCostsSection(zithiaCharacter);
 	    mainPanel = new VerticalPanel();
 	}
 
@@ -46,6 +48,7 @@ public class ZithiaCharsheet implements EntryPoint {
         mainPanel.add(zithiaStatsTable);
         mainPanel.add(zithiaSkillsSection);
         mainPanel.add(zithiaWeaponSkillsSection);
+        mainPanel.add(zithiaCostsSection);
         RootPanel.get("charsheet").add(mainPanel);
     }
     

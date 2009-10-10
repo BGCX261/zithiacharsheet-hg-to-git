@@ -8,7 +8,7 @@ public class SkillValue implements Observable {
 
     private final ZithiaSkill skill;
     private final StatValue statValue; // the stat value or null if there is no stat
-    private final ObservableValue levels;
+    private final ObservableIntValue levels;
     
     /**
      * Constructor.
@@ -26,7 +26,7 @@ public class SkillValue implements Observable {
         } else {
             statValue = zithiaCharacter.getStat(stat);
         }
-        this.levels = new ObservableValue(0);
+        this.levels = new ObservableIntValue(0);
     }
     
     public int getCost() {

@@ -12,6 +12,7 @@ public class ZithiaCharacter {
     private final List<StatValue> stats;
     private final SkillList skills;
     private final WeaponTraining weaponTraining;
+    private final ZithiaCosts zithiaCosts;
     
     /**
      * Creates a default blank character sheet.
@@ -31,6 +32,9 @@ public class ZithiaCharacter {
         
         // -- weapon training --
         weaponTraining = WeaponTraining.createAllCombatTraining();
+        
+        // -- costs --
+        zithiaCosts = new ZithiaCosts(this);
     }
     
     public List<StatValue> getStats() {
@@ -61,6 +65,10 @@ public class ZithiaCharacter {
      */
     public WeaponTraining getWeaponTraining() {
         return weaponTraining;
+    }
+    
+    public ZithiaCosts getCosts() {
+        return zithiaCosts;
     }
 
 }

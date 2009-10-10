@@ -4,13 +4,13 @@ package com.mcherm.zithiacharsheet.client.model;
  * An actual instance of a stat in a particular individual.
  * So, for instance, this might be Rogan Harsha's Strength.
  */
-public class StatValue {
-    private final ObservableValue value;
+public class StatValue implements ObservableInt {
+    private final ObservableIntValue value;
     private final ZithiaStat stat;
     
     public StatValue(ZithiaStat stat) {
         this.stat = stat;
-        this.value = new ObservableValue(stat.getDefaultValue());
+        this.value = new ObservableIntValue(stat.getDefaultValue());
     }
     
     public int getValue() {

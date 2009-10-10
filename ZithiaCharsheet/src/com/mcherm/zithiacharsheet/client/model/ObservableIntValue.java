@@ -7,11 +7,11 @@ package com.mcherm.zithiacharsheet.client.model;
  * an int, but for now it is.
  * 
  */
-public class ObservableValue extends SimpleObservable {
+public class ObservableIntValue extends SimpleObservable implements ObservableInt {
     
     private int value;
     
-    public ObservableValue(int initialValue) {
+    public ObservableIntValue(int initialValue) {
         this.value = initialValue;
     }
     
