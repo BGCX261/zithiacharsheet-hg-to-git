@@ -12,7 +12,7 @@ public class CalculatedIntValue extends ObservableIntValue {
     public static interface ValueCalculator {
         public int calculateValue(List<? extends Observable> inputs);
     }
-    
+        
     private final List<? extends Observable> inputs;
     private final ValueCalculator valueCalculator;
 
