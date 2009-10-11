@@ -2,10 +2,7 @@ package com.mcherm.zithiacharsheet.client.model;
 
 
 /**
- * Contains a single value, and can be observed. Someday
- * I might enhance this so the value isn't necessarily
- * an int, but for now it is.
- * 
+ * Contains a single value, and can be observed.
  */
 public class ObservableIntValue extends SimpleObservable implements ObservableInt {
     

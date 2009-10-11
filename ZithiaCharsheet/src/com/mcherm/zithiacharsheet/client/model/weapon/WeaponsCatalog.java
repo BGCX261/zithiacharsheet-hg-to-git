@@ -157,14 +157,20 @@ public class WeaponsCatalog {
     
     private String[][] getData() {
         return new String[][] {
+            // 1: name strMin spd, hpDmg stunDmg
             {"4:", "All Combat", "10", "7"},
             {"3:", "Melee Weapons", "6", "5"},
             {"2:", "Daggers"},
-            {"1:", "Knife", "3", "3"},
-            {"1:", "Dagger", "3", "5"},
-            {"1:", "Stiletto", "3", "5"},
+            {"1:", "Knife", "3", "3", "1D2-1", "1D3-1"},
+            {"1:", "Dagger", "3", "5", "1D2", "1D3"},
+            {"1:", "Stiletto", "3", "5", "1D3-1", "1D2"},
             {"2:", "Swords"},
-            {"1:", "Short Sword", "4", "8"},
+            {"1:", "Short Sword", "4", "8", "1D4", "1D6"},
+            {"1:", "Rapier", "7", "6", "1D4", "1D6"},
+            {"1:", "Scimitar", "10", "5", "1D6", "1D8"},
+            {"1:", "Long Sword", "11", "6", "2D3", "1D8+1"},
+            {"1:", "Broadsword", "12", "6", "1D8", "1D10"},
+            {"1:", "Bastard Sword (1-handed)", "15", "7", "2D4+1", "2D6+1"},
             {"3:", "Ranged Weapons", "5", "5"},
         };
     }

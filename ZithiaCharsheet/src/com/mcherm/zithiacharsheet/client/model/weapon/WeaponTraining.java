@@ -2,6 +2,7 @@ package com.mcherm.zithiacharsheet.client.model.weapon;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.mcherm.zithiacharsheet.client.model.Util;
 
 
 /**
@@ -45,12 +46,74 @@ public class WeaponTraining {
         return weaponSkill;
     }
     
+    /**
+     * Returns true if the character has paid for training with
+     * this particular WeaponSkill.
+     */
     public boolean getBasicTrainingPurchased() {
         return basicTraingPurchased;
     }
     
+    /**
+     * Returns true if the character is trained in the use of
+     * this WeaponSkill or some more broad category that includes
+     * it.
+     */
+    public boolean isTrained() {
+        return basicTraingPurchased || (parent != null && parent.isTrained());
+    }
+    
+    /**
+     * Used to set whether basic training is purchased for this.
+     */
+    public void setBasicTrainingPurchased(boolean b) {
+        basicTraingPurchased = b;
+    }
+    
+    /**
+     * Returns the number of levels of this weapon skill that the
+     * character has paid for.
+     */
     public int getLevelsPurchased() {
         return levelsPurchased;
+    }
+    
+    /**
+     * Returns the number of levels that the character can use with
+     * this weapon or weapons in this weapon group.
+     */
+    public int getLevels() {
+        return levelsPurchased + (parent == null ? 0 : parent.getLevels());
+    }
+    
+    /**
+     * Used to set the number of levels purchased.
+     */
+    public void setLevelsPurchased(int levels) {
+        levelsPurchased = levels;
+    }
+    
+    /**
+     * Returns the cost for just this particular WeaponTraining, not
+     * including any parent or child WeaponTrainings.
+     */
+    public int getThisCost() {
+        int basicTrainingCost = getBasicTrainingPurchased() ? weaponSkill.getBasicTrainingCost() : 0;
+        int firstLevelCost = weaponSkill.getFirstLevelCost();
+        int levels = getLevelsPurchased();
+        return Util.skillCost(basicTrainingCost, firstLevelCost, levels);
+    }
+    
+    /**
+     * Returns the cumulative cost for this particular WeaponTraining and all
+     * child WeaponTrainings.
+     */
+    public int getTotalCost() {
+        int result = getThisCost();
+        for (WeaponTraining child : children) {
+            result += child.getTotalCost();
+        }
+        return result;
     }
     
     /**

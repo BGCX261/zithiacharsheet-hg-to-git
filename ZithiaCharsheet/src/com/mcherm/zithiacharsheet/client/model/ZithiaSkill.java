@@ -75,7 +75,7 @@ public class ZithiaSkill {
     }
     
     /**
-     * Returns waht the roll would be for the indicated character if that
+     * Returns what the roll would be for the indicated character if that
      * character had the indicated number of levels with the skill.
      */
     public int getRoll(int levels, ZithiaCharacter zithiaCharacter) {
@@ -91,19 +91,7 @@ public class ZithiaSkill {
      * Returns the total cost of the indicated number of levels of this skill.
      */
     public int getCost(int levels) {
-        if (levels < 0) {
-            throw new RuntimeException("Cannot have negative skill levels.");
-        } else if (levels == 0) {
-            return baseCost;
-        } else {
-            // FIXME: This math formula can be simplified enormously. Do that sometime.
-            int overTwo = (levels - 1) / 2;
-            int major = overTwo * (overTwo + 1);
-            int extra = ((levels + 1) / 2) - 1;
-            int pct2 = levels % 2;
-            int stuff = major - extra * pct2;
-            return baseCost + levels * firstLevelCost + stuff;
-        }
+        return Util.skillCost(baseCost, firstLevelCost, levels);
     }
     
     public String getName() {

@@ -50,9 +50,9 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
     private class WeaponTrainingRow extends HorizontalPanel {
         public WeaponTrainingRow(final WeaponTraining wt, boolean hasBasicTraining, int levels) {
             String name = wt.getWeaponSkill().getName();
-            boolean isTrained = hasBasicTraining || wt.getBasicTrainingPurchased();
+            boolean isTrained = wt.isTrained();
             int levelsPurchased = wt.getLevelsPurchased();
-            int netLevels = levels + levelsPurchased;
+            int netLevels = wt.getLevels();
             this.addStyleName("weaponSkillRow");
             this.add(new HTML(
                     name + ": " + (isTrained ? "" : "<untrained> ") +
@@ -61,6 +61,17 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
             ));
             if (wt.getWeaponSkill() instanceof WeaponClusterSkill) {
                 final WeaponClusterSkill weaponClusterSkill = (WeaponClusterSkill) wt.getWeaponSkill();
+                Button trainButton = new Button("Train", new ClickHandler() {
+                    public void onClick(ClickEvent event) {
+                        if (wt.isTrained()) {
+                            wt.setLevelsPurchased(wt.getLevelsPurchased() + 1);
+                        } else {
+                            wt.setBasicTrainingPurchased(true);
+                        }
+                        Window.alert("Probably just trained."); // FIXME: Remove when display works.
+                    }
+                });
+                this.add(trainButton);
                 Button newChildButton = new Button("Add", new ClickHandler() {
                     public void onClick(ClickEvent event) {
                         List<WeaponSkill> eligibleSkills = WeaponsCatalog.getSingleton().getChildren(weaponClusterSkill);

@@ -16,6 +16,7 @@ public class ZithiaCosts {
     
     private final ObservableInt statCost;
     private final ObservableInt skillCost;
+    private final ObservableInt weaponSkillCost;
     private final ObservableInt totalCost;
     
     /**
