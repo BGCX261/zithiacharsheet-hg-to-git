@@ -50,7 +50,7 @@ public class ZithiaSkillsTable extends FlexTable {
         }
         row++;
         // -- Re-insert all skills as rows --
-        for (final SkillValue skillValue : skills.getSkillValues()) {
+        for (final SkillValue skillValue : skills) {
             // -- Name --
             getFlexCellFormatter().addStyleName(row, 1, "nameCol");
             setText(row, 1, skillValue.getSkill().getName());

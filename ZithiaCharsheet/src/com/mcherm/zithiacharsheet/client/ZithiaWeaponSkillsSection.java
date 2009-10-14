@@ -1,7 +1,6 @@
 package com.mcherm.zithiacharsheet.client;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;

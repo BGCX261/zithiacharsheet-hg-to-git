@@ -1,10 +1,8 @@
 package com.mcherm.zithiacharsheet.client.model;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue.ValueCalculator;
-import com.mcherm.zithiacharsheet.client.model.RecalculatedIntValue.InputResetter;
 
 
 /**
@@ -31,7 +29,7 @@ public class ZithiaCosts {
         statCost = new CalculatedIntValue(
             zithiaCharacter.getStats(),
             new ValueCalculator() {
-                public int calculateValue(List<? extends Observable> inputs) {
+                public int calculateValue(Iterable<? extends Observable> inputs) {
                     int cost = 0;
                     for (Observable input : inputs) {
                         StatValue statValue = (StatValue) input;
@@ -41,30 +39,12 @@ public class ZithiaCosts {
                 }
             }
         );
-        skillCost = new RecalculatedIntValue(
-            zithiaCharacter.getSkills(), // it resets the list of things to add when this changes
-            new InputResetter() {
-                @Override
-                public List<? extends Observable> resetInputs() {
-                    return zithiaCharacter.getSkills().getSkillValues();
-                }
-            },
-            new ValueCalculator() {
-                @Override
-                public int calculateValue(List<? extends Observable> inputs) {
-                    int result = 0;
-                    for (Observable input : inputs) {
-                        SkillValue skillValue = (SkillValue) input;
-                        result += skillValue.getCost();
-                    }
-                    return result;
-                }
-            }
-        );
+        skillCost = zithiaCharacter.getSkills();
+        weaponSkillCost = zithiaCharacter.getWeaponTraining().getTotalCost();
         totalCost = new CalculatedIntValue(
-            Arrays.asList(new ObservableInt[] {statCost, skillCost}),
+            Arrays.asList(new ObservableInt[] {statCost, skillCost, weaponSkillCost}),
             new ValueCalculator() {
-                public int calculateValue(List<? extends Observable> inputs) {
+                public int calculateValue(Iterable<? extends Observable> inputs) {
                     int cost = 0;
                     for (Observable input : inputs) {
                         ObservableInt value = (ObservableInt) input;
@@ -83,6 +63,10 @@ public class ZithiaCosts {
     
     public ObservableInt getSkillCost() {
         return skillCost;
+    }
+    
+    public ObservableInt getWeaponsSkillCost() {
+        return weaponSkillCost;
     }
     
     public ObservableInt getTotalCost() {

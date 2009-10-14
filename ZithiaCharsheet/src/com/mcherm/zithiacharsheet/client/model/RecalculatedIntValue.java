@@ -1,19 +1,20 @@
 package com.mcherm.zithiacharsheet.client.model;
 
 import java.util.Arrays;
-import java.util.List;
 
 import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue.ValueCalculator;
 
 /**
  * This is a kind of CalculatedIntValue, except that what it depends on varies.
  * Usually it is used to add up the items in a list.
+ * 
+ * @deprecated (If I can get ObservableList to take over everywhere.)
  */
 public class RecalculatedIntValue extends SimpleObservable implements ObservableInt {
     
     
     public static interface InputResetter {
-        public List<? extends Observable> resetInputs();
+        public Iterable<? extends Observable> resetInputs();
     }
     
     private final InputResetter inputResetter;
@@ -39,7 +40,7 @@ public class RecalculatedIntValue extends SimpleObservable implements Observable
      *   current set of inputs.
      */
     public RecalculatedIntValue(
-            List<? extends Observable> resetters,
+            Iterable<? extends Observable> resetters,
             InputResetter inputResetter,
             ValueCalculator valueCalculator)
     {

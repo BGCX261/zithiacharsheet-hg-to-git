@@ -1,6 +1,5 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import java.util.List;
 
 
 /**
@@ -10,10 +9,10 @@ import java.util.List;
 public class CalculatedIntValue extends ObservableIntValue {
     
     public static interface ValueCalculator {
-        public int calculateValue(List<? extends Observable> inputs);
+        public int calculateValue(Iterable<? extends Observable> inputs);
     }
         
-    private final List<? extends Observable> inputs;
+    private final Iterable<? extends Observable> inputs;
     private final ValueCalculator valueCalculator;
 
     /**
@@ -26,7 +25,7 @@ public class CalculatedIntValue extends ObservableIntValue {
      *   any point in time.
      */
     public CalculatedIntValue(
-            List<? extends Observable> inputs,
+            Iterable<? extends Observable> inputs,
             ValueCalculator valueCalculator)
     {
         super(valueCalculator.calculateValue(inputs));

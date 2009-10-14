@@ -1,7 +1,6 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import com.mcherm.zithiacharsheet.client.util.ImmutableList;
 
 
 /**
@@ -9,10 +8,10 @@ import java.util.LinkedList;
  */
 public abstract class SimpleObservable implements Observable {
 
-    private final LinkedList<Observer> observers = new LinkedList<Observer>();
+    private ImmutableList<Observer> observers = new ImmutableList<Observer>();
     
     public void addObserver(Observer observer) {
-        observers.add(observer);
+        observers = ImmutableList.add(observer, observers);
     }
     
     /**
@@ -20,9 +19,8 @@ public abstract class SimpleObservable implements Observable {
      */
     protected void alertObservers() {
         // FIXME: Possible bug: new observers get added during the iteration. We should probably save the modifications until AFTER the iteration.
-        Iterator<Observer> iter = observers.iterator();
-        while (iter.hasNext()) {
-            Observer observer = iter.next();
+        ImmutableList<Observer> currentObservers = observers;
+        for (Observer observer : currentObservers) {
             observer.onChange();
         }
     }

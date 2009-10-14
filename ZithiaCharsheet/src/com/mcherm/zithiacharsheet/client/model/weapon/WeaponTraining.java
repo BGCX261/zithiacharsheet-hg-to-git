@@ -1,8 +1,15 @@
 package com.mcherm.zithiacharsheet.client.model.weapon;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+
+import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue;
+import com.mcherm.zithiacharsheet.client.model.Observable;
+import com.mcherm.zithiacharsheet.client.model.ObservableInt;
+import com.mcherm.zithiacharsheet.client.model.ObservableIntValue;
+import com.mcherm.zithiacharsheet.client.model.ObservableList;
+import com.mcherm.zithiacharsheet.client.model.SimpleObservable;
 import com.mcherm.zithiacharsheet.client.model.Util;
+import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue.ValueCalculator;
 
 
 /**
@@ -16,19 +23,39 @@ import com.mcherm.zithiacharsheet.client.model.Util;
  * possibility is to make these immutable and just clobber the whole
  * thing whenever it changes.
  */
-public class WeaponTraining {
+public class WeaponTraining extends SimpleObservable {
     private final WeaponTraining parent;
-    private final List<WeaponTraining> children;
+    private final Observer observeAndAlert;
+    private final ObservableList<WeaponTraining> children;
     private final WeaponSkill weaponSkill;
     private boolean basicTraingPurchased;
-    private int levelsPurchased;
+    private final ObservableIntValue levelsPurchased;
+    private final CalculatedIntValue thisCost;
     
-    private WeaponTraining(WeaponTraining parent, WeaponSkill weaponSkill) {
+    private WeaponTraining(WeaponTraining parent, final WeaponSkill weaponSkill) {
         this.parent = parent;
-        this.children = new ArrayList<WeaponTraining>();
+        observeAndAlert = new Observer() {
+            public void onChange() {
+                alertObservers();
+            }
+        };
+        children = new ObservableList<WeaponTraining>();
+        children.addObserver(observeAndAlert);
         this.weaponSkill = weaponSkill;
         this.basicTraingPurchased = false;
-        this.levelsPurchased = 0;
+        levelsPurchased = new ObservableIntValue(0);
+        levelsPurchased.addObserver(observeAndAlert);
+        thisCost = new CalculatedIntValue(
+            Arrays.asList(levelsPurchased), 
+            new ValueCalculator() {
+                public int calculateValue(Iterable<? extends Observable> inputs) {
+                    int basicTrainingCost = getBasicTrainingPurchased() ? weaponSkill.getBasicTrainingCost() : 0;
+                    int firstLevelCost = weaponSkill.getFirstLevelCost();
+                    int levels = ((ObservableInt) inputs.iterator().next()).getValue();
+                    return Util.skillCost(basicTrainingCost, firstLevelCost, levels);
+                }
+            }
+        );
     }
     
     public WeaponTraining getParent() {
@@ -38,7 +65,7 @@ public class WeaponTraining {
     /**
      * Callers must not modify the list that gets returned.
      */
-    public List<WeaponTraining> getChildren() {
+    public Iterable<WeaponTraining> getChildren() {
         return children;
     }
     
@@ -75,22 +102,22 @@ public class WeaponTraining {
      * character has paid for.
      */
     public int getLevelsPurchased() {
-        return levelsPurchased;
+        return levelsPurchased.getValue();
     }
     
     /**
      * Returns the number of levels that the character can use with
      * this weapon or weapons in this weapon group.
      */
-    public int getLevels() {
-        return levelsPurchased + (parent == null ? 0 : parent.getLevels());
+    public int getLevels() { // FIXME: Use CalculatedIntValue.
+        return levelsPurchased.getValue() + (parent == null ? 0 : parent.getLevels());
     }
     
     /**
      * Used to set the number of levels purchased.
      */
     public void setLevelsPurchased(int levels) {
-        levelsPurchased = levels;
+        levelsPurchased.setValue(levels);
     }
     
     /**
@@ -98,22 +125,15 @@ public class WeaponTraining {
      * including any parent or child WeaponTrainings.
      */
     public int getThisCost() {
-        int basicTrainingCost = getBasicTrainingPurchased() ? weaponSkill.getBasicTrainingCost() : 0;
-        int firstLevelCost = weaponSkill.getFirstLevelCost();
-        int levels = getLevelsPurchased();
-        return Util.skillCost(basicTrainingCost, firstLevelCost, levels);
+        return thisCost.getValue();
     }
     
     /**
      * Returns the cumulative cost for this particular WeaponTraining and all
      * child WeaponTrainings.
      */
-    public int getTotalCost() {
-        int result = getThisCost();
-        for (WeaponTraining child : children) {
-            result += child.getTotalCost();
-        }
-        return result;
+    public ObservableInt getTotalCost() {
+        return children;
     }
     
     /**

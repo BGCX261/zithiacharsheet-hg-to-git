@@ -27,8 +27,8 @@ public class ZithiaCharacter {
         
         // -- starting skills --
         skills = new SkillList();
-        skills.addSkillValue(new SkillValue(SkillCatalog.get("climbing"), this));
-        skills.addSkillValue(new SkillValue(SkillCatalog.get("stealth"), this));
+        skills.add(new SkillValue(SkillCatalog.get("climbing"), this));
+        skills.add(new SkillValue(SkillCatalog.get("stealth"), this));
         
         // -- weapon training --
         weaponTraining = WeaponTraining.createAllCombatTraining();
@@ -57,7 +57,7 @@ public class ZithiaCharacter {
      */
     public void addNewSkill(ZithiaSkill skill) {
         SkillValue skillValue = new SkillValue(skill, this);
-        skills.addSkillValue(skillValue);
+        skills.add(skillValue);
     }
     
     /**
