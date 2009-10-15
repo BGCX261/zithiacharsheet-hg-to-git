@@ -11,7 +11,7 @@ public abstract class SimpleObservable implements Observable {
     private ImmutableList<Observer> observers = new ImmutableList<Observer>();
     
     public void addObserver(Observer observer) {
-        observers = ImmutableList.add(observer, observers);
+        observers = observers.add(observer);
     }
     
     /**

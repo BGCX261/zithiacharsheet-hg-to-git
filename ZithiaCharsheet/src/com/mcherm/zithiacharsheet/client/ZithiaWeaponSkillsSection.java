@@ -39,7 +39,7 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
     private void showWT(WeaponTraining wt, boolean hasBasicTraining, int levels) {
         this.add(new WeaponTrainingRow(wt, hasBasicTraining, levels));
         boolean isTrained = hasBasicTraining || wt.getBasicTrainingPurchased();
-        int netLevels = levels + wt.getLevelsPurchased();
+        int netLevels = levels + wt.getLevelsPurchased().getValue();
         for (WeaponTraining child : wt.getChildren()) {
             showWT(child, isTrained, netLevels);
         }
@@ -50,7 +50,7 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
         public WeaponTrainingRow(final WeaponTraining wt, boolean hasBasicTraining, int levels) {
             String name = wt.getWeaponSkill().getName();
             boolean isTrained = wt.isTrained();
-            int levelsPurchased = wt.getLevelsPurchased();
+            int levelsPurchased = wt.getLevelsPurchased().getValue();
             int netLevels = wt.getLevels();
             this.addStyleName("weaponSkillRow");
             this.add(new HTML(
@@ -63,7 +63,7 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
                 Button trainButton = new Button("Train", new ClickHandler() {
                     public void onClick(ClickEvent event) {
                         if (wt.isTrained()) {
-                            wt.setLevelsPurchased(wt.getLevelsPurchased() + 1);
+                            wt.setLevelsPurchased(wt.getLevelsPurchased().getValue() + 1);
                         } else {
                             wt.setBasicTrainingPurchased(true);
                         }

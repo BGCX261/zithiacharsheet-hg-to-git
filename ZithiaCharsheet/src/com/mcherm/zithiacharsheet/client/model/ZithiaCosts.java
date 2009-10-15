@@ -26,25 +26,25 @@ public class ZithiaCosts {
      *   should only be called from there.
      */
     public ZithiaCosts(final ZithiaCharacter zithiaCharacter) {
-        statCost = new CalculatedIntValue(
+        statCost = new CalculatedIntValue<StatValue>(
             zithiaCharacter.getStats(),
-            new ValueCalculator() {
-                public int calculateValue(Iterable<? extends Observable> inputs) {
+            new ValueCalculator<StatValue>() {
+                public int calculateValue(Iterable<? extends StatValue> inputs) {
                     int cost = 0;
-                    for (Observable input : inputs) {
-                        StatValue statValue = (StatValue) input;
+                    for (StatValue statValue : inputs) {
                         cost += statValue.getCost();
                     }
                     return cost;
                 }
             }
         );
-        skillCost = zithiaCharacter.getSkills();
+        skillCost = zithiaCharacter.getSkills().getSum();
         weaponSkillCost = zithiaCharacter.getWeaponTraining().getTotalCost();
-        totalCost = new CalculatedIntValue(
+        totalCost = new CalculatedIntValue<ObservableInt>(
             Arrays.asList(new ObservableInt[] {statCost, skillCost, weaponSkillCost}),
-            new ValueCalculator() {
-                public int calculateValue(Iterable<? extends Observable> inputs) {
+            // FIXME: Use the standard sum calculator.
+            new ValueCalculator<ObservableInt>() {
+                public int calculateValue(Iterable<? extends ObservableInt> inputs) {
                     int cost = 0;
                     for (Observable input : inputs) {
                         ObservableInt value = (ObservableInt) input;

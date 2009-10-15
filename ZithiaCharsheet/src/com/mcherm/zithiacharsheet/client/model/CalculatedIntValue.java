@@ -6,14 +6,15 @@ package com.mcherm.zithiacharsheet.client.model;
  * This is an ObservableIntValue for which the value is (normally) computed
  * according to some formula and depends on other values.
  */
-public class CalculatedIntValue extends ObservableIntValue {
+public class CalculatedIntValue<T extends Observable> extends ObservableIntValue {
     
-    public static interface ValueCalculator {
-        public int calculateValue(Iterable<? extends Observable> inputs);
+    public static interface ValueCalculator<T> {
+        public int calculateValue(Iterable<? extends T> inputs);
     }
+    
         
-    private final Iterable<? extends Observable> inputs;
-    private final ValueCalculator valueCalculator;
+    private final Iterable<? extends T> inputs;
+    private final ValueCalculator<T> valueCalculator;
 
     /**
      * Constructor.
@@ -25,8 +26,8 @@ public class CalculatedIntValue extends ObservableIntValue {
      *   any point in time.
      */
     public CalculatedIntValue(
-            Iterable<? extends Observable> inputs,
-            ValueCalculator valueCalculator)
+            Iterable<? extends T> inputs,
+            ValueCalculator<T> valueCalculator)
     {
         super(valueCalculator.calculateValue(inputs));
         this.inputs = inputs;

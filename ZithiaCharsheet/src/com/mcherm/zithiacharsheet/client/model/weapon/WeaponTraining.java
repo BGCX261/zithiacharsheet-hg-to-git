@@ -3,11 +3,11 @@ package com.mcherm.zithiacharsheet.client.model.weapon;
 import java.util.Arrays;
 
 import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue;
-import com.mcherm.zithiacharsheet.client.model.Observable;
 import com.mcherm.zithiacharsheet.client.model.ObservableInt;
 import com.mcherm.zithiacharsheet.client.model.ObservableIntValue;
 import com.mcherm.zithiacharsheet.client.model.ObservableList;
 import com.mcherm.zithiacharsheet.client.model.SimpleObservable;
+import com.mcherm.zithiacharsheet.client.model.SumOfIntsValue;
 import com.mcherm.zithiacharsheet.client.model.Util;
 import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue.ValueCalculator;
 
@@ -30,7 +30,8 @@ public class WeaponTraining extends SimpleObservable {
     private final WeaponSkill weaponSkill;
     private boolean basicTraingPurchased;
     private final ObservableIntValue levelsPurchased;
-    private final CalculatedIntValue thisCost;
+    private final CalculatedIntValue<ObservableInt> thisCost;
+    private final ObservableInt totalCost;
     
     private WeaponTraining(WeaponTraining parent, final WeaponSkill weaponSkill) {
         this.parent = parent;
@@ -45,17 +46,18 @@ public class WeaponTraining extends SimpleObservable {
         this.basicTraingPurchased = false;
         levelsPurchased = new ObservableIntValue(0);
         levelsPurchased.addObserver(observeAndAlert);
-        thisCost = new CalculatedIntValue(
+        thisCost = new CalculatedIntValue<ObservableInt>(
             Arrays.asList(levelsPurchased), 
-            new ValueCalculator() {
-                public int calculateValue(Iterable<? extends Observable> inputs) {
+            new ValueCalculator<ObservableInt>() {
+                public int calculateValue(Iterable<? extends ObservableInt> inputs) {
                     int basicTrainingCost = getBasicTrainingPurchased() ? weaponSkill.getBasicTrainingCost() : 0;
                     int firstLevelCost = weaponSkill.getFirstLevelCost();
-                    int levels = ((ObservableInt) inputs.iterator().next()).getValue();
+                    int levels = (inputs.iterator().next()).getValue();
                     return Util.skillCost(basicTrainingCost, firstLevelCost, levels);
                 }
             }
         );
+        totalCost = new SumOfIntsValue(Arrays.asList(thisCost, children.getSum()));
     }
     
     public WeaponTraining getParent() {
@@ -101,8 +103,8 @@ public class WeaponTraining extends SimpleObservable {
      * Returns the number of levels of this weapon skill that the
      * character has paid for.
      */
-    public int getLevelsPurchased() {
-        return levelsPurchased.getValue();
+    public ObservableIntValue getLevelsPurchased() {
+        return levelsPurchased;
     }
     
     /**
@@ -123,6 +125,8 @@ public class WeaponTraining extends SimpleObservable {
     /**
      * Returns the cost for just this particular WeaponTraining, not
      * including any parent or child WeaponTrainings.
+     * <p>
+     * FIXME: Should return an ObservableInt instead.
      */
     public int getThisCost() {
         return thisCost.getValue();
@@ -133,7 +137,7 @@ public class WeaponTraining extends SimpleObservable {
      * child WeaponTrainings.
      */
     public ObservableInt getTotalCost() {
-        return children;
+        return totalCost;
     }
     
     /**

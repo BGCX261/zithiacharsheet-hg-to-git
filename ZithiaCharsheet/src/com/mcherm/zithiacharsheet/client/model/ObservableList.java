@@ -13,7 +13,7 @@ import java.util.Iterator;
  * This alerts its observers if an item is added to the list, removed
  * from the list, or if an item in the list alerts.
  */
-public class ObservableList<T extends Observable> extends SimpleObservable implements ObservableInt, Iterable<T> {
+public class ObservableList<T extends Observable> extends SimpleObservable implements Iterable<T> {
     
     public static interface Extractor<T> {
         public int extractValue(T item);
@@ -21,18 +21,36 @@ public class ObservableList<T extends Observable> extends SimpleObservable imple
     
     private final ArrayList<T> items;
     private final Extractor<T> extractor;
-    private final Observer childObserver;
-    private int cachedSum;
+    private final ObservableSum observableSum;
     
     /**
      * A list which doesn't keep a sum. Its value is always 0.
      */
     public ObservableList() {
+        // FIXME: Switch to null extractor when not meaningful.
         this(new Extractor<T>() {
             public int extractValue(Observable item) {
                 return 0;
             }
         });
+    }
+    
+    // FIXME: Move this elsewhere in the file.
+    private class ObservableSum extends SimpleObservable implements ObservableInt, Observer {
+        @Override
+        public int getValue() {
+            int result = 0;
+            for (T item : items) {
+                result += extractor.extractValue(item);
+            }
+            return result;
+        }
+
+        /** When a value we observe changes, notify our observers. */
+        @Override
+        public void onChange() {
+            alertObservers();
+        }
     }
     
     /**
@@ -42,21 +60,9 @@ public class ObservableList<T extends Observable> extends SimpleObservable imple
     public ObservableList(Extractor<T> extractor) {
         items = new ArrayList<T>(4);
         this.extractor = extractor;
-        childObserver = new Observer() {
-            public void onChange() {
-                alertObservers();
-            }
-        };
-        refreshCachedSum();
+        observableSum = new ObservableSum();
     }
     
-    private void refreshCachedSum() {
-        int result = 0;
-        for (T item : items) {
-            result += extractor.extractValue(item);
-        }
-        cachedSum = result;
-    }
     
     public Iterator<T> iterator() {
         return items.iterator();
@@ -64,17 +70,17 @@ public class ObservableList<T extends Observable> extends SimpleObservable imple
     
     public void add(T item) {
         items.add(item);
-        refreshCachedSum();
-        item.addObserver(childObserver);
         alertObservers();
+        item.addObserver(observableSum);
     }
 
     /**
-     * This retrieves the sum of the values of the items in the list.
+     * This obtains an ObservableInt which contains the sum of the items
+     * in the list and can be monitored to retrieve them. It returns
+     * null if there is no meaningful sum defined for this list.
      */
-    @Override
-    public int getValue() {
-        return cachedSum;
+    public ObservableInt getSum() {
+        return observableSum;
     }
     
 }
