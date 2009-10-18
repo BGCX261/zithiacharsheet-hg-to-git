@@ -1,16 +1,13 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import com.mcherm.zithiacharsheet.client.model.weapon.WeaponTraining;
-
-
+/**
+ * A complete character sheet.
+ */
 public class ZithiaCharacter {
 
-    private final List<StatValue> stats;
-    private final SkillList skills;
+    private final StatValues statValues;
+    private final SkillList skillList;
     private final WeaponTraining weaponTraining;
     private final ZithiaCosts zithiaCosts;
     
@@ -18,46 +15,35 @@ public class ZithiaCharacter {
      * Creates a default blank character sheet.
      */
     public ZithiaCharacter() {
-        // -- starting stats --
-        List<StatValue> statList = new ArrayList<StatValue>();
-        for (final ZithiaStat stat : ZithiaStat.values()) {
-            statList.add(new StatValue(stat));
-        }
-        stats = Collections.unmodifiableList(statList);
-        
-        // -- starting skills --
-        skills = new SkillList();
-        skills.add(new SkillValue(SkillCatalog.get("climbing"), this));
-        skills.add(new SkillValue(SkillCatalog.get("stealth"), this));
-        
-        // -- weapon training --
+        statValues = new StatValues();
+        skillList = new SkillList();
+        addNewSkill(SkillCatalog.get("climbing"));
+        addNewSkill(SkillCatalog.get("stealth"));
         weaponTraining = WeaponTraining.createAllCombatTraining();
-        
-        // -- costs --
-        zithiaCosts = new ZithiaCosts(this);
+        zithiaCosts = new ZithiaCosts(statValues, skillList, weaponTraining);
     }
     
-    public List<StatValue> getStats() {
-        return stats;
+    public StatValues getStatValues() {
+        return statValues;
     }
     
-    public SkillList getSkills() {
-        return skills;
+    public SkillList getSkillList() {
+        return skillList;
     }
     
     /**
      * Return the value of a particular stat.
      */
     public StatValue getStat(ZithiaStat stat) {
-        return stats.get(stat.ordinal());
+        return statValues.getStat(stat);
     }
     
     /**
      * Call this to add a new skill to the character.
      */
     public void addNewSkill(ZithiaSkill skill) {
-        SkillValue skillValue = new SkillValue(skill, this);
-        skills.add(skillValue);
+        SkillValue skillValue = new SkillValue(skill, this.statValues);
+        skillList.add(skillValue);
     }
     
     /**

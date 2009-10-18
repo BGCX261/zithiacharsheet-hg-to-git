@@ -1,14 +1,12 @@
 package com.mcherm.zithiacharsheet.client;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.TextBox;
-import com.mcherm.zithiacharsheet.client.model.Observable;
 import com.mcherm.zithiacharsheet.client.model.SkillList;
 import com.mcherm.zithiacharsheet.client.model.SkillValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
+import com.mcherm.zithiacharsheet.client.modeler.Observable;
+
 
 // FIXME: Can this share code with stats table? I'm thinking probably not, but right now it's nearly a perfect duplicate
 public class ZithiaSkillsTable extends FlexTable {
@@ -28,7 +26,7 @@ public class ZithiaSkillsTable extends FlexTable {
         getRowFormatter().addStyleName(row, "header");
         row++;
         // -- Fill in Skills --
-        final SkillList skillList = zithiaCharacter.getSkills();
+        final SkillList skillList = zithiaCharacter.getSkillList();
         repopulateSkillTable(skillList);
         // -- Subscribe to future changes to the set of skills --
         skillList.addObserver(new Observable.Observer() {
@@ -55,50 +53,23 @@ public class ZithiaSkillsTable extends FlexTable {
             getFlexCellFormatter().addStyleName(row, 1, "nameCol");
             setText(row, 1, skillValue.getSkill().getName());
             // -- Cost --
-            final TextBox costBox = new TextBox();
-            costBox.setValue(Integer.toString(skillValue.getCost()));
-            costBox.setEnabled(false);
             getFlexCellFormatter().addStyleName(row, 0, "costCol");
-            setWidget(row, 0, costBox);
+            final TweakableIntField costField = new TweakableIntField(skillValue.getCost());
+            setWidget(row, 0, costField);
             // -- Roll --
             getFlexCellFormatter().addStyleName(row, 3, "rollCol");
-            final TextBox rollBox;
+            final TextBox rollField;
             if (skillValue.getSkill().hasRoll()) {
-                rollBox = new TextBox();
-                rollBox.setValue(Integer.toString(skillValue.getRoll()));
-                rollBox.setEnabled(false);
-                setWidget(row, 3, rollBox);
+                rollField = new TweakableIntField(skillValue.getRoll());
+                setWidget(row, 3, rollField);
             } else {
                 setText(row, 3, "n/a");
-                rollBox = null;
+                rollField = null;
             }
             // -- Value --
-            final TextBox levelsBox = new TextBox();
             getFlexCellFormatter().addStyleName(row, 2, "levelsCol");
-            levelsBox.setValue(Integer.toString(skillValue.getLevels()));
-            levelsBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-                @Override
-                public void onValueChange(ValueChangeEvent<String> event) {
-                    int newLevels;
-                    try {
-                        newLevels = Integer.parseInt(event.getValue());
-                    } catch(NumberFormatException err) {
-                        Window.alert("Got number format exception. value was " + event.getValue());
-                        return;
-                    }
-                    skillValue.setLevels(newLevels);
-                }
-            });
-            setWidget(row, 2, levelsBox);
-            // -- Register to update the values --
-            skillValue.addObserver(new Observable.Observer() {
-                public void onChange() {
-                    costBox.setValue(Integer.toString(skillValue.getCost()));
-                    if (rollBox != null) {
-                        rollBox.setValue(Integer.toString(skillValue.getRoll()));
-                    }
-                }
-            });
+            final SettableIntField levelsField = new SettableIntField(skillValue.getLevels());
+            setWidget(row, 2, levelsField);
             // -- Continue loop --
             row++;
         }

@@ -1,11 +1,7 @@
 package com.mcherm.zithiacharsheet.client;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.TextBox;
-import com.mcherm.zithiacharsheet.client.model.Observable;
+import com.google.gwt.user.client.ui.Widget;
 import com.mcherm.zithiacharsheet.client.model.StatValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
@@ -29,57 +25,28 @@ public class ZithiaStatsTable extends FlexTable {
         
         
         // -- Rows --
-        for (final StatValue statValue : zithiaCharacter.getStats()) {
+        for (final StatValue statValue : zithiaCharacter.getStatValues()) {
             // -- Name --
             getFlexCellFormatter().addStyleName(row, 1, "nameCol");
             setText(row, 1, statValue.getStat().getName());
             // -- Cost --
-            final TextBox costBox = new TextBox();
-            costBox.setValue(Integer.toString(statValue.getCost()));
-            costBox.setEnabled(false);
             getFlexCellFormatter().addStyleName(row, 0, "costCol");
-            setWidget(row, 0, costBox);
+            final Widget costField = new TweakableIntField(statValue.getCost());
+            setWidget(row, 0, costField);
             // -- Roll --
             getFlexCellFormatter().addStyleName(row, 3, "rollCol");
-            final TextBox rollBox;
+            final Widget rollField;
             if (statValue.getStat().hasRoll()) {
-                rollBox = new TextBox();
-                rollBox.setValue(Integer.toString(statValue.getRoll()));
-                rollBox.setEnabled(false);
-                setWidget(row, 3, rollBox);
+                rollField = new TweakableIntField(statValue.getRoll());
+                setWidget(row, 3, rollField);
             } else {
                 setText(row, 3, "n/a");
-                rollBox = null;
+                rollField = null;
             }
             // -- Value --
-            final TextBox valueBox = new TextBox();
             getFlexCellFormatter().addStyleName(row, 2, "valueCol");
-            valueBox.setValue(Integer.toString(statValue.getValue()));
-            valueBox.addValueChangeHandler(new ValueChangeHandler<String>() {
-                @Override
-                public void onValueChange(ValueChangeEvent<String> event) {
-                    int newValue;
-                    try {
-                        newValue = Integer.parseInt(event.getValue());
-                    } catch(NumberFormatException err) {
-                        Window.alert("Got number format exception. value was " + event.getValue());
-                        return;
-                    }
-                    statValue.setValue(newValue);
-                }
-            });
-            setWidget(row, 2, valueBox);
-            // -- Register to update the values --
-            statValue.addObserver(new Observable.Observer() {
-                public void onChange() {
-                    costBox.setValue(Integer.toString(statValue.getCost()));
-                    if (rollBox != null) {
-                        rollBox.setValue(Integer.toString(statValue.getRoll()));
-                    }
-                }
-            });
-            // reset to trigger initial value calculation // FIXME: Because of this I didn't need to set it above
-            statValue.setValue(statValue.getValue());
+            final SettableIntField valueField = new SettableIntField(statValue.getValue());
+            setWidget(row, 2, valueField);
             // -- Continue loop --
             row++;
         }

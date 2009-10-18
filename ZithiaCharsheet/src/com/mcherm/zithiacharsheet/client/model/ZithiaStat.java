@@ -21,6 +21,10 @@ public enum ZithiaStat {
     SPD("Spd", new SpdStatCost(), false, 6),
     ;
     
+    public static int getNumStats() {
+        return ZithiaStat.values().length;
+    }
+    
     private final String name;
     private final StatCost statCost;
     private final boolean hasRoll;

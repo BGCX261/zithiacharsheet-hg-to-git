@@ -1,4 +1,5 @@
-package com.mcherm.zithiacharsheet.client.model;
+package com.mcherm.zithiacharsheet.client.modeler;
+
 
 /**
  * A CalculatedIntValue which just adds up some ObservableInt values. The set

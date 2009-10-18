@@ -1,8 +1,9 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import java.util.Arrays;
-
-import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue.ValueCalculator;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation1;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation3;
 
 
 /**
@@ -12,64 +13,44 @@ import com.mcherm.zithiacharsheet.client.model.CalculatedIntValue.ValueCalculato
  */
 public class ZithiaCosts {
     
-    private final ObservableInt statCost;
-    private final ObservableInt skillCost;
-    private final ObservableInt weaponSkillCost;
-    private final ObservableInt totalCost;
+    private final TweakableIntValue statCost;
+    private final TweakableIntValue skillCost;
+    private final TweakableIntValue weaponSkillCost;
+    private final TweakableIntValue totalCost;
     
     /**
      * Constructor.
-     * 
-     * @param zithiaCharacter the character it will be created for. This MAY be
-     *   only partially initialized, but certain pieces must have been initialized
-     *   already - see the ZithiaCharacter constructor for the proper order. This
-     *   should only be called from there.
      */
-    public ZithiaCosts(final ZithiaCharacter zithiaCharacter) {
-        statCost = new CalculatedIntValue<StatValue>(
-            zithiaCharacter.getStats(),
-            new ValueCalculator<StatValue>() {
-                public int calculateValue(Iterable<? extends StatValue> inputs) {
-                    int cost = 0;
-                    for (StatValue statValue : inputs) {
-                        cost += statValue.getCost();
-                    }
-                    return cost;
-                }
+    public ZithiaCosts(StatValues statValues, SkillList skillList, WeaponTraining weaponTraining) {
+        Equation1 identity = new Equation1() {
+            public int getValue(int x) {
+                return x;
             }
-        );
-        skillCost = zithiaCharacter.getSkills().getSum();
-        weaponSkillCost = zithiaCharacter.getWeaponTraining().getTotalCost();
-        totalCost = new CalculatedIntValue<ObservableInt>(
-            Arrays.asList(new ObservableInt[] {statCost, skillCost, weaponSkillCost}),
-            // FIXME: Use the standard sum calculator.
-            new ValueCalculator<ObservableInt>() {
-                public int calculateValue(Iterable<? extends ObservableInt> inputs) {
-                    int cost = 0;
-                    for (Observable input : inputs) {
-                        ObservableInt value = (ObservableInt) input;
-                        cost += value.getValue();
-                    }
-                    return cost;
-                }
+        };
+        statCost = new EquationIntValue(statValues.getCost(), identity);
+        skillCost = new EquationIntValue(skillList.getCost(), identity);
+        weaponSkillCost = new EquationIntValue(weaponTraining.getTotalCost(), identity);
+        totalCost = new EquationIntValue(statCost, skillCost, weaponSkillCost, new Equation3() {
+            public int getValue(int statCost, int skillCost, int weaponSkillCost) {
+                return statCost + skillCost + weaponSkillCost;
             }
-        );
+        });
     }
 
 
-    public ObservableInt getStatCost() {
+    public TweakableIntValue getStatCost() {
         return statCost;
     }
     
-    public ObservableInt getSkillCost() {
+    public TweakableIntValue getSkillCost() {
         return skillCost;
     }
     
-    public ObservableInt getWeaponsSkillCost() {
+    public TweakableIntValue getWeaponsSkillCost() {
         return weaponSkillCost;
     }
     
-    public ObservableInt getTotalCost() {
+    public TweakableIntValue getTotalCost() {
         return totalCost;
     }
 }

@@ -1,20 +1,18 @@
-package com.mcherm.zithiacharsheet.client.model;
-
+package com.mcherm.zithiacharsheet.client.modeler;
 
 
 /**
- * This is an ObservableIntValue for which the value is (normally) computed
- * according to some formula and depends on other values.
+ * This is a generic form of a TweakableIntValue. The value is computed
+ * according to some formula and depends on certain fixed other values.
  */
-public class CalculatedIntValue<T extends Observable> extends ObservableIntValue {
+public class CalculatedIntValue<T extends Observable> extends SimpleObservable implements TweakableIntValue {
     
     public static interface ValueCalculator<T> {
         public int calculateValue(Iterable<? extends T> inputs);
     }
     
         
-    private final Iterable<? extends T> inputs;
-    private final ValueCalculator<T> valueCalculator;
+    private int value;
 
     /**
      * Constructor.
@@ -26,15 +24,14 @@ public class CalculatedIntValue<T extends Observable> extends ObservableIntValue
      *   any point in time.
      */
     public CalculatedIntValue(
-            Iterable<? extends T> inputs,
-            ValueCalculator<T> valueCalculator)
+            final Iterable<? extends T> inputs,
+            final ValueCalculator<T> valueCalculator)
     {
-        super(valueCalculator.calculateValue(inputs));
-        this.inputs = inputs;
-        this.valueCalculator = valueCalculator;
+        value = valueCalculator.calculateValue(inputs);
         Observable.Observer inputObserver = new Observable.Observer() {
             public void onChange() {
-                recalculateCost();
+                value = valueCalculator.calculateValue(inputs);
+                alertObservers();
             }
         };
         for (Observable input : inputs) {
@@ -42,8 +39,9 @@ public class CalculatedIntValue<T extends Observable> extends ObservableIntValue
         }
     }
 
-    private void recalculateCost() {
-        setValue(valueCalculator.calculateValue(inputs));
+    @Override
+    public int getValue() {
+        return value;
     }
     
 }

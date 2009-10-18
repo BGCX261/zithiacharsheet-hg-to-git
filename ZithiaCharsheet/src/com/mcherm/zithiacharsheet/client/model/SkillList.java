@@ -1,36 +1,29 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
+import com.mcherm.zithiacharsheet.client.modeler.SummableList;
 
 /**
  * This is the set of skills that a character.
  */
-public class SkillList extends ObservableList<SkillValue> {
+public class SkillList extends SummableList<SkillValue> {
 
+    /**
+     * Constructor. Creates an empty list of skills.
+     */
     public SkillList() {
         super(new Extractor<SkillValue>() {
-            @Override
-            public int extractValue(SkillValue item) {
+            public ObservableInt extractValue(SkillValue item) {
                 return item.getCost();
             }
         });
     }
-}
-
-
-// FIXME: Remove old code once new code is tested.
-class OldSkillList extends SimpleObservable {
     
-    private final List<SkillValue> skillValues = new ArrayList<SkillValue>();
-
-    public List<SkillValue> getSkillValues() {
-        return Collections.unmodifiableList(skillValues);
+    /**
+     * Returns the cost of the skills.
+     */
+    public ObservableInt getCost() {
+        return getSum();
     }
 
-    public void addSkillValue(SkillValue skillValue) {
-        skillValues.add(skillValue);
-        alertObservers();
-    }
 }

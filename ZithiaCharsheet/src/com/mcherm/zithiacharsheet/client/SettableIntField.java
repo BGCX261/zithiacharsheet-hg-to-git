@@ -3,7 +3,9 @@ package com.mcherm.zithiacharsheet.client;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
-import com.mcherm.zithiacharsheet.client.model.ObservableIntValue;
+import com.google.gwt.user.client.ui.TextBox;
+import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
 
 
 /**
@@ -11,21 +13,27 @@ import com.mcherm.zithiacharsheet.client.model.ObservableIntValue;
  * the field changes and you can edit the field to set
  * the value.
  */
-public class UserEnteredIntField extends CalculatedIntField {
+public class SettableIntField extends TextBox {
+    
+    protected final SettableIntValue value;
     
     /**
      * Constructor. Must specify the value to which this is tied.
      */
-    public UserEnteredIntField(final ObservableIntValue field) {
-        super(field);
-        setEnabled(true);
+    public SettableIntField(final SettableIntValue value) {
+        this.value = value;
+        updateDisplay();
+        value.addObserver(new Observer() {
+            public void onChange() {
+                updateDisplay();
+            }
+        });
         addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 try {
                     int newValue = Integer.parseInt(event.getValue());
-                    Window.alert("Going to set it to " + newValue);
-                    field.setValue(newValue);
+                    value.setValue(newValue);
                 } catch(NumberFormatException err) {
                     Window.alert("Got number format exception. value was " + event.getValue());
                     updateDisplay();
@@ -34,4 +42,10 @@ public class UserEnteredIntField extends CalculatedIntField {
         });
     }
     
+    /**
+     * Sets the displayed value to match the field value.
+     */
+    protected void updateDisplay() {
+        setValue(Integer.toString(value.getValue()));
+    }
 }

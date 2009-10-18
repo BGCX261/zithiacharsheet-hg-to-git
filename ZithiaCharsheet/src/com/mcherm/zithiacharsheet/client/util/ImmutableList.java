@@ -3,6 +3,7 @@ package com.mcherm.zithiacharsheet.client.util;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+
 /**
  * Your basic immutable linked list class.
  */
@@ -50,6 +51,21 @@ public class ImmutableList<T> implements Iterable<T> {
                 throw new UnsupportedOperationException();
             }
         };
+    }
+
+    public String toString() {
+        StringBuilder result = new StringBuilder("[");
+        boolean firstItem = true;
+        for (T item : this) {
+            if (firstItem) {
+                firstItem = false;
+            } else {
+                result.append(", ");
+            }
+            result.append(item);
+        }
+        result.append("]");
+        return result.toString();
     }
     
     /**
@@ -107,10 +123,13 @@ public class ImmutableList<T> implements Iterable<T> {
                 private ImmutableList<? extends T> currentPosition = thisList;
                 @Override
                 public boolean hasNext() {
-                    return ! currentPosition.tail().isEmpty();
+                    return ! currentPosition.isEmpty();
                 }
                 @Override
                 public T next() {
+                    if (currentPosition.isEmpty()) {
+                        throw new NoSuchElementException();
+                    }
                     T result = currentPosition.head();
                     currentPosition = currentPosition.tail();
                     return result;

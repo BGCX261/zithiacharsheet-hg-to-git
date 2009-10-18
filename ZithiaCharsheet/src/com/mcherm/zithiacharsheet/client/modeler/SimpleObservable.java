@@ -1,4 +1,4 @@
-package com.mcherm.zithiacharsheet.client.model;
+package com.mcherm.zithiacharsheet.client.modeler;
 
 import com.mcherm.zithiacharsheet.client.util.ImmutableList;
 

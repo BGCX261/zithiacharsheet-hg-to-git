@@ -1,14 +1,24 @@
 package com.mcherm.zithiacharsheet.client.model;
 
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
+import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableIntValueImpl;
+import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation1;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation2;
+
+
 /**
  * An actual instance of a skill in a particular individual.
  * So, for instance, this might be Rogan Harsha's Stealth.
  */
-public class SkillValue implements Observable {
+public class SkillValue {
 
     private final ZithiaSkill skill;
-    private final StatValue statValue; // the stat value or null if there is no stat
-    private final ObservableIntValue levels;
+    private final SettableIntValue levels;
+    private final TweakableIntValue roll; // may be null if no roll is applicable to this Skill
+    private final TweakableIntValue cost;
     
     /**
      * Constructor.
@@ -18,42 +28,41 @@ public class SkillValue implements Observable {
      *   only partially initialized, but the stats and race must have been initialized
      *   already.
      */
-    public SkillValue(ZithiaSkill skill, ZithiaCharacter zithiaCharacter) {
+    public SkillValue(final ZithiaSkill skill, StatValues statValues) {
         this.skill = skill;
-        ZithiaStat stat = skill.getStat();
-        if (stat == null) {
-            statValue = null;
+        levels = new SettableIntValueImpl(0);
+        ZithiaStat statForSkill = skill.getStat();
+        if (statForSkill == null) {
+            roll = null;
         } else {
-            statValue = zithiaCharacter.getStat(stat);
+            ObservableInt statRoll = statValues.getStat(statForSkill).getRoll();
+            roll = new EquationIntValue(statRoll, levels, new Equation2() {
+                public int getValue(int statRoll, int levels) {
+                    return statRoll + levels;
+                }
+            });
         }
-        this.levels = new ObservableIntValue(0);
-    }
-    
-    public int getCost() {
-        return skill.getCost(levels.getValue());
-    }
-    
-    public int getRoll() {
-        return skill.getRoll(levels.getValue(), statValue.getValue());
-    }
-    
-    public int getLevels() {
-        return levels.getValue();
-    }
-    
-    public void setLevels(int newLevels) {
-        levels.setValue(newLevels);
+        cost = new EquationIntValue(levels, new Equation1() {
+            public int getValue(int levels) {
+                return skill.getCost(levels);
+            }
+        });
     }
     
     public ZithiaSkill getSkill() {
         return skill;
     }
-
-    public void addObserver(Observable.Observer observer) {
-        levels.addObserver(observer);
-        if (statValue != null) {
-            statValue.addObserver(observer);
-        }
+    
+    public SettableIntValue getLevels() {
+        return levels;
+    }
+    
+    public TweakableIntValue getRoll() {
+        return roll;
+    }
+    
+    public TweakableIntValue getCost() {
+        return cost;
     }
     
 }

@@ -60,34 +60,6 @@ public class ZithiaSkill {
     }
     
     /**
-     * Returns what the roll would be if someone had the indicated number
-     * of levels in the skill and the indicated value for the stat.
-     * @param levels
-     * @param statValue
-     * @return
-     */
-    public int getRoll(int levels, int statValue) {
-        if (!hasRoll()) {
-            throw new RuntimeException("Skill " + name + " does not have a roll.");
-        } else {
-            return stat.getRoll(statValue) + levels;
-        }
-    }
-    
-    /**
-     * Returns what the roll would be for the indicated character if that
-     * character had the indicated number of levels with the skill.
-     */
-    public int getRoll(int levels, ZithiaCharacter zithiaCharacter) {
-        if (!hasRoll()) {
-            throw new RuntimeException("Skill " + name + " does not have a roll.");
-        } else {
-            int statValue = zithiaCharacter.getStat(stat).getValue();
-            return getRoll(levels, statValue);
-        }
-    }
-    
-    /**
      * Returns the total cost of the indicated number of levels of this skill.
      */
     public int getCost(int levels) {
