@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,7 +18,6 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponClusterSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
-import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 
 
 /**
@@ -50,30 +48,17 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
     private class WeaponTrainingRow extends HorizontalPanel {
         public WeaponTrainingRow(final WeaponTraining wt) {
             String name = wt.getWeaponSkill().getName();
-            boolean isTrained = wt.isTrained().getValue();
-            int levelsPurchased = wt.getLevelsPurchased().getValue();
-            int netLevels = wt.getLevels().getValue();
             this.addStyleName("weaponSkillRow");
-            this.add(new HTML(
-                    name + ": " + (isTrained ? "" : "<untrained> ") +
-                    netLevels + " levels " +
-                    "[" + levelsPurchased + "]"
-            ));
+            this.add(new HTML(name + ": "));
+            TweakableIntField netLevels = new TweakableIntField(wt.getLevels());
+            this.add(netLevels);
+            this.add(new HTML(" levels ["));
+            SettableIntField levelsPurchased = new SettableIntField(wt.getLevelsPurchased());
+            this.add(levelsPurchased);
+            this.add(new HTML("]"));
+            this.add(new SettableBooleanField("Trained", wt.getBasicTrainingPurchased()));
             if (wt.getWeaponSkill() instanceof WeaponClusterSkill) {
                 final WeaponClusterSkill weaponClusterSkill = (WeaponClusterSkill) wt.getWeaponSkill();
-                Button trainButton = new Button("Train", new ClickHandler() {
-                    public void onClick(ClickEvent event) {
-                        if (wt.isTrained().getValue()) {
-                            SettableIntValue levelsPurchased = wt.getLevelsPurchased();
-                            levelsPurchased.setValue(levelsPurchased.getValue() + 1);
-                        } else {
-                            wt.getBasicTrainingPurchased().setValue(true);
-                            // FIXME: descendent items should get it set to false.
-                        }
-                        Window.alert("Probably just trained."); // FIXME: Remove when display works.
-                    }
-                });
-                this.add(trainButton);
                 Button newChildButton = new Button("Add", new ClickHandler() {
                     public void onClick(ClickEvent event) {
                         List<WeaponSkill> eligibleSkills = WeaponsCatalog.getSingleton().getChildren(weaponClusterSkill);
