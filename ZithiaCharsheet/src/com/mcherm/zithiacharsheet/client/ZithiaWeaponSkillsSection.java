@@ -50,13 +50,17 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
             String name = wt.getWeaponSkill().getName();
             this.addStyleName("weaponSkillRow");
             this.add(new HTML(name + ": "));
-            TweakableIntField netLevels = new TweakableIntField(wt.getLevels());
-            this.add(netLevels);
-            this.add(new HTML(" levels ["));
-            SettableIntField levelsPurchased = new SettableIntField(wt.getLevelsPurchased());
-            this.add(levelsPurchased);
+            this.add(new HTML("levels-"));
+            this.add(new TweakableIntField(wt.getLevels()));
+            this.add(new HTML("["));
+            this.add(new SettableIntField(wt.getLevelsPurchased()));
             this.add(new HTML("]"));
             this.add(new SettableBooleanField("Trained", wt.getBasicTrainingPurchased()));
+            this.add(new HTML(" cost-"));
+            this.add(new TweakableIntField(wt.getTotalCost()));
+            this.add(new HTML("["));
+            this.add(new TweakableIntField(wt.getThisCost()));
+            this.add(new HTML("]"));
             if (wt.getWeaponSkill() instanceof WeaponClusterSkill) {
                 final WeaponClusterSkill weaponClusterSkill = (WeaponClusterSkill) wt.getWeaponSkill();
                 Button newChildButton = new Button("Add", new ClickHandler() {

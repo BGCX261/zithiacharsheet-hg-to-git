@@ -34,19 +34,19 @@ import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation2;
 public class WeaponTraining {
     private final WeaponTraining parent;
     private final WeaponSkill weaponSkill;
-    private final SettableBooleanValue basicTraingPurchased;
+    private final SettableBooleanValue basicTrainingPurchased;
     private final SettableIntValue levelsPurchased;
     private final EquationIntValue levels;
     private final ObservableBoolean trained;
     private final CalculatedIntValue<Observable> thisCost;
     private final SummableList<WeaponTraining> children;
-    private final ObservableInt totalCost;
+    private final EquationIntValue totalCost;
     
     private WeaponTraining(final WeaponTraining parent, final WeaponSkill weaponSkill) {
         this.parent = parent;
         this.weaponSkill = weaponSkill;
-        final SettableBooleanValue btp = new SettableBooleanValueImpl(false); // FIXME: Rename to basicTrainingPurchased
-        this.basicTraingPurchased = btp;
+        final SettableBooleanValue basicTrainingPurchased = new SettableBooleanValueImpl(false);
+        this.basicTrainingPurchased = basicTrainingPurchased;
         levelsPurchased = new SettableIntValueImpl(0);
         if (parent == null) {
             levels = new EquationIntValue(levelsPurchased, new Equation1() {
@@ -55,10 +55,10 @@ public class WeaponTraining {
                 }
             });
             trained = new CalculatedBooleanValue(
-                Arrays.asList(btp),
+                Arrays.asList(basicTrainingPurchased),
                 new BooleanValueCalculator() {
                     public boolean calculateValue() {
-                        return btp.getValue();
+                        return basicTrainingPurchased.getValue();
                     }
                 }
             );
@@ -69,19 +69,19 @@ public class WeaponTraining {
                 }
             });
             trained = new CalculatedBooleanValue(
-                Arrays.asList(btp, parent.isTrained()),
+                Arrays.asList(basicTrainingPurchased, parent.isTrained()),
                 new BooleanValueCalculator() {
                     public boolean calculateValue() {
-                        return btp.getValue() || parent.isTrained().getValue();
+                        return basicTrainingPurchased.getValue() || parent.isTrained().getValue();
                     }
                 }
             );
         }
         thisCost = new CalculatedIntValue<Observable>(
-            Arrays.asList(basicTraingPurchased, levelsPurchased),
+            Arrays.asList(basicTrainingPurchased, levelsPurchased),
             new ValueCalculator<Observable>() {
                 public int calculateValue(Iterable<? extends Observable> inputs) {
-                    int basicTrainingCost = basicTraingPurchased.getValue() ? weaponSkill.getBasicTrainingCost() : 0;
+                    int basicTrainingCost = basicTrainingPurchased.getValue() ? weaponSkill.getBasicTrainingCost() : 0;
                     int firstLevelCost = weaponSkill.getFirstLevelCost();
                     int levels = levelsPurchased.getValue();
                     return Util.skillCost(basicTrainingCost, firstLevelCost, levels);
@@ -120,7 +120,7 @@ public class WeaponTraining {
      * this particular WeaponSkill.
      */
     public SettableBooleanValue getBasicTrainingPurchased() {
-        return basicTraingPurchased;
+        return basicTrainingPurchased;
     }
     
     /**
@@ -160,7 +160,7 @@ public class WeaponTraining {
      * Returns the cumulative cost for this particular WeaponTraining and all
      * child WeaponTrainings.
      */
-    public ObservableInt getTotalCost() {
+    public TweakableIntValue getTotalCost() {
         return totalCost;
     }
     
@@ -172,7 +172,9 @@ public class WeaponTraining {
      * @return the newly created WeaponTraining.
      */
     public WeaponTraining createChild(WeaponSkill weaponSkill) {
-        return new WeaponTraining(this, weaponSkill);
+        WeaponTraining result = new WeaponTraining(this, weaponSkill);
+        children.add(result);
+        return result;
     }
     
     /**
