@@ -104,9 +104,10 @@ public class WeaponTraining {
         return parent;
     }
     
-    /**
-     * Callers must not modify the list that gets returned.
-     */
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
+    
     public Iterable<WeaponTraining> getChildren() {
         return children;
     }

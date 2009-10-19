@@ -23,9 +23,11 @@ public class WeaponsCatalog {
     private final List<Weapon> weapons;
     private final WeaponCluster allCombatGroup;
     private final WeaponClusterSkill allCombatSkill;
+    private final Map<String,WeaponSkill> weaponSkillById;
     private final Map<WeaponClusterSkill,List<WeaponSkill>> skillChildren;
     
     public WeaponsCatalog() {
+        weaponSkillById = new HashMap<String,WeaponSkill>();
         LineReader lineReader = new LineReader(Arrays.asList(getData()));
         lineReader.processLines();
         allCombatGroup = lineReader.singleSpan4Group;
@@ -64,66 +66,79 @@ public class WeaponsCatalog {
         public void processLines() {
             for (String[] line : lines) {
                 String spanIndicator = line[0];
+                WeaponSkill weaponSkill;
                 if ("1:".equals(spanIndicator)) {
-                    doSpan1(line);
+                    weaponSkill = doSpan1(line);
                 } else if ("2:".equals(spanIndicator)) {
-                    doSpan2(line);
+                    weaponSkill = doSpan2(line);
                 } else if ("3:".equals(spanIndicator)) {
-                    doSpan3(line);
+                    weaponSkill = doSpan3(line);
                 } else if ("4:".equals(spanIndicator)) {
-                    doSpan4(line);
+                    weaponSkill = doSpan4(line);
                 } else {
                     throw new RuntimeException("Invalid span indicator.");
                 }
+                if (weaponSkillById.containsKey(weaponSkill.getId())) {
+                    throw new RuntimeException("Duplicate WeaponSkill id: " + weaponSkill.getId());
+                }
+                weaponSkillById.put(weaponSkill.getId(), weaponSkill);
             }
         }
         
-        private void doSpan4(String[] line) {
+        private WeaponClusterSkill doSpan4(String[] line) {
             final int span = 4;
-            final String name = line[1];
-            final int trainingCost = Integer.parseInt(line[2]);
-            final int firstLevelCost = Integer.parseInt(line[3]);
-            singleSpan4Group = new WeaponCluster(null, name, span);
+            final String id = line[1];
+            final String name = line[2];
+            final int trainingCost = Integer.parseInt(line[3]);
+            final int firstLevelCost = Integer.parseInt(line[4]);
+            singleSpan4Group = new WeaponCluster(null, id, name, span);
             WeaponClusterSkill newSkill = new WeaponClusterSkill(singleSpan4Group, trainingCost, firstLevelCost);
             singleSpan4Skill = newSkill;
             currentSpan3Skills = new ArrayList<WeaponSkill>();
             skillChildren.put(newSkill, currentSpan3Skills);
+            return newSkill;
         }
         
-        private void doSpan3(String[] line) {
+        private WeaponClusterSkill doSpan3(String[] line) {
             final int span = 3;
-            final String name = line[1];
-            final int trainingCost = Integer.parseInt(line[2]);
-            final int firstLevelCost = Integer.parseInt(line[3]);
-            currentSpan3Group = new WeaponCluster(singleSpan4Group, name, span);
+            final String id = line[1];
+            final String name = line[2];
+            final int trainingCost = Integer.parseInt(line[3]);
+            final int firstLevelCost = Integer.parseInt(line[4]);
+            currentSpan3Group = new WeaponCluster(singleSpan4Group, id, name, span);
             WeaponClusterSkill newSkill = new WeaponClusterSkill(currentSpan3Group, trainingCost, firstLevelCost);
             currentSpan3Skills.add(newSkill);
             currentSpan2Skills = new ArrayList<WeaponSkill>();
             skillChildren.put(newSkill, currentSpan2Skills);
+            return newSkill;
         }
         
-        private void doSpan2(String[] line) {
+        private WeaponClusterSkill doSpan2(String[] line) {
             final int span = 2;
-            final String name = line[1];
+            final String id = line[1];
+            final String name = line[2];
             final int groupTrainingCost = 2;
             final int groupLevelCost = 3;
-            currentSpan2Group = new WeaponGroup(currentSpan3Group, name, span);
+            currentSpan2Group = new WeaponGroup(currentSpan3Group, id, name, span);
             WeaponClusterSkill newSkill = new WeaponClusterSkill(currentSpan2Group, groupTrainingCost, groupLevelCost);
             currentSpan2Skills.add(newSkill);
             currentSpan1Skills = new ArrayList<WeaponSkill>();
             skillChildren.put(newSkill, currentSpan1Skills);
+            return newSkill;
         }
         
-        private void doSpan1(String[] line) {
-            String name = line[1];
-            int strMin = Integer.parseInt(line[2]);
-            int spd = Integer.parseInt(line[3]);
-            Weapon weapon = new Weapon(currentSpan2Group, name, strMin, spd);
+        private SingleWeaponSkill doSpan1(String[] line) {
+            String id = line[1];
+            String name = line[2];
+            int strMin = Integer.parseInt(line[3]);
+            int spd = Integer.parseInt(line[4]);
+            Weapon weapon = new Weapon(currentSpan2Group, id, name, strMin, spd);
             weaponsList.add(weapon);
             final int basicTrainingCost = 1;
             final int firstLevelCost = 2;
             SingleWeaponSkill weaponSkill = new SingleWeaponSkill(weapon, basicTrainingCost, firstLevelCost);
             currentSpan1Skills.add(weaponSkill);
+            return weaponSkill;
         }
     }
     
@@ -148,6 +163,14 @@ public class WeaponsCatalog {
     }
     
     /**
+     * Attempts to find a WeaponSkill from an Id. Return null if it is
+     * not found, or a WeaponSkill if it is.
+     */
+    public WeaponSkill getWeaponSkillById(String id) {
+        return weaponSkillById.get(id);
+    }
+        
+    /**
      * This returns a list of the known child skills for the given
      * parent.
      */
@@ -157,21 +180,21 @@ public class WeaponsCatalog {
     
     private String[][] getData() {
         return new String[][] {
-            // 1: name strMin spd, hpDmg stunDmg
-            {"4:", "All Combat", "10", "7"},
-            {"3:", "Melee Weapons", "6", "5"},
-            {"2:", "Daggers"},
-            {"1:", "Knife", "3", "3", "1D2-1", "1D3-1"},
-            {"1:", "Dagger", "3", "5", "1D2", "1D3"},
-            {"1:", "Stiletto", "3", "5", "1D3-1", "1D2"},
-            {"2:", "Swords"},
-            {"1:", "Short Sword", "4", "8", "1D4", "1D6"},
-            {"1:", "Rapier", "7", "6", "1D4", "1D6"},
-            {"1:", "Scimitar", "10", "5", "1D6", "1D8"},
-            {"1:", "Long Sword", "11", "6", "2D3", "1D8+1"},
-            {"1:", "Broadsword", "12", "6", "1D8", "1D10"},
-            {"1:", "Bastard Sword (1-handed)", "15", "7", "2D4+1", "2D6+1"},
-            {"3:", "Ranged Weapons", "5", "5"},
+            // 1: id, name strMin spd, hpDmg stunDmg
+            {"4:", "allcombat", "All Combat", "10", "7"},
+            {"3:", "melee", "Melee Weapons", "6", "5"},
+            {"2:", "daggers", "Daggers"},
+            {"1:", "knife", "Knife", "3", "3", "1D2-1", "1D3-1"},
+            {"1:", "dagger", "Dagger", "3", "5", "1D2", "1D3"},
+            {"1:", "stiletto", "Stiletto", "3", "5", "1D3-1", "1D2"},
+            {"2:", "swords", "Swords"},
+            {"1:", "shortsword", "Short Sword", "4", "8", "1D4", "1D6"},
+            {"1:", "rapier", "Rapier", "7", "6", "1D4", "1D6"},
+            {"1:", "scimitar", "Scimitar", "10", "5", "1D6", "1D8"},
+            {"1:", "longsword", "Long Sword", "11", "6", "2D3", "1D8+1"},
+            {"1:", "broadsword", "Broadsword", "12", "6", "1D8", "1D10"},
+            {"1:", "bastard1h", "Bastard Sword (1-handed)", "15", "7", "2D4+1", "2D6+1"},
+            {"3:", "ranged", "Ranged Weapons", "5", "5"},
         };
     }
     

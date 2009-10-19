@@ -7,7 +7,7 @@ package com.mcherm.zithiacharsheet.client.model.weapon;
  */
 public class WeaponGroup extends WeaponCluster {
 
-    public WeaponGroup(WeaponCluster parent, String name, int span) {
-        super(parent, name, span);
+    public WeaponGroup(WeaponCluster parent, String id, String name, int span) {
+        super(parent, id, name, span);
     }
 }

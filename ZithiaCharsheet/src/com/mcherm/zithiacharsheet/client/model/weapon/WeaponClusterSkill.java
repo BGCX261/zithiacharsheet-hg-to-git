@@ -21,6 +21,11 @@ public class WeaponClusterSkill extends WeaponSkill {
     public WeaponCluster getWeaponCluster() {
         return weaponCluster;
     }
+    
+    @Override
+    public String getId() {
+        return weaponCluster.getId();
+    }
 
     @Override
     public String getName() {

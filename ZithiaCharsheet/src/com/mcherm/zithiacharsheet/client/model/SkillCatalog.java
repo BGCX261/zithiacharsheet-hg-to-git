@@ -81,7 +81,7 @@ public class SkillCatalog {
                     throw new RuntimeException("Syntax error on line "  + lineNum);
                 }
                 final String name = skillDataRow[4];
-                final ZithiaSkill newSkill = new ZithiaSkill(stat, hasRoll, baseCost, firstLevelCost, name);
+                final ZithiaSkill newSkill = new ZithiaSkill(stat, hasRoll, baseCost, firstLevelCost, name, id);
                 skillMap.put(id, newSkill);
                 currentCategorySkills.add(newSkill);
             } else {

@@ -22,6 +22,10 @@ public class ObservableList<T> extends SimpleObservable implements Iterable<T> {
         items = new ArrayList<T>(4);
     }
     
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+    
     public Iterator<T> iterator() {
         return items.iterator();
     }

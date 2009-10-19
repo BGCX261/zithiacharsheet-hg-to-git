@@ -21,6 +21,11 @@ public class SingleWeaponSkill extends WeaponSkill {
     }
     
     @Override
+    public String getId() {
+        return weapon.getId();
+    }
+    
+    @Override
     public String getName() {
         return weapon.getName();
     }

@@ -11,6 +11,7 @@ public class ZithiaSkill {
     private final int baseCost;
     private final int firstLevelCost;
     private final String name;
+    private final String id;
     
     /**
      * Constructor.
@@ -22,9 +23,10 @@ public class ZithiaSkill {
      * @param firstLevelCost the cost for the first level with the skill,
      *   or 0 if the skill has no meaningful levels or roll.
      * @param name the name of the skill
+     * @param id the unique ID of the skill in the SkillCatalog
      */
     public ZithiaSkill(ZithiaStat stat, boolean hasRoll,
-                       int baseCost, int firstLevelCost, String name)
+                       int baseCost, int firstLevelCost, String name, String id)
     {
         if (stat == null && hasRoll == true) {
             throw new RuntimeException("A skill with a roll must have an associated stat.");
@@ -34,6 +36,7 @@ public class ZithiaSkill {
         this.baseCost = baseCost;
         this.firstLevelCost = firstLevelCost;
         this.name = name;
+        this.id = id;
     }
     
     /**
@@ -68,6 +71,10 @@ public class ZithiaSkill {
     
     public String getName() {
         return name;
+    }
+    
+    public String getId() {
+        return id;
     }
     
 }

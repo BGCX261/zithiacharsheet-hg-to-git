@@ -6,6 +6,7 @@ package com.mcherm.zithiacharsheet.client.model.weapon;
  */
 public class Weapon {
     private final WeaponGroup weaponGroup;
+    private final String id;
     private final String name;
     private final int strMin;
     private final int spd;
@@ -14,8 +15,9 @@ public class Weapon {
     /**
      * Constructor.
      */
-    public Weapon(WeaponGroup weaponGroup, String name, int strMin, int spd) {
+    public Weapon(WeaponGroup weaponGroup, String id, String name, int strMin, int spd) {
         this.weaponGroup = weaponGroup;
+        this.id = id;
         this.name = name;
         this.strMin = strMin;
         this.spd = spd;
@@ -23,6 +25,10 @@ public class Weapon {
     
     public WeaponGroup getWeaponGroup() {
         return weaponGroup;
+    }
+    
+    public String getId() {
+        return id;
     }
 
     public String getName() {
