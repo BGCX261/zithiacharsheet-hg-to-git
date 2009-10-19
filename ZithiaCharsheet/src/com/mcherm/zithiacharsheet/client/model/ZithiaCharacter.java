@@ -41,9 +41,10 @@ public class ZithiaCharacter {
     /**
      * Call this to add a new skill to the character.
      */
-    public void addNewSkill(ZithiaSkill skill) {
+    public SkillValue addNewSkill(ZithiaSkill skill) {
         SkillValue skillValue = new SkillValue(skill, this.statValues);
         skillList.add(skillValue);
+        return skillValue;
     }
     
     /**

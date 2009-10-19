@@ -46,7 +46,7 @@ public class ZithiaCosts {
         return skillCost;
     }
     
-    public TweakableIntValue getWeaponsSkillCost() {
+    public TweakableIntValue getWeaponSkillCost() {
         return weaponSkillCost;
     }
     

@@ -3,6 +3,7 @@ package com.mcherm.zithiacharsheet.client.model;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponClusterSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
+import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 
@@ -91,16 +92,18 @@ public class JSONSerializer {
         out.append(i);
     }
     
-    protected void serialize(TweakableIntValue tweakableIntValue) {
+    protected void serialize(TweakableIntValue value) {
         out.append("{}");
     }
     
-    protected void serialize(SettableIntValue settableIntValue) {
-        out.append("{");
-        putAttributeEqInline("v");
-        out.append(settableIntValue.getValue());
-        out.append("}");
+    protected void serialize(SettableIntValue value) {
+        out.append(value.getValue());
     }
+    
+    protected void serialize(SettableBooleanValue value) {
+        out.append(value.getValue() ? "true" : "false");
+    }
+
     
     protected void serialize(StatValue statValue) {
         putStartDict();
@@ -179,17 +182,32 @@ public class JSONSerializer {
         putEndDict();
     }
     
-    protected void serialize(WeaponTraining weaponTraining) {
+    protected void serialize(WeaponTraining wt) {
         putStartDict();
         putAttributeEq("weaponSkill");
-        serialize(weaponTraining.getWeaponSkill());
+        serialize(wt.getWeaponSkill());
+        putComma();
+        putAttributeEq("basicTrainingPurchased");
+        serialize(wt.getBasicTrainingPurchased());
+        putComma();
+        putAttributeEq("levelsPurchased");
+        serialize(wt.getLevelsPurchased());
+        putComma();
+        putAttributeEq("levels");
+        serialize(wt.getLevels());
+        putComma();
+        putAttributeEq("thisCost");
+        serialize(wt.getThisCost());
+        putComma();
+        putAttributeEq("totalCost");
+        serialize(wt.getTotalCost());
         putComma();
         // FIXME: And more fields here
-        if (weaponTraining.hasChildren()) {
+        if (wt.hasChildren()) {
             putAttributeEq("children");
             putStartList();
             boolean firstTimeInLoop = true;
-            for (WeaponTraining child : weaponTraining.getChildren()) {
+            for (WeaponTraining child : wt.getChildren()) {
                 if (firstTimeInLoop) {
                     firstTimeInLoop = false;
                 } else {
@@ -202,7 +220,29 @@ public class JSONSerializer {
         putEndDict();
     }
     
-    protected void serialize(ZithiaCharacter zithiaCharacter) {
+    public void serialize(ZithiaCosts zithiaCosts) {
+/*
+    private final TweakableIntValue statCost;
+    private final TweakableIntValue skillCost;
+    private final TweakableIntValue weaponSkillCost;
+    private final TweakableIntValue totalCost;
+ */
+        putStartDict();
+        putAttributeEq("statCost");
+        serialize(zithiaCosts.getStatCost());
+        putComma();
+        putAttributeEq("skillCost");
+        serialize(zithiaCosts.getSkillCost());
+        putComma();
+        putAttributeEq("weaponSkillCost");
+        serialize(zithiaCosts.getWeaponSkillCost());
+        putComma();
+        putAttributeEq("totalCost");
+        serialize(zithiaCosts.getTotalCost());
+        putEndDict();
+    }
+    
+    public void serialize(ZithiaCharacter zithiaCharacter) {
         putStartDict();
         putAttributeEq("statValues");
         serialize(zithiaCharacter.getStatValues());
@@ -212,7 +252,9 @@ public class JSONSerializer {
         putComma();
         putAttributeEq("weaponTraining");
         serialize(zithiaCharacter.getWeaponTraining());
-        // FIXME: Need other fields also
+        putComma();
+        putAttributeEq("costs");
+        serialize(zithiaCharacter.getCosts());
         putEndDict();
     }
     
@@ -225,6 +267,8 @@ public class JSONSerializer {
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
         final JSONSerializer jss = new JSONSerializer(true);
         ZithiaCharacter character = new ZithiaCharacter();
+        SkillValue skillValue = character.addNewSkill(skillCatalog.getSkill("flowers"));
+        skillValue.getLevels().setValue(3);
         final WeaponTraining allCombatTraining = character.getWeaponTraining();
         // Buy 1 level with each tier-2 skill
         for (WeaponSkill weaponSkill : weaponsCatalog.getChildren(((WeaponClusterSkill) allCombatTraining.getWeaponSkill()))) {
