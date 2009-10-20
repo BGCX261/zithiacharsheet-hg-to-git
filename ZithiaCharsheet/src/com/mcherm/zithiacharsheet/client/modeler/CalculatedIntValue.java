@@ -13,6 +13,8 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
     
         
     private int value;
+    private Integer override;
+    private Integer modifier;
 
     /**
      * Constructor.
@@ -27,6 +29,8 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
             final Iterable<? extends T> inputs,
             final ValueCalculator<T> valueCalculator)
     {
+        override = null;
+        modifier = null;
         value = valueCalculator.calculateValue(inputs);
         Observable.Observer inputObserver = new Observable.Observer() {
             public void onChange() {
@@ -41,7 +45,38 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
 
     @Override
     public int getValue() {
-        return value;
+        if (override != null) {
+            return override.intValue();
+        } else if (modifier != null) {
+            return value + modifier.intValue();
+        } else {
+            return value;
+        }
+    }
+
+    @Override
+    public boolean isEdited() {
+        return override != null || modifier != null;
+    }
+
+    @Override
+    public Integer getOverride() {
+        return override;
+    }
+
+    @Override
+    public Integer getModifier() {
+        return modifier;
+    }
+
+    @Override
+    public void setAdjustments(Integer override, Integer modifier) {
+        if (override != null && modifier != null) {
+            throw new IllegalArgumentException("Either override or modifier must be null.");
+        }
+        this.override = override;
+        this.modifier = modifier;
+        alertObservers();
     }
     
 }

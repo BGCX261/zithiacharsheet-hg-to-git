@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -15,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
 
@@ -49,6 +51,17 @@ public class ZithiaCharsheet implements EntryPoint {
         mainPanel.add(zithiaSkillsSection);
         mainPanel.add(zithiaWeaponSkillsSection);
         mainPanel.add(zithiaCostsSection);
+        final Button saveButton = new Button("Save");
+        saveButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                JSONSerializer serializer = new JSONSerializer(true);
+                serializer.serialize(zithiaCharacter);
+                String output = serializer.output();
+                System.out.println(output);
+                Window.alert(output);
+            }
+        });
+        mainPanel.add(saveButton);
         RootPanel.get("charsheet").add(mainPanel);
     }
     

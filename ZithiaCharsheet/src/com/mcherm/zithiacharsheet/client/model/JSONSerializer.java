@@ -15,12 +15,12 @@ public class JSONSerializer {
     private final boolean prettyPrint;
     private final StringBuilder out = new StringBuilder();
     private int indentLevel;
-    private boolean lineHasBracket;
+    private boolean lineHasOpenBracket;
     
     public JSONSerializer(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
         indentLevel = 0;
-        lineHasBracket = false;
+        lineHasOpenBracket = false;
     }
     
     public String output() {
@@ -33,7 +33,7 @@ public class JSONSerializer {
             for (int i=0; i<indentLevel; i++) {
                 out.append("  ");
             }
-            lineHasBracket = false;
+            lineHasOpenBracket = false;
         }
     }
     
@@ -48,16 +48,23 @@ public class JSONSerializer {
     }
     
     protected void putComma() {
-        out.append(",");
+        if (!lineHasOpenBracket) {
+            out.append(",");
+        }
+    }
+    
+    protected void putStartField(String fieldName) {
+        putComma();
+        putAttributeEq(fieldName);
     }
     
     protected void putStartDict() {
-        if (lineHasBracket) {
+        if (lineHasOpenBracket) {
             indent();
         }
         out.append("{");
         indentLevel++;
-        lineHasBracket = true;
+        lineHasOpenBracket = true;
     }
     
     protected void putEndDict() {
@@ -67,12 +74,12 @@ public class JSONSerializer {
     }
     
     protected void putStartList() {
-        if (lineHasBracket) {
+        if (lineHasOpenBracket) {
             indent();
         }
         out.append("[");
         indentLevel++;
-        lineHasBracket = true;
+        lineHasOpenBracket = true;
     }
     
     protected void putEndList() {
@@ -92,15 +99,31 @@ public class JSONSerializer {
         out.append(i);
     }
     
-    protected void serialize(TweakableIntValue value) {
-        out.append("{}");
+    protected void serialize(String fieldName, TweakableIntValue value) {
+        if (value.isEdited()) {
+            putStartField(fieldName);
+            Integer override = value.getOverride();
+            Integer modifier = value.getModifier();
+            out.append("{");
+            if (override != null) {
+                putAttributeEqInline("override");
+                serialize(override.intValue());
+            }
+            if (modifier != null) {
+                putAttributeEqInline("modifier");
+                serialize(modifier.intValue());
+            }
+            out.append("}");
+        }
     }
     
-    protected void serialize(SettableIntValue value) {
+    protected void serialize(String fieldName, SettableIntValue value) {
+        putStartField(fieldName);
         out.append(value.getValue());
     }
     
-    protected void serialize(SettableBooleanValue value) {
+    protected void serialize(String fieldName, SettableBooleanValue value) {
+        putStartField(fieldName);
         out.append(value.getValue() ? "true" : "false");
     }
 
@@ -110,34 +133,25 @@ public class JSONSerializer {
         if (prettyPrint) {
             putAttributeEq("stat");
             serialize(statValue.getStat().getName());
-            putComma();
         }
-        putAttributeEq("value");
-        serialize(statValue.getValue());
-        putComma();
-        putAttributeEq("roll");
-        serialize(statValue.getRoll());
-        putComma();
-        putAttributeEq("cost");
-        serialize(statValue.getCost());
+        serialize("value", statValue.getValue());
+        serialize("roll", statValue.getRoll());
+        serialize("cost", statValue.getCost());
         putEndDict();
     }
     
-    protected void serialize(StatValues statValues) {
+    protected void serialize(String fieldName, StatValues statValues) {
+        putStartField(fieldName);
         putStartList();
-        boolean firstTimeInLoop = true;
         for (StatValue statValue : statValues) {
-            if (firstTimeInLoop) {
-                firstTimeInLoop = false;
-            } else {
-                putComma();
-            }
+            putComma();
             serialize(statValue);
         }
         putEndList();
     }
     
-    protected void serialize(ZithiaSkill skill) {
+    protected void serialize(String fieldName, ZithiaSkill skill) {
+        putStartField(fieldName);
         putStartDict();
         putAttributeEq("id");
         serialize(skill.getId());
@@ -146,73 +160,50 @@ public class JSONSerializer {
     
     protected void serialize(SkillValue skillValue) {
         putStartDict();
-        putAttributeEq("skill");
-        serialize(skillValue.getSkill());
-        putComma();
-        putAttributeEq("levels");
-        serialize(skillValue.getLevels());
-        putComma();
-        putAttributeEq("roll");
-        serialize(skillValue.getRoll());
-        putComma();
-        putAttributeEq("cost");
-        serialize(skillValue.getCost());
+        serialize("skill", skillValue.getSkill());
+        serialize("levels", skillValue.getLevels());
+        serialize("roll", skillValue.getRoll());
+        serialize("cost", skillValue.getCost());
         putEndDict();
     }
     
     
-    protected void serialize(SkillList skillList) {
+    protected void serialize(String fieldName, SkillList skillList) {
+        putStartField(fieldName);
         putStartList();
-        boolean firstTimeInLoop = true;
         for (SkillValue skillValue : skillList) {
-            if (firstTimeInLoop) {
-                firstTimeInLoop = false;
-            } else {
-                putComma();
-            }
+            putComma();
             serialize(skillValue);
         }
         putEndList();
     }
     
-    protected void serialize(WeaponSkill weaponSkill) {
+    protected void serialize(String fieldName, WeaponSkill weaponSkill) {
+        putStartField(fieldName);
         putStartDict();
         putAttributeEq("id");
         serialize(weaponSkill.getId());
         putEndDict();
     }
     
+    protected void serialize(String fieldName, WeaponTraining wt) {
+        putStartField(fieldName);
+        serialize(wt);
+    }
+    
     protected void serialize(WeaponTraining wt) {
         putStartDict();
-        putAttributeEq("weaponSkill");
-        serialize(wt.getWeaponSkill());
-        putComma();
-        putAttributeEq("basicTrainingPurchased");
-        serialize(wt.getBasicTrainingPurchased());
-        putComma();
-        putAttributeEq("levelsPurchased");
-        serialize(wt.getLevelsPurchased());
-        putComma();
-        putAttributeEq("levels");
-        serialize(wt.getLevels());
-        putComma();
-        putAttributeEq("thisCost");
-        serialize(wt.getThisCost());
-        putComma();
-        putAttributeEq("totalCost");
-        serialize(wt.getTotalCost());
-        putComma();
-        // FIXME: And more fields here
+        serialize("weaponSkill", wt.getWeaponSkill());
+        serialize("basicTrainingPurchased", wt.getBasicTrainingPurchased());
+        serialize("levelsPurchased", wt.getLevelsPurchased());
+        serialize("levels", wt.getLevels());
+        serialize("thisCost", wt.getThisCost());
+        serialize("totalCost", wt.getTotalCost());
         if (wt.hasChildren()) {
-            putAttributeEq("children");
+            putStartField("children");
             putStartList();
-            boolean firstTimeInLoop = true;
             for (WeaponTraining child : wt.getChildren()) {
-                if (firstTimeInLoop) {
-                    firstTimeInLoop = false;
-                } else {
-                    putComma();
-                }
+                putComma();
                 serialize(child);
             }
             putEndList();
@@ -220,41 +211,22 @@ public class JSONSerializer {
         putEndDict();
     }
     
-    public void serialize(ZithiaCosts zithiaCosts) {
-/*
-    private final TweakableIntValue statCost;
-    private final TweakableIntValue skillCost;
-    private final TweakableIntValue weaponSkillCost;
-    private final TweakableIntValue totalCost;
- */
+    protected void serialize(String fieldName, ZithiaCosts zithiaCosts) {
+        putStartField(fieldName);
         putStartDict();
-        putAttributeEq("statCost");
-        serialize(zithiaCosts.getStatCost());
-        putComma();
-        putAttributeEq("skillCost");
-        serialize(zithiaCosts.getSkillCost());
-        putComma();
-        putAttributeEq("weaponSkillCost");
-        serialize(zithiaCosts.getWeaponSkillCost());
-        putComma();
-        putAttributeEq("totalCost");
-        serialize(zithiaCosts.getTotalCost());
+        serialize("statCost", zithiaCosts.getStatCost());
+        serialize("skillCost", zithiaCosts.getSkillCost());
+        serialize("weaponSkillCost", zithiaCosts.getWeaponSkillCost());
+        serialize("totalCost", zithiaCosts.getTotalCost());
         putEndDict();
     }
     
     public void serialize(ZithiaCharacter zithiaCharacter) {
         putStartDict();
-        putAttributeEq("statValues");
-        serialize(zithiaCharacter.getStatValues());
-        putComma();
-        putAttributeEq("skillList");
-        serialize(zithiaCharacter.getSkillList());
-        putComma();
-        putAttributeEq("weaponTraining");
-        serialize(zithiaCharacter.getWeaponTraining());
-        putComma();
-        putAttributeEq("costs");
-        serialize(zithiaCharacter.getCosts());
+        serialize("statValues", zithiaCharacter.getStatValues());
+        serialize("skillList", zithiaCharacter.getSkillList());
+        serialize("weaponTraining", zithiaCharacter.getWeaponTraining());
+        serialize("costs", zithiaCharacter.getCosts());
         putEndDict();
     }
     
@@ -267,6 +239,7 @@ public class JSONSerializer {
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
         final JSONSerializer jss = new JSONSerializer(true);
         ZithiaCharacter character = new ZithiaCharacter();
+        character.getStat(ZithiaStat.OBS).getValue().setValue(16);
         SkillValue skillValue = character.addNewSkill(skillCatalog.getSkill("flowers"));
         skillValue.getLevels().setValue(3);
         final WeaponTraining allCombatTraining = character.getWeaponTraining();
@@ -275,6 +248,8 @@ public class JSONSerializer {
             WeaponTraining newWT = allCombatTraining.createChild(weaponSkill);
             newWT.getLevelsPurchased().setValue(1);
         }
+        character.getCosts().getWeaponSkillCost().setAdjustments(0, null);
+        character.getCosts().getTotalCost().setAdjustments(null, -10);
         jss.serialize(character);
         String output = jss.output();
         System.out.println(output);
