@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
 import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
 import com.mcherm.zithiacharsheet.client.model.StatValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
@@ -74,8 +75,10 @@ public class ZithiaCharsheet implements EntryPoint {
                     public void doAction(String text) {
                         System.out.println("text = " + text); // FIXME: Remove
                         JSONValue jsonValue = JSONParser.parse(text);
-                        StatValue statValue = new StatValue(jsonValue, ZithiaStat.STR);
-                        System.out.println("statValue = " + statValue); // FIXME: Remove
+                        JSONDeserializer deserializer = new JSONDeserializer();
+                        StatValue statValue = new StatValue(ZithiaStat.STR);
+                        deserializer.update(jsonValue, statValue);
+                        System.out.println("statValue = " + statValue.getValue().getValue()); // FIXME: Remove
                         Window.alert("jsonValue = " + statValue); // FIXME: Remove
                     }
                 });
