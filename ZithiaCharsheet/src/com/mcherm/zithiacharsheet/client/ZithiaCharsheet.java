@@ -7,6 +7,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.json.client.JSONParser;
+import com.google.gwt.json.client.JSONValue;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -17,7 +19,9 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
+import com.mcherm.zithiacharsheet.client.model.StatValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
+import com.mcherm.zithiacharsheet.client.model.ZithiaStat;
 
 
 /**
@@ -25,20 +29,16 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
  */
 public class ZithiaCharsheet implements EntryPoint {
 
-    private final ZithiaCharacter zithiaCharacter;
-    private final ZithiaStatsTable zithiaStatsTable;
-    private final ZithiaSkillsSection zithiaSkillsSection;
-    private final ZithiaWeaponSkillsSection zithiaWeaponSkillsSection;
-    private final ZithiaCostsSection zithiaCostsSection;
+    private ZithiaCharacter zithiaCharacter;
+    private ZithiaStatsTable zithiaStatsTable;
+    private ZithiaSkillsSection zithiaSkillsSection;
+    private ZithiaWeaponSkillsSection zithiaWeaponSkillsSection;
+    private ZithiaCostsSection zithiaCostsSection;
     private final VerticalPanel mainPanel;
     
     
     public ZithiaCharsheet() {
         zithiaCharacter = new ZithiaCharacter();
-        zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
-        zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
-        zithiaWeaponSkillsSection = new ZithiaWeaponSkillsSection(zithiaCharacter);
-        zithiaCostsSection = new ZithiaCostsSection(zithiaCharacter);
         mainPanel = new VerticalPanel();
     }
 
@@ -47,9 +47,14 @@ public class ZithiaCharsheet implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
+        RootPanel.get("charsheet").add(mainPanel);
+        zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
         mainPanel.add(zithiaStatsTable);
+        zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
         mainPanel.add(zithiaSkillsSection);
+        zithiaWeaponSkillsSection = new ZithiaWeaponSkillsSection(zithiaCharacter);
         mainPanel.add(zithiaWeaponSkillsSection);
+        zithiaCostsSection = new ZithiaCostsSection(zithiaCharacter);
         mainPanel.add(zithiaCostsSection);
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
@@ -62,7 +67,22 @@ public class ZithiaCharsheet implements EntryPoint {
             }
         });
         mainPanel.add(saveButton);
-        RootPanel.get("charsheet").add(mainPanel);
+        final Button loadButton = new Button("Load");
+        loadButton.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                GetStringDialog dialog = new GetStringDialog(new GetStringDialog.Action() {
+                    public void doAction(String text) {
+                        System.out.println("text = " + text); // FIXME: Remove
+                        JSONValue jsonValue = JSONParser.parse(text);
+                        StatValue statValue = new StatValue(jsonValue, ZithiaStat.STR);
+                        System.out.println("statValue = " + statValue); // FIXME: Remove
+                        Window.alert("jsonValue = " + statValue); // FIXME: Remove
+                    }
+                });
+                dialog.show();
+            }
+        });
+        mainPanel.add(loadButton);
     }
     
     // ============== BELOW THIS LINE IS OLD CRUFT =======================

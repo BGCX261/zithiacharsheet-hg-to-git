@@ -40,7 +40,7 @@ public class JSONSerializer {
     protected void putAttributeEqInline(String name) {
         out.append("\"");
         out.append(name);
-        out.append("\"=");
+        out.append("\":");
     }
     protected void putAttributeEq(String name) {
         indent();
