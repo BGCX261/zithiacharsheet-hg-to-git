@@ -14,17 +14,18 @@ import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
  * exactly matches the content of a JSON file.
  */
 public class JSONDeserializer {
+    
+    protected <T> T notNull(T x) {
+        if (x == null) {
+            throw new JSONBuildException();
+        }
+        return x;
+    }
 
     
     public void updateFromField(JSONObject parent, String fieldName, SettableIntValue settableIntValue) {
-        JSONValue valueValue = parent.get(fieldName);
-        if (valueValue == null) {
-            throw new JSONBuildException();
-        }
-        JSONNumber valueNum = valueValue.isNumber();
-        if (valueNum == null) {
-            throw new JSONBuildException();
-        }
+        JSONValue valueValue = notNull(parent.get(fieldName));
+        JSONNumber valueNum = notNull(valueValue.isNumber());
         int valueInt = (int) valueNum.doubleValue();
         settableIntValue.setValue(valueInt);
     }
@@ -34,30 +35,21 @@ public class JSONDeserializer {
         if (value == null) {
             tweakableIntValue.setAdjustments(null, null);
         } else {
-            JSONObject obj = value.isObject();
-            if (obj == null) {
-                throw new JSONBuildException();
-            }
+            JSONObject obj = notNull(value.isObject());
             final Integer overrideInt;
             final Integer modifierInt;
             JSONValue overrideValue = obj.get("override");
             if (overrideValue == null) {
                 overrideInt = null;
             } else {
-                JSONNumber overrideNum = overrideValue.isNumber();
-                if (overrideNum == null) {
-                    throw new JSONBuildException();
-                }
+                JSONNumber overrideNum = notNull(overrideValue.isNumber());
                 overrideInt = Integer.valueOf((int) overrideNum.doubleValue());
             }
             JSONValue modifierValue = obj.get("modifier");
             if (modifierValue == null) {
                 modifierInt = null;
             } else {
-                JSONNumber modifierNum = modifierValue.isNumber();
-                if (modifierNum == null) {
-                    throw new JSONBuildException();
-                }
+                JSONNumber modifierNum = notNull(modifierValue.isNumber());
                 modifierInt = Integer.valueOf((int) modifierNum.doubleValue());
             }
             tweakableIntValue.setAdjustments(overrideInt, modifierInt);
@@ -66,20 +58,14 @@ public class JSONDeserializer {
     
 
     public void update(JSONValue input, StatValue statValue) {
-        JSONObject inputObj = input.isObject();
-        if (inputObj == null) {
-            throw new JSONBuildException();
-        }
+        JSONObject inputObj = notNull(input.isObject());
         updateFromField(inputObj, "value", statValue.getValue());
         updateFromField(inputObj, "roll", statValue.getRoll());
         updateFromField(inputObj, "cost", statValue.getCost());
     }
     
     public void update(JSONValue input, StatValues statValues) {
-        JSONArray inputArray = input.isArray();
-        if (inputArray == null) {
-            throw new JSONBuildException();
-        }
+        JSONArray inputArray = notNull(input.isArray());
         if (inputArray.size() != ZithiaStat.getNumStats()) {
             throw new JSONBuildException();
         }
@@ -89,44 +75,22 @@ public class JSONDeserializer {
     }
     
     public ZithiaSkill lookupSkill(JSONValue input) {
-        if (input == null) {
-            throw new JSONBuildException();
-        }
-        JSONObject inputObj = input.isObject();
-        if (inputObj == null) {
-            throw new JSONBuildException();
-        }
-        JSONValue idValue = inputObj.get("id");
-        if (idValue == null) {
-            throw new JSONBuildException();
-        }
-        JSONString idString = idValue.isString();
-        // FIXME: Make an 'assertNotNull'
-        if (idString == null) {
-            throw new JSONBuildException();
-        }
+        JSONObject inputObj = notNull(input.isObject());
+        JSONValue idValue = notNull(inputObj.get("id"));
+        JSONString idString = notNull(idValue.isString());
         String id = idString.stringValue();
-        ZithiaSkill skill = SkillCatalog.get(id);
-        if (skill == null) {
-            throw new JSONBuildException();
-        }
+        ZithiaSkill skill = notNull(SkillCatalog.get(id));
         return skill;
     }
     
     
     public void update(JSONValue input, SkillList skillList, StatValues statValues) {
-        JSONArray inputArray = input.isArray();
-        if (inputArray == null) {
-            throw new JSONBuildException();
-        }
+        JSONArray inputArray = notNull(input.isArray());
         skillList.clear();
         for (int i=0; i<inputArray.size(); i++) {
             JSONValue skillDataValue = inputArray.get(i);
-            JSONObject skillDataObj = skillDataValue.isObject();
-            if (skillDataObj == null) {
-                throw new JSONBuildException();
-            }
-            JSONValue zithiaSkillValue = skillDataObj.get("skill");
+            JSONObject skillDataObj = notNull(skillDataValue.isObject());
+            JSONValue zithiaSkillValue = notNull(skillDataObj.get("skill"));
             ZithiaSkill zithiaSkill = lookupSkill(zithiaSkillValue);
             SkillValue result = skillList.addNewSkill(zithiaSkill);
             updateFromField(skillDataObj, "levels", result.getLevels());
