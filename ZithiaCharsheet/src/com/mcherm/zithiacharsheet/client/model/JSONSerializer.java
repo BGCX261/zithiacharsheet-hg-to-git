@@ -100,7 +100,7 @@ public class JSONSerializer {
     }
     
     protected void serialize(String fieldName, TweakableIntValue value) {
-        if (value.isEdited()) {
+        if (value.isTweaked()) {
             putStartField(fieldName);
             Integer override = value.getOverride();
             Integer modifier = value.getModifier();

@@ -10,7 +10,7 @@ public interface TweakableIntValue extends ObservableInt {
      * Returns true if there is either an override or a modifier;
      * returns false if there is neither.
      */
-    public boolean isEdited();
+    public boolean isTweaked();
     
     /**
      * Returns the current override value, or null if there is no override

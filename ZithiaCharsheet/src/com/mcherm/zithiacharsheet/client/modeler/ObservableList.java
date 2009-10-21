@@ -1,7 +1,9 @@
 package com.mcherm.zithiacharsheet.client.modeler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -13,7 +15,7 @@ import java.util.Iterator;
  */
 public class ObservableList<T> extends SimpleObservable implements Iterable<T> {
     
-    private final ArrayList<T> items;
+    private final List<T> items;
     
     /**
      * Constructor.
@@ -27,7 +29,7 @@ public class ObservableList<T> extends SimpleObservable implements Iterable<T> {
     }
     
     public Iterator<T> iterator() {
-        return items.iterator();
+        return Collections.unmodifiableList(items).iterator();
     }
     
     public void add(T item) {
@@ -35,12 +37,15 @@ public class ObservableList<T> extends SimpleObservable implements Iterable<T> {
         alertObservers();
     }
     
-    /* Commented out for the moment
+    /**
+     * Removes the first occurrence of item from the list if it was in the list;
+     * does nothing if it was not in the list. equals() is used to test for
+     * equality.
+     */
     public void remove(T item) {
         items.remove(item);
         alertObservers();
     }
-    */
     
     /**
      * Removes <i>all</i> items from the list in a single call.

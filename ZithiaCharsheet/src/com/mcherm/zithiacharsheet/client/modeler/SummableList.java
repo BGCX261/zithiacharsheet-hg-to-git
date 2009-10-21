@@ -55,6 +55,12 @@ public class SummableList<T> extends ObservableList<T> {
     }
     
     @Override
+    public void remove(T item) {
+        super.remove(item);
+        extractor.extractValue(item).removeObserver(observableSum);
+    }
+    
+    @Override
     public void clear() {
         for (T item : this) {
             extractor.extractValue(item).removeObserver(observableSum);

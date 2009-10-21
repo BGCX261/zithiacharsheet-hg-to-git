@@ -55,7 +55,7 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
     }
 
     @Override
-    public boolean isEdited() {
+    public boolean isTweaked() {
         return override != null || modifier != null;
     }
 

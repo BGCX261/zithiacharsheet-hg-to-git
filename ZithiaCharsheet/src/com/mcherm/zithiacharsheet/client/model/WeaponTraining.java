@@ -1,6 +1,9 @@
 package com.mcherm.zithiacharsheet.client.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import com.mcherm.zithiacharsheet.client.model.Util;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
@@ -176,6 +179,45 @@ public class WeaponTraining {
         WeaponTraining result = new WeaponTraining(this, weaponSkill);
         children.add(result);
         return result;
+    }
+    
+    /**
+     * This walks this WeaponTraining and all child WeaponTrainings, keeping
+     * every item that has basicTrainingPurchased, levelsPurchased, any tweaked
+     * values, or has child we keep, and removing all other items. This node itself
+     * will still exist, even if empty, but the method returns true if this
+     * WeaponTraining can itself be pruned and false if it cannot.
+     * <p>
+     * FIXME: Must test this, and use it!
+     */
+    public boolean prune() {
+        boolean hasChild;
+        if (children.isEmpty()) {
+            hasChild = false;
+        } else {
+            List<WeaponTraining> childrenToRemove = new ArrayList<WeaponTraining>();
+            for (WeaponTraining child : children) {
+                if (child.prune()) {
+                    childrenToRemove.add(child);
+                }
+            }
+            for (WeaponTraining child : childrenToRemove) {
+                children.remove(child);
+            }
+            hasChild = !children.isEmpty();
+        }
+        boolean hasBTP = getBasicTrainingPurchased().getValue();
+        boolean hasLevels = getLevelsPurchased().getValue() != 0;
+        boolean hasTweaks = getLevels().isTweaked() ||  getThisCost().isTweaked() || getTotalCost().isTweaked();
+        return hasChild || hasBTP || hasLevels || hasTweaks;
+    }
+    
+    /**
+     * This removes all children, all tweaks, and sets the levelsPurchased to 0 and
+     * basicTrainingPurchased to false. Essentially, it wipes clean this and all children.
+     */
+    public void clean() {
+        // FIXME: Write this (?)
     }
     
     /**
