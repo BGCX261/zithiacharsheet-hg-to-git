@@ -16,7 +16,7 @@ public class ZithiaCharacter {
      */
     public ZithiaCharacter() {
         statValues = new StatValues();
-        skillList = new SkillList();
+        skillList = new SkillList(statValues);
         addNewSkill(SkillCatalog.get("climbing"));
         addNewSkill(SkillCatalog.get("stealth"));
         weaponTraining = WeaponTraining.createAllCombatTraining();
@@ -42,9 +42,7 @@ public class ZithiaCharacter {
      * Call this to add a new skill to the character.
      */
     public SkillValue addNewSkill(ZithiaSkill skill) {
-        SkillValue skillValue = new SkillValue(skill, this.statValues);
-        skillList.add(skillValue);
-        return skillValue;
+        return skillList.addNewSkill(skill);
     }
     
     /**

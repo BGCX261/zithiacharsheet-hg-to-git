@@ -77,6 +77,36 @@ public class ImmutableList<T> implements Iterable<T> {
     public ImmutableList<T> add(T item) {
         return new ListNode<T>(item, this);
     }
+    
+    /**
+     * Removes the first occurrence of an item from the list if it is in the list.
+     * @param item an item to be removed. Must not be null. The equals() method
+     *   will be used to test for a match.
+     * @return a new list which is the same except that it is missing
+     *   the first instance of item. If item did not exist in the original
+     *   list then it returns the original list.
+     */
+    @SuppressWarnings("unchecked") // because I can't get the type of the lists right while iterating
+    public ImmutableList<T> remove(T item) {
+        ImmutableList<T> leadingItems = new ImmutableList<T>();
+        ImmutableList<T> remainingList = this;
+        while (! remainingList.isEmpty()) {
+            T currentItem = remainingList.head();
+            remainingList = (ImmutableList<T>) remainingList.tail();
+            if (item.equals(currentItem)) {
+                ImmutableList<T> result = remainingList;
+                while (! leadingItems.isEmpty()) {
+                    T x = leadingItems.head();
+                    leadingItems = (ImmutableList<T>) leadingItems.tail();
+                    result = result.add(x);
+                }
+                return result;
+            } else {
+                leadingItems = leadingItems.add(currentItem);
+            }
+        }
+        return this; // no match was found
+    }
 
     /**
      * A static version of the add() method which can be used to

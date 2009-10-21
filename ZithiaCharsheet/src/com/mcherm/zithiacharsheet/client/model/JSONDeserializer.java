@@ -1,7 +1,9 @@
 package com.mcherm.zithiacharsheet.client.model;
 
+import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
@@ -73,5 +75,64 @@ public class JSONDeserializer {
         updateFromField(inputObj, "cost", statValue.getCost());
     }
     
+    public void update(JSONValue input, StatValues statValues) {
+        JSONArray inputArray = input.isArray();
+        if (inputArray == null) {
+            throw new JSONBuildException();
+        }
+        if (inputArray.size() != ZithiaStat.getNumStats()) {
+            throw new JSONBuildException();
+        }
+        for (ZithiaStat zithiaStat : ZithiaStat.values()) {
+            update(inputArray.get(zithiaStat.ordinal()), statValues.getStat(zithiaStat));
+        }
+    }
+    
+    public ZithiaSkill lookupSkill(JSONValue input) {
+        if (input == null) {
+            throw new JSONBuildException();
+        }
+        JSONObject inputObj = input.isObject();
+        if (inputObj == null) {
+            throw new JSONBuildException();
+        }
+        JSONValue idValue = inputObj.get("id");
+        if (idValue == null) {
+            throw new JSONBuildException();
+        }
+        JSONString idString = idValue.isString();
+        // FIXME: Make an 'assertNotNull'
+        if (idString == null) {
+            throw new JSONBuildException();
+        }
+        String id = idString.stringValue();
+        ZithiaSkill skill = SkillCatalog.get(id);
+        if (skill == null) {
+            throw new JSONBuildException();
+        }
+        return skill;
+    }
+    
+    
+    public void update(JSONValue input, SkillList skillList, StatValues statValues) {
+        JSONArray inputArray = input.isArray();
+        if (inputArray == null) {
+            throw new JSONBuildException();
+        }
+        skillList.clear();
+        for (int i=0; i<inputArray.size(); i++) {
+            JSONValue skillDataValue = inputArray.get(i);
+            JSONObject skillDataObj = skillDataValue.isObject();
+            if (skillDataObj == null) {
+                throw new JSONBuildException();
+            }
+            JSONValue zithiaSkillValue = skillDataObj.get("skill");
+            ZithiaSkill zithiaSkill = lookupSkill(zithiaSkillValue);
+            SkillValue result = skillList.addNewSkill(zithiaSkill);
+            updateFromField(skillDataObj, "levels", result.getLevels());
+            updateFromField(skillDataObj, "roll", result.getRoll());
+            updateFromField(skillDataObj, "cost", result.getCost());
+        }
+    }
     
 }

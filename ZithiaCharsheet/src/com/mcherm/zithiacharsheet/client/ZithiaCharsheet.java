@@ -20,9 +20,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
 import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
-import com.mcherm.zithiacharsheet.client.model.StatValue;
+import com.mcherm.zithiacharsheet.client.model.SkillList;
+import com.mcherm.zithiacharsheet.client.model.SkillValue;
+import com.mcherm.zithiacharsheet.client.model.StatValues;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
-import com.mcherm.zithiacharsheet.client.model.ZithiaStat;
 
 
 /**
@@ -73,13 +74,14 @@ public class ZithiaCharsheet implements EntryPoint {
             public void onClick(ClickEvent event) {
                 GetStringDialog dialog = new GetStringDialog(new GetStringDialog.Action() {
                     public void doAction(String text) {
-                        System.out.println("text = " + text); // FIXME: Remove
                         JSONValue jsonValue = JSONParser.parse(text);
                         JSONDeserializer deserializer = new JSONDeserializer();
-                        StatValue statValue = new StatValue(ZithiaStat.STR);
-                        deserializer.update(jsonValue, statValue);
-                        System.out.println("statValue = " + statValue.getValue().getValue()); // FIXME: Remove
-                        Window.alert("jsonValue = " + statValue); // FIXME: Remove
+                        StatValues statValues = new StatValues();
+                        SkillList skillList = new SkillList(statValues);
+                        deserializer.update(jsonValue, skillList, statValues);
+                        for (SkillValue skillValue : skillList) {
+                            System.out.println("Skill " + skillValue.getSkill().getName() + ": " + skillValue.getRoll().getValue()); // FIXME: Remove
+                        }
                     }
                 });
                 dialog.show();

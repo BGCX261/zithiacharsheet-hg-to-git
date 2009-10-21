@@ -41,4 +41,12 @@ public class ObservableList<T> extends SimpleObservable implements Iterable<T> {
         alertObservers();
     }
     */
+    
+    /**
+     * Removes <i>all</i> items from the list in a single call.
+     */
+    public void clear() {
+        items.clear();
+        alertObservers();
+    }
 }

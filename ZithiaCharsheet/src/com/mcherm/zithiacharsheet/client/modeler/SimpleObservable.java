@@ -6,14 +6,20 @@ import com.mcherm.zithiacharsheet.client.util.ImmutableList;
 /**
  * This can be used to implement the Observable interface.
  */
-public abstract class SimpleObservable implements Observable {
+public class SimpleObservable implements Observable {
 
     private ImmutableList<Observer> observers = new ImmutableList<Observer>();
     
+    @Override
     public void addObserver(Observer observer) {
         observers = observers.add(observer);
     }
     
+    @Override
+    public void removeObserver(Observer observer) {
+        observers = observers.remove(observer);
+    }
+
     /**
      * Subclasses call this when they're ready to alert observers of a change.
      */

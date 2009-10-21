@@ -11,5 +11,5 @@ public interface Observable {
 
     public void addObserver(Observer observer);
     
-    // FIXME: Needs a way to delete observers
+    public void removeObserver(Observer observer);
 }

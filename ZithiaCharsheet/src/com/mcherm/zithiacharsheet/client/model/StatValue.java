@@ -1,8 +1,5 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import com.google.gwt.json.client.JSONNumber;
-import com.google.gwt.json.client.JSONObject;
-import com.google.gwt.json.client.JSONValue;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValueImpl;

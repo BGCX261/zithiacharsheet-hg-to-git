@@ -53,6 +53,14 @@ public class SummableList<T> extends ObservableList<T> {
         super.add(item);
         extractor.extractValue(item).addObserver(observableSum); // the sum observes each item's value
     }
+    
+    @Override
+    public void clear() {
+        for (T item : this) {
+            extractor.extractValue(item).removeObserver(observableSum);
+        }
+        super.clear();
+    }
 
     /**
      * This obtains an ObservableInt which contains the sum of the items
