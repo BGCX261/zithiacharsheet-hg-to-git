@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
 import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
-import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
 
@@ -59,7 +58,7 @@ public class ZithiaCharsheet implements EntryPoint {
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                JSONSerializer serializer = new JSONSerializer(true);
+                JSONSerializer serializer = new JSONSerializer(false);
                 serializer.serialize(zithiaCharacter);
                 String output = serializer.output();
                 System.out.println(output);
@@ -74,10 +73,7 @@ public class ZithiaCharsheet implements EntryPoint {
                     public void doAction(String text) {
                         JSONValue jsonValue = JSONParser.parse(text);
                         JSONDeserializer deserializer = new JSONDeserializer();
-                        WeaponTraining wt = zithiaCharacter.getWeaponTraining();
-                        wt.clean();
-                        deserializer.update(jsonValue, wt);
-                        System.out.println("After update." );
+                        deserializer.update(jsonValue, zithiaCharacter);
                     }
                 });
                 dialog.show();

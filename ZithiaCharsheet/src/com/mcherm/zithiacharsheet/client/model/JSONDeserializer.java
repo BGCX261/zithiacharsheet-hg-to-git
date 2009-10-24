@@ -161,4 +161,26 @@ public class JSONDeserializer {
         }
     }
     
+    public void updateFromField(JSONObject inputObject, String fieldName, ZithiaCosts zithiaCosts) {
+        JSONValue fieldValue = inputObject.get(fieldName);
+        if (fieldValue != null) {
+            JSONObject fieldObject = notNull(fieldValue.isObject());
+            updateFromField(fieldObject, "statCost", zithiaCosts.getStatCost());
+            updateFromField(fieldObject, "skillCost", zithiaCosts.getSkillCost());
+            updateFromField(fieldObject, "weaponSkillCost", zithiaCosts.getWeaponSkillCost());
+            updateFromField(fieldObject, "totalCost", zithiaCosts.getTotalCost());
+        }
+    }
+    
+    public void update(JSONValue inputValue, ZithiaCharacter zithiaCharacter) {
+        // FIXME: refactor so most of these are updateFromField?
+        JSONObject inputObject = notNull(inputValue.isObject());
+        update(notNull(inputObject.get("statValues")), zithiaCharacter.getStatValues());
+        update(notNull(inputObject.get("skillList")), zithiaCharacter.getSkillList());
+        WeaponTraining wt = zithiaCharacter.getWeaponTraining();
+        wt.clean();
+        update(notNull(inputObject.get("weaponTraining")), wt);
+        updateFromField(inputObject, "costs", zithiaCharacter.getCosts());
+    }
+
 }

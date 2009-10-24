@@ -33,8 +33,8 @@ public class JSONSerializer {
             for (int i=0; i<indentLevel; i++) {
                 out.append("  ");
             }
-            lineHasOpenBracket = false;
         }
+        lineHasOpenBracket = false;
     }
     
     protected void putAttributeEqInline(String name) {
@@ -238,7 +238,7 @@ public class JSONSerializer {
     public static void main(String[] args) {
         final SkillCatalog skillCatalog = SkillCatalog.getSingleton();
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
-        final JSONSerializer jss = new JSONSerializer(true);
+        final JSONSerializer jss = new JSONSerializer(false);
         ZithiaCharacter character = new ZithiaCharacter();
         character.getStat(ZithiaStat.OBS).getValue().setValue(16);
         SkillValue skillValue = character.addNewSkill(skillCatalog.getSkill("flowers"));
