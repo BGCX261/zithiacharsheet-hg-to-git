@@ -247,7 +247,10 @@ public class JSONSerializer {
         // Buy 1 level with each tier-2 skill
         for (WeaponSkill weaponSkill : weaponsCatalog.getChildren(((WeaponClusterSkill) allCombatTraining.getWeaponSkill()))) {
             WeaponTraining newWT = allCombatTraining.createChild(weaponSkill);
-            newWT.getLevelsPurchased().setValue(1);
+            newWT.getLevelsPurchased().setValue(2);
+            if (newWT.getWeaponSkill().getName().equals("melee")) {
+                newWT.createChild(weaponsCatalog.getWeaponSkillById("swords")).getLevelsPurchased().setValue(4);
+            }
         }
         character.getCosts().getWeaponSkillCost().setAdjustments(0, null);
         character.getCosts().getTotalCost().setAdjustments(null, -10);

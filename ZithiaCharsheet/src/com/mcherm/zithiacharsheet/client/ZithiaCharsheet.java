@@ -20,9 +20,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
 import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
-import com.mcherm.zithiacharsheet.client.model.SkillList;
-import com.mcherm.zithiacharsheet.client.model.SkillValue;
-import com.mcherm.zithiacharsheet.client.model.StatValues;
+import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
 
@@ -76,12 +74,10 @@ public class ZithiaCharsheet implements EntryPoint {
                     public void doAction(String text) {
                         JSONValue jsonValue = JSONParser.parse(text);
                         JSONDeserializer deserializer = new JSONDeserializer();
-                        StatValues statValues = new StatValues();
-                        SkillList skillList = new SkillList(statValues);
-                        deserializer.update(jsonValue, skillList, statValues);
-                        for (SkillValue skillValue : skillList) {
-                            System.out.println("Skill " + skillValue.getSkill().getName() + ": " + skillValue.getRoll().getValue()); // FIXME: Remove
-                        }
+                        WeaponTraining wt = zithiaCharacter.getWeaponTraining();
+                        wt.clean();
+                        deserializer.update(jsonValue, wt);
+                        System.out.println("After update." );
                     }
                 });
                 dialog.show();

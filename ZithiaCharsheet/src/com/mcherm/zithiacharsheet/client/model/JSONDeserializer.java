@@ -1,12 +1,16 @@
 package com.mcherm.zithiacharsheet.client.model;
 
 import com.google.gwt.json.client.JSONArray;
+import com.google.gwt.json.client.JSONBoolean;
 import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
+import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
+import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
 
 
 /**
@@ -22,12 +26,20 @@ public class JSONDeserializer {
         return x;
     }
 
+    // FIXME: Make the publics private instead, right?
+    
     
     public void updateFromField(JSONObject parent, String fieldName, SettableIntValue settableIntValue) {
         JSONValue valueValue = notNull(parent.get(fieldName));
         JSONNumber valueNum = notNull(valueValue.isNumber());
         int valueInt = (int) valueNum.doubleValue();
         settableIntValue.setValue(valueInt);
+    }
+    
+    public void updateFromField(JSONObject parent, String fieldName, SettableBooleanValue settableBooleanValue) {
+        JSONValue valueValue = notNull(parent.get(fieldName));
+        JSONBoolean valueBool = notNull(valueValue.isBoolean());
+        settableBooleanValue.setValue(valueBool.booleanValue());
     }
     
     public void updateFromField(JSONObject parent, String fieldName, TweakableIntValue tweakableIntValue) {
@@ -79,12 +91,11 @@ public class JSONDeserializer {
         JSONValue idValue = notNull(inputObj.get("id"));
         JSONString idString = notNull(idValue.isString());
         String id = idString.stringValue();
-        ZithiaSkill skill = notNull(SkillCatalog.get(id));
-        return skill;
+        return notNull(SkillCatalog.get(id));
     }
     
     
-    public void update(JSONValue input, SkillList skillList, StatValues statValues) {
+    public void update(JSONValue input, SkillList skillList) {
         JSONArray inputArray = notNull(input.isArray());
         skillList.clear();
         for (int i=0; i<inputArray.size(); i++) {
@@ -96,6 +107,57 @@ public class JSONDeserializer {
             updateFromField(skillDataObj, "levels", result.getLevels());
             updateFromField(skillDataObj, "roll", result.getRoll());
             updateFromField(skillDataObj, "cost", result.getCost());
+        }
+    }
+    
+    public WeaponSkill lookupWeaponSkill(JSONValue input) {
+        JSONObject inputObj = notNull(input.isObject());
+        JSONValue idValue = notNull(inputObj.get("id"));
+        JSONString idString = notNull(idValue.isString());
+        String id = idString.stringValue();
+        return notNull(WeaponsCatalog.getSingleton().getWeaponSkillById(id));
+    }
+    
+    public WeaponTraining newWeaponTraining(JSONValue input, WeaponTraining parent) {
+        JSONObject inputObject = notNull(input.isObject());
+        WeaponSkill weaponSkill = lookupWeaponSkill(notNull(inputObject.get("weaponSkill")));
+        WeaponTraining result = parent.createChild(weaponSkill);
+        updateFromField(inputObject, "basicTrainingPurchased", result.getBasicTrainingPurchased());
+        updateFromField(inputObject, "levelsPurchased", result.getLevelsPurchased());
+        updateFromField(inputObject, "levels", result.getLevels());
+        updateFromField(inputObject, "thisCost", result.getThisCost());
+        updateFromField(inputObject, "totalCost", result.getTotalCost());
+        return result;
+    }
+    
+    /**
+     * This is used for reading the top-level WeaponTraining. The input must
+     * specify a weaponSkill that matches the skill in wt. The WeaponTraining
+     * passed must be newly created or have had .clean() called on it before
+     * calling this.
+     */
+    public void update(JSONValue input, WeaponTraining wt) {
+        JSONObject inputObject = notNull(input.isObject());
+        WeaponSkill weaponSkillFound = lookupWeaponSkill(notNull(inputObject.get("weaponSkill")));
+        if (wt.getWeaponSkill() != weaponSkillFound) {
+            throw new JSONBuildException();
+        }
+        updateFromField(inputObject, "basicTrainingPurchased", wt.getBasicTrainingPurchased());
+        updateFromField(inputObject, "levelsPurchased", wt.getLevelsPurchased());
+        updateFromField(inputObject, "levels", wt.getLevels());
+        updateFromField(inputObject, "thisCost", wt.getThisCost());
+        updateFromField(inputObject, "totalCost", wt.getTotalCost());
+        JSONValue childrenValue = inputObject.get("children");
+        if (childrenValue != null) {
+            JSONArray childrenArray = notNull(childrenValue.isArray());
+            for (int i=0; i<childrenArray.size(); i++) {
+                JSONValue childValue = childrenArray.get(i);
+                JSONObject childObject = notNull(childValue.isObject());
+                JSONValue childWeaponSkillValue = notNull(childObject.get("weaponSkill"));
+                WeaponSkill childWeaponSkill = lookupWeaponSkill(childWeaponSkillValue);
+                WeaponTraining newChild = wt.createChild(childWeaponSkill);
+                update(childValue, newChild);
+            }
         }
     }
     
