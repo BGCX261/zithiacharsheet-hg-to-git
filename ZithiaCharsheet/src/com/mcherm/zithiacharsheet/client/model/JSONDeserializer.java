@@ -25,24 +25,22 @@ public class JSONDeserializer {
         }
         return x;
     }
-
-    // FIXME: Make the publics private instead, right?
     
     
-    public void updateFromField(JSONObject parent, String fieldName, SettableIntValue settableIntValue) {
+    protected void updateFromField(JSONObject parent, String fieldName, SettableIntValue settableIntValue) {
         JSONValue valueValue = notNull(parent.get(fieldName));
         JSONNumber valueNum = notNull(valueValue.isNumber());
         int valueInt = (int) valueNum.doubleValue();
         settableIntValue.setValue(valueInt);
     }
     
-    public void updateFromField(JSONObject parent, String fieldName, SettableBooleanValue settableBooleanValue) {
+    protected void updateFromField(JSONObject parent, String fieldName, SettableBooleanValue settableBooleanValue) {
         JSONValue valueValue = notNull(parent.get(fieldName));
         JSONBoolean valueBool = notNull(valueValue.isBoolean());
         settableBooleanValue.setValue(valueBool.booleanValue());
     }
     
-    public void updateFromField(JSONObject parent, String fieldName, TweakableIntValue tweakableIntValue) {
+    protected void updateFromField(JSONObject parent, String fieldName, TweakableIntValue tweakableIntValue) {
         JSONValue value = parent.get(fieldName);
         if (value == null) {
             tweakableIntValue.setAdjustments(null, null);
@@ -69,24 +67,25 @@ public class JSONDeserializer {
     }
     
 
-    public void update(JSONValue input, StatValue statValue) {
+    protected void update(JSONValue input, StatValue statValue) {
         JSONObject inputObj = notNull(input.isObject());
         updateFromField(inputObj, "value", statValue.getValue());
         updateFromField(inputObj, "roll", statValue.getRoll());
         updateFromField(inputObj, "cost", statValue.getCost());
     }
     
-    public void update(JSONValue input, StatValues statValues) {
-        JSONArray inputArray = notNull(input.isArray());
-        if (inputArray.size() != ZithiaStat.getNumStats()) {
+    protected void updateFromField(JSONObject inputObject, String fieldName, StatValues statValues) {
+        JSONValue fieldValue = notNull(inputObject.get(fieldName));
+        JSONArray fieldArray = notNull(fieldValue.isArray());
+        if (fieldArray.size() != ZithiaStat.getNumStats()) {
             throw new JSONBuildException();
         }
         for (ZithiaStat zithiaStat : ZithiaStat.values()) {
-            update(inputArray.get(zithiaStat.ordinal()), statValues.getStat(zithiaStat));
+            update(fieldArray.get(zithiaStat.ordinal()), statValues.getStat(zithiaStat));
         }
     }
     
-    public ZithiaSkill lookupSkill(JSONValue input) {
+    protected ZithiaSkill lookupSkill(JSONValue input) {
         JSONObject inputObj = notNull(input.isObject());
         JSONValue idValue = notNull(inputObj.get("id"));
         JSONString idString = notNull(idValue.isString());
@@ -95,11 +94,12 @@ public class JSONDeserializer {
     }
     
     
-    public void update(JSONValue input, SkillList skillList) {
-        JSONArray inputArray = notNull(input.isArray());
+    protected void updateFromField(JSONObject inputObject, String fieldName, SkillList skillList) {
+        JSONValue fieldValue = notNull(inputObject.get(fieldName));
+        JSONArray fieldArray = notNull(fieldValue.isArray());
         skillList.clear();
-        for (int i=0; i<inputArray.size(); i++) {
-            JSONValue skillDataValue = inputArray.get(i);
+        for (int i=0; i<fieldArray.size(); i++) {
+            JSONValue skillDataValue = fieldArray.get(i);
             JSONObject skillDataObj = notNull(skillDataValue.isObject());
             JSONValue zithiaSkillValue = notNull(skillDataObj.get("skill"));
             ZithiaSkill zithiaSkill = lookupSkill(zithiaSkillValue);
@@ -110,7 +110,7 @@ public class JSONDeserializer {
         }
     }
     
-    public WeaponSkill lookupWeaponSkill(JSONValue input) {
+    protected WeaponSkill lookupWeaponSkill(JSONValue input) {
         JSONObject inputObj = notNull(input.isObject());
         JSONValue idValue = notNull(inputObj.get("id"));
         JSONString idString = notNull(idValue.isString());
@@ -118,7 +118,7 @@ public class JSONDeserializer {
         return notNull(WeaponsCatalog.getSingleton().getWeaponSkillById(id));
     }
     
-    public WeaponTraining newWeaponTraining(JSONValue input, WeaponTraining parent) {
+    protected WeaponTraining newWeaponTraining(JSONValue input, WeaponTraining parent) {
         JSONObject inputObject = notNull(input.isObject());
         WeaponSkill weaponSkill = lookupWeaponSkill(notNull(inputObject.get("weaponSkill")));
         WeaponTraining result = parent.createChild(weaponSkill);
@@ -136,7 +136,7 @@ public class JSONDeserializer {
      * passed must be newly created or have had .clean() called on it before
      * calling this.
      */
-    public void update(JSONValue input, WeaponTraining wt) {
+    protected void update(JSONValue input, WeaponTraining wt) {
         JSONObject inputObject = notNull(input.isObject());
         WeaponSkill weaponSkillFound = lookupWeaponSkill(notNull(inputObject.get("weaponSkill")));
         if (wt.getWeaponSkill() != weaponSkillFound) {
@@ -161,7 +161,13 @@ public class JSONDeserializer {
         }
     }
     
-    public void updateFromField(JSONObject inputObject, String fieldName, ZithiaCosts zithiaCosts) {
+    protected void updateFromField(JSONObject inputObject, String fieldName, WeaponTraining wt) {
+        wt.clean();
+        JSONValue fieldValue = notNull(inputObject.get(fieldName));
+        update(fieldValue, wt);
+    }
+    
+    protected void updateFromField(JSONObject inputObject, String fieldName, ZithiaCosts zithiaCosts) {
         JSONValue fieldValue = inputObject.get(fieldName);
         if (fieldValue != null) {
             JSONObject fieldObject = notNull(fieldValue.isObject());
@@ -175,11 +181,9 @@ public class JSONDeserializer {
     public void update(JSONValue inputValue, ZithiaCharacter zithiaCharacter) {
         // FIXME: refactor so most of these are updateFromField?
         JSONObject inputObject = notNull(inputValue.isObject());
-        update(notNull(inputObject.get("statValues")), zithiaCharacter.getStatValues());
-        update(notNull(inputObject.get("skillList")), zithiaCharacter.getSkillList());
-        WeaponTraining wt = zithiaCharacter.getWeaponTraining();
-        wt.clean();
-        update(notNull(inputObject.get("weaponTraining")), wt);
+        updateFromField(inputObject, "statValues", zithiaCharacter.getStatValues());
+        updateFromField(inputObject, "skillList", zithiaCharacter.getSkillList());
+        updateFromField(inputObject, "weaponTraining", zithiaCharacter.getWeaponTraining());
         updateFromField(inputObject, "costs", zithiaCharacter.getCosts());
     }
 
