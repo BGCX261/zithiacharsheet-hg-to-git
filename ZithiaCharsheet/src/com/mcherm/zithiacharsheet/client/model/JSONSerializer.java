@@ -191,7 +191,8 @@ public class JSONSerializer {
         serialize(wt);
     }
     
-    protected void serialize(WeaponTraining wt) {
+    // FIXME: Make this protected instead
+    public void serialize(WeaponTraining wt) {
         putStartDict();
         serialize("weaponSkill", wt.getWeaponSkill());
         serialize("basicTrainingPurchased", wt.getBasicTrainingPurchased());

@@ -2,7 +2,6 @@ package com.mcherm.zithiacharsheet.client.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import com.mcherm.zithiacharsheet.client.model.Util;
@@ -14,6 +13,7 @@ import com.mcherm.zithiacharsheet.client.modeler.SummableList.Extractor;
 import com.mcherm.zithiacharsheet.client.modeler.CalculatedBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.ObservableBoolean;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableList;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValueImpl;
 import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
@@ -111,7 +111,7 @@ public class WeaponTraining {
         return !children.isEmpty();
     }
     
-    public Iterable<WeaponTraining> getChildren() {
+    public ObservableList<WeaponTraining> getChildren() {
         return children;
     }
     
@@ -187,8 +187,6 @@ public class WeaponTraining {
      * values, or has child we keep, and removing all other items. This node itself
      * will still exist, even if empty, but the method returns true if this
      * WeaponTraining can itself be pruned and false if it cannot.
-     * <p>
-     * FIXME: Must test this, and use it!
      */
     public boolean prune() {
         boolean hasChild;
@@ -209,7 +207,7 @@ public class WeaponTraining {
         boolean hasBTP = getBasicTrainingPurchased().getValue();
         boolean hasLevels = getLevelsPurchased().getValue() != 0;
         boolean hasTweaks = getLevels().isTweaked() ||  getThisCost().isTweaked() || getTotalCost().isTweaked();
-        return hasChild || hasBTP || hasLevels || hasTweaks;
+        return !(hasChild || hasBTP || hasLevels || hasTweaks);
     }
     
     /**
@@ -217,7 +215,27 @@ public class WeaponTraining {
      * basicTrainingPurchased to false. Essentially, it wipes clean this and all children.
      */
     public void clean() {
-        // FIXME: Write this (?)
+        for (WeaponTraining child : children) {
+            child.clobber();
+        }
+        children.clear();
+        getLevels().setAdjustments(null, null);
+        getThisCost().setAdjustments(null, null);
+        getTotalCost().setAdjustments(null, null);
+        getBasicTrainingPurchased().setValue(false);
+        getLevelsPurchased().setValue(0);
+    }
+    
+    /**
+     * A subroutine of clean() so that we don't have to carefully reset values
+     * on items which will be deleted in a moment.
+     * @param resetValues
+     */
+    private void clobber() {
+        for (WeaponTraining child : children) {
+            child.clobber();
+        }
+        children.clear();
     }
     
     /**

@@ -12,4 +12,6 @@ public interface Observable {
     public void addObserver(Observer observer);
     
     public void removeObserver(Observer observer);
+    
+    // FIXME: Need the ability to mark an observable as deleted, then it will get released for GC.
 }

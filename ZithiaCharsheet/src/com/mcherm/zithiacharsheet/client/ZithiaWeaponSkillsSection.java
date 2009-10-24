@@ -18,34 +18,63 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponClusterSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableList;
+import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
 
 
 /**
  * A section within a character sheet for displaying the
  * weapon levels and such.
- * <p>
- * FIXME: Probably needs to use SettableIntField and TweakableIntField.
  */
 public class ZithiaWeaponSkillsSection extends VerticalPanel {
 
     public ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
         this.addStyleName("weaponSkills");
-        WeaponTraining weaponTraining = zithiaCharacter.getWeaponTraining();
-        showWT(weaponTraining);
+        final WeaponTraining wt = zithiaCharacter.getWeaponTraining();
+        showWTInPanel(this, wt);
+        this.add(new Button("Prune", new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                wt.prune();
+            }
+        }));
+        this.add(new Button("Clean", new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                wt.clean();
+            }
+        }));
     }
     
     /**
-     * A subroutine of the constructor, used just to get recursion.
+     * To the panel, add up to 2 items: a row the the WeaponTraining wt and
+     * (if appropriate) an inner pane with its children.
      */
-    private void showWT(WeaponTraining wt) {
-        this.add(new WeaponTrainingRow(wt));
-        for (WeaponTraining child : wt.getChildren()) {
-            showWT(child);
+    private static void showWTInPanel(VerticalPanel panel, WeaponTraining wt) {
+        panel.add(new WeaponTrainingRow(wt));
+        final ObservableList<WeaponTraining> children = wt.getChildren();
+        final VerticalPanel childPanel = new VerticalPanel();
+        if (!children.isEmpty()) {
+            childPanel.addStyleName("weaponSkillsChildPanel");
+            for (WeaponTraining childWT : children) {
+                showWTInPanel(childPanel, childWT);
+            }
         }
+        panel.add(childPanel);
+        children.addObserver(new Observer() {
+            public void onChange() {
+                childPanel.clear();
+                childPanel.addStyleName("weaponSkillsChildPanel");
+                for (WeaponTraining childWT : children) {
+                    showWTInPanel(childPanel, childWT);
+                }
+            }
+        });
     }
     
-    // FIXME: Could probably be static
-    private class WeaponTrainingRow extends HorizontalPanel {
+    
+    /**
+     * A single row describing a WeaponTraining.
+     */
+    private static class WeaponTrainingRow extends HorizontalPanel {
         public WeaponTrainingRow(final WeaponTraining wt) {
             String name = wt.getWeaponSkill().getName();
             this.addStyleName("weaponSkillRow");
@@ -69,7 +98,6 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
                         final FancyListSelectionDialog<WeaponSkill> selector = new FancyListSelectionDialog<WeaponSkill>(
                             eligibleSkills,
                             new ItemDisplayCallback<WeaponSkill>() {
-                                @Override
                                 public List<Widget> getDisplay(WeaponSkill weaponSkill) {
                                     final List<Widget> result = new ArrayList<Widget>(2);
                                     String name = weaponSkill.getName();
@@ -78,11 +106,8 @@ public class ZithiaWeaponSkillsSection extends VerticalPanel {
                                 }
                             },
                             new ItemSelectCallback<WeaponSkill>() {
-                                @Override
                                 public void newItemSelected(WeaponSkill weaponSkill) {
-                                    WeaponTraining newWT = wt.createChild(weaponSkill);
-                                    // FIXME: There's no observation yet, so we'll manually re-create it
-                                    showWT(newWT);
+                                    wt.createChild(weaponSkill);
                                 }
                              },
                              true,

@@ -90,3 +90,7 @@ table.skillCatalog td.statsCol {
 table.skillCatalog td.nameCol {
   width: 250px;
 }
+
+.weaponSkillsChildPanel {
+  padding-left: 20px;
+}
