@@ -35,6 +35,9 @@ public class ZithiaCharsheet implements EntryPoint {
     private ZithiaCostsSection zithiaCostsSection;
     private final VerticalPanel mainPanel;
     
+    // FIXME: Move or doc this or something after it works.
+    private final SaveCharsheetServiceAsync saveCharsheetService = GWT.create(SaveCharsheetService.class);
+    
     
     public ZithiaCharsheet() {
         zithiaCharacter = new ZithiaCharacter();
@@ -63,12 +66,35 @@ public class ZithiaCharsheet implements EntryPoint {
                 String output = serializer.output();
                 System.out.println(output);
                 Window.alert(output);
+                saveCharsheetService.saveCharsheet("onlyCharacter", output, new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Window.alert("onFailure " + caught);
+                    }
+                    @Override
+                    public void onSuccess(Void result) {
+                        Window.alert("onSuccess " + result);
+                    }
+                });
             }
         });
         mainPanel.add(saveButton);
         final Button loadButton = new Button("Load");
         loadButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
+                saveCharsheetService.loadCharsheet("onlyCharacter", new AsyncCallback<String>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        Window.alert("Could not load the data: " + caught);
+                    }
+                    @Override
+                    public void onSuccess(String result) {
+                        JSONValue jsonValue = JSONParser.parse(result);
+                        JSONDeserializer deserializer = new JSONDeserializer();
+                        deserializer.update(jsonValue, zithiaCharacter);
+                    }
+                });
+                /* FIXME: Old code... delete once working
                 GetStringDialog dialog = new GetStringDialog(new GetStringDialog.Action() {
                     public void doAction(String text) {
                         JSONValue jsonValue = JSONParser.parse(text);
@@ -77,6 +103,7 @@ public class ZithiaCharsheet implements EntryPoint {
                     }
                 });
                 dialog.show();
+                */
             }
         });
         mainPanel.add(loadButton);
