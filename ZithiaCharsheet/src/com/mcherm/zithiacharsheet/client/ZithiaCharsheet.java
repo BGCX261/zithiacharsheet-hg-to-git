@@ -64,8 +64,6 @@ public class ZithiaCharsheet implements EntryPoint {
                 JSONSerializer serializer = new JSONSerializer(false);
                 serializer.serialize(zithiaCharacter);
                 String output = serializer.output();
-                System.out.println(output);
-                Window.alert(output);
                 saveCharsheetService.saveCharsheet("onlyCharacter", output, new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
@@ -73,7 +71,7 @@ public class ZithiaCharsheet implements EntryPoint {
                     }
                     @Override
                     public void onSuccess(Void result) {
-                        Window.alert("onSuccess " + result);
+                        // Nothing to do
                     }
                 });
             }
@@ -94,16 +92,6 @@ public class ZithiaCharsheet implements EntryPoint {
                         deserializer.update(jsonValue, zithiaCharacter);
                     }
                 });
-                /* FIXME: Old code... delete once working
-                GetStringDialog dialog = new GetStringDialog(new GetStringDialog.Action() {
-                    public void doAction(String text) {
-                        JSONValue jsonValue = JSONParser.parse(text);
-                        JSONDeserializer deserializer = new JSONDeserializer();
-                        deserializer.update(jsonValue, zithiaCharacter);
-                    }
-                });
-                dialog.show();
-                */
             }
         });
         mainPanel.add(loadButton);
