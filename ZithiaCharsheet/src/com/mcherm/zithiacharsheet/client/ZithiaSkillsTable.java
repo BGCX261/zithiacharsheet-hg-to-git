@@ -1,7 +1,6 @@
 package com.mcherm.zithiacharsheet.client;
 
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.TextBox;
 import com.mcherm.zithiacharsheet.client.model.SkillList;
 import com.mcherm.zithiacharsheet.client.model.SkillValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
@@ -58,7 +57,7 @@ public class ZithiaSkillsTable extends FlexTable {
             setWidget(row, 0, costField);
             // -- Roll --
             getFlexCellFormatter().addStyleName(row, 3, "rollCol");
-            final TextBox rollField;
+            final TweakableIntField rollField;
             if (skillValue.getSkill().hasRoll()) {
                 rollField = new TweakableIntField(skillValue.getRoll());
                 setWidget(row, 3, rollField);
