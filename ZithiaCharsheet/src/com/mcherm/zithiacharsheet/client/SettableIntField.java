@@ -22,6 +22,7 @@ public class SettableIntField extends TextBox {
      */
     public SettableIntField(final SettableIntValue value) {
         this.value = value;
+        this.addStyleName("settableInt");
         updateDisplay();
         value.addObserver(new Observer() {
             public void onChange() {

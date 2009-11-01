@@ -47,27 +47,9 @@ table.stats .header td, table.skills .header td {
   background: #AAAAAA;
 }
 
-table.stats td.costCol input {
-  width: 45px;
-}
-table.stats td.valueCol input {
-  width: 45px;
-}
-table.stats td.rollCol input {
-  width: 45px;
-}
 
-table.skills td.costCol input {
-  width: 45px;
-}
 table.skills td.nameCol {
   width: 250px;
-}
-table.skills td.levelsCol input {
-  width: 45px;
-}
-table.skills td.rollCol input {
-  width: 45px;
 }
 
 table.skillCatalog, table.skillCatalog table {
@@ -93,4 +75,16 @@ table.skillCatalog td.nameCol {
 
 .weaponSkillsChildPanel {
   padding-left: 20px;
+}
+
+input.settableInt {
+  width: 45px;
+}
+
+.tweakableInt input {
+  width: 40px;
+}
+.tweakableInt td {
+  border: none !important;
+  padding: 0 !important;
 }
