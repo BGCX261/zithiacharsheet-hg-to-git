@@ -5,6 +5,7 @@ import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 
 /**
@@ -126,6 +127,15 @@ public class JSONSerializer {
         putStartField(fieldName);
         out.append(value.getValue() ? "true" : "false");
     }
+    
+    protected void serialize(String fieldName, SettableStringValue value) {
+        if (value.getValue() != "") {
+            putStartField(fieldName);
+            out.append("\"");
+            out.append(value.getValue());
+            out.append("\"");
+        }
+    }
 
     
     protected void serialize(StatValue statValue) {
@@ -222,8 +232,17 @@ public class JSONSerializer {
         putEndDict();
     }
     
+    protected void serialize(String fieldName, Names names) {
+        putStartField(fieldName);
+        putStartDict();
+        serialize("name", names.getCharacterName());
+        serialize("player", names.getPlayerName());
+        putEndDict();
+    }
+    
     public void serialize(ZithiaCharacter zithiaCharacter) {
         putStartDict();
+        serialize("names", zithiaCharacter.getNames());
         serialize("statValues", zithiaCharacter.getStatValues());
         serialize("skillList", zithiaCharacter.getSkillList());
         serialize("weaponTraining", zithiaCharacter.getWeaponTraining());
@@ -240,6 +259,7 @@ public class JSONSerializer {
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
         final JSONSerializer jss = new JSONSerializer(false);
         ZithiaCharacter character = new ZithiaCharacter();
+        character.getNames().getCharacterName().setValue("Entarm");
         character.getStat(ZithiaStat.OBS).getValue().setValue(16);
         SkillValue skillValue = character.addNewSkill(skillCatalog.getSkill("flowers"));
         skillValue.getLevels().setValue(3);

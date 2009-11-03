@@ -50,6 +50,7 @@ public class ZithiaCharsheet implements EntryPoint {
      */
     public void onModuleLoad() {
         RootPanel.get("charsheet").add(mainPanel);
+        mainPanel.add(new ZithiaNamesSection(zithiaCharacter));
         zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
         mainPanel.add(zithiaStatsTable);
         zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);

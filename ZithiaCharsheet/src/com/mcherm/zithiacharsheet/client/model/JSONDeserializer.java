@@ -8,6 +8,7 @@ import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
@@ -38,6 +39,18 @@ public class JSONDeserializer {
         JSONValue valueValue = notNull(parent.get(fieldName));
         JSONBoolean valueBool = notNull(valueValue.isBoolean());
         settableBooleanValue.setValue(valueBool.booleanValue());
+    }
+    
+    protected void updateFromField(JSONObject parent, String fieldName, SettableStringValue settableStringValue) {
+        JSONValue valueValue = parent.get(fieldName);
+        String actualValue;
+        if (valueValue == null) {
+            actualValue = "";
+        } else {
+            JSONString valueString = notNull(valueValue.isString());
+            actualValue = valueString.stringValue();
+        }
+        settableStringValue.setValue(actualValue);
     }
     
     protected void updateFromField(JSONObject parent, String fieldName, TweakableIntValue tweakableIntValue) {
@@ -178,9 +191,17 @@ public class JSONDeserializer {
         }
     }
     
+    protected void updateFromField(JSONObject inputObject, String fieldName, Names names) {
+        JSONValue fieldValue = notNull(inputObject.get(fieldName));
+        JSONObject fieldObject = notNull(fieldValue.isObject());
+        updateFromField(fieldObject, "name", names.getCharacterName());
+        updateFromField(fieldObject, "player", names.getPlayerName());
+    }
+    
     public void update(JSONValue inputValue, ZithiaCharacter zithiaCharacter) {
         // FIXME: refactor so most of these are updateFromField?
         JSONObject inputObject = notNull(inputValue.isObject());
+        updateFromField(inputObject, "names", zithiaCharacter.getNames());
         updateFromField(inputObject, "statValues", zithiaCharacter.getStatValues());
         updateFromField(inputObject, "skillList", zithiaCharacter.getSkillList());
         updateFromField(inputObject, "weaponTraining", zithiaCharacter.getWeaponTraining());

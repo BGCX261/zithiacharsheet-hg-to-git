@@ -88,3 +88,10 @@ input.settableInt {
   border: none !important;
   padding: 0 !important;
 }
+
+.namesSection {
+  border: 1px solid black;
+}
+.namesSection input {
+  width: 130px;
+}
