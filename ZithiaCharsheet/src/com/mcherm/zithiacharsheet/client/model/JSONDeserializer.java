@@ -118,7 +118,9 @@ public class JSONDeserializer {
             ZithiaSkill zithiaSkill = lookupSkill(zithiaSkillValue);
             SkillValue result = skillList.addNewSkill(zithiaSkill);
             updateFromField(skillDataObj, "levels", result.getLevels());
-            updateFromField(skillDataObj, "roll", result.getRoll());
+            if (zithiaSkill.hasRoll()) {
+                updateFromField(skillDataObj, "roll", result.getRoll());
+            }
             updateFromField(skillDataObj, "cost", result.getCost());
         }
     }

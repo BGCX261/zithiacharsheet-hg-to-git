@@ -4,20 +4,15 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
 import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
@@ -28,12 +23,8 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
  */
 public class ZithiaCharsheet implements EntryPoint {
 
-    private ZithiaCharacter zithiaCharacter;
-    private ZithiaStatsTable zithiaStatsTable;
-    private ZithiaSkillsSection zithiaSkillsSection;
-    private ZithiaWeaponSkillsSection zithiaWeaponSkillsSection;
-    private ZithiaCostsSection zithiaCostsSection;
-    private final VerticalPanel mainPanel;
+    private final ZithiaCharacter zithiaCharacter;
+    private String characterId;
     
     // FIXME: Move or doc this or something after it works.
     private final SaveCharsheetServiceAsync saveCharsheetService = GWT.create(SaveCharsheetService.class);
@@ -41,7 +32,6 @@ public class ZithiaCharsheet implements EntryPoint {
     
     public ZithiaCharsheet() {
         zithiaCharacter = new ZithiaCharacter();
-        mainPanel = new VerticalPanel();
     }
 
     
@@ -49,171 +39,109 @@ public class ZithiaCharsheet implements EntryPoint {
      * This is the entry point method.
      */
     public void onModuleLoad() {
+        // -- Create the pieces of the charsheet --
+        final Grid mainPanel = new Grid(1,2);
         RootPanel.get("charsheet").add(mainPanel);
-        mainPanel.add(new ZithiaNamesSection(zithiaCharacter));
-        zithiaStatsTable = new ZithiaStatsTable(zithiaCharacter);
-        mainPanel.add(zithiaStatsTable);
-        zithiaSkillsSection = new ZithiaSkillsSection(zithiaCharacter);
-        mainPanel.add(zithiaSkillsSection);
-        zithiaWeaponSkillsSection = new ZithiaWeaponSkillsSection(zithiaCharacter);
-        mainPanel.add(zithiaWeaponSkillsSection);
-        zithiaCostsSection = new ZithiaCostsSection(zithiaCharacter);
-        mainPanel.add(zithiaCostsSection);
+        final Grid leftSide = new Grid(4,1);
+        mainPanel.setWidget(0, 0, leftSide);
+        final Grid rightSide = new Grid(2,1);
+        mainPanel.setWidget(0, 1, rightSide);
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            leftSide.setWidget(0, 0, new ZithiaNamesSection(zithiaCharacter));
+        } });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            leftSide.setWidget(1, 0, new ZithiaStatsTable(zithiaCharacter));
+        } });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            leftSide.setWidget(2, 0, new ZithiaCostsSection(zithiaCharacter));
+        } });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            rightSide.setWidget(0, 0, new ZithiaSkillsSection(zithiaCharacter));
+        } });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            rightSide.setWidget(1, 0, new ZithiaWeaponSkillsSection(zithiaCharacter));
+        } });
+        
+        // -- Determine character id --
+        characterId = Window.Location.getParameter("character");
+        if (characterId == null) {
+            characterId = "onlyCharacter"; // FIXME: Does this stay?
+        }
+        
+        // -- Load character --
+        load(new FailureAction() {
+            public void onFailure(Throwable caught) {
+                save(); // if the character doesn't exist, populate it with the default values
+            }
+        });
+        
+        // -- Show save/load buttons --
         final Button saveButton = new Button("Save");
         saveButton.addClickHandler(new ClickHandler() {
             public void onClick(ClickEvent event) {
-                JSONSerializer serializer = new JSONSerializer(false);
-                serializer.serialize(zithiaCharacter);
-                String output = serializer.output();
-                saveCharsheetService.saveCharsheet("onlyCharacter", output, new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("onFailure " + caught);
-                    }
-                    @Override
-                    public void onSuccess(Void result) {
-                        // Nothing to do
-                    }
-                });
+                save();
             }
         });
-        mainPanel.add(saveButton);
-        final Button loadButton = new Button("Load");
-        loadButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                saveCharsheetService.loadCharsheet("onlyCharacter", new AsyncCallback<String>() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        Window.alert("Could not load the data: " + caught);
-                    }
-                    @Override
-                    public void onSuccess(String result) {
-                        JSONValue jsonValue = JSONParser.parse(result);
-                        JSONDeserializer deserializer = new JSONDeserializer();
-                        deserializer.update(jsonValue, zithiaCharacter);
-                    }
-                });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            leftSide.setWidget(3, 0, saveButton);
+        } });
+    }
+
+    
+    /**
+     * Loads the character data, overwriting what is currently displayed.
+     * <p>
+     * FIXME: In the long run, is this method needed?
+     */
+    private void load() {
+        load(new FailureAction() {
+            public void onFailure(Throwable caught) {
+                Window.alert("Could not load the data: " + caught);
             }
         });
-        mainPanel.add(loadButton);
+    }
+
+    /** A function that can be passed to load(). */
+    private interface FailureAction {
+        public void onFailure(Throwable caught);
     }
     
-    // ============== BELOW THIS LINE IS OLD CRUFT =======================
-    
     /**
-     * The message displayed to the user when the server cannot be reached or
-     * returns an error.
+     * A version of load() where you can specify what to do if it fails.
      */
-    private static final String SERVER_ERROR = "An error occurred while "
-            + "attempting to contact the server. Please check your network "
-            + "connection and try again.";
-
-    /**
-     * Create a remote service proxy to talk to the server-side Greeting service.
-     */
-    private final GreetingServiceAsync greetingService = GWT
-            .create(GreetingService.class);
-
-    
-    public void generatedModuleLoad() {
-        final Button sendButton = new Button("Send");
-        final TextBox nameField = new TextBox();
-        nameField.setText("GWT User");
-
-        // We can add style names to widgets
-        sendButton.addStyleName("sendButton");
-
-        // Add the nameField and sendButton to the RootPanel
-        // Use RootPanel.get() to get the entire body element
-        RootPanel.get("nameFieldContainer").add(nameField);
-        RootPanel.get("sendButtonContainer").add(sendButton);
-
-        // Focus the cursor on the name field when the app loads
-        nameField.setFocus(true);
-        nameField.selectAll();
-
-        // Create the popup dialog box
-        final DialogBox dialogBox = new DialogBox();
-        dialogBox.setText("Remote Procedure Call");
-        dialogBox.setAnimationEnabled(true);
-        final Button closeButton = new Button("Close");
-        // We can set the id of a widget by accessing its Element
-        closeButton.getElement().setId("closeButton");
-        final Label textToServerLabel = new Label();
-        final HTML serverResponseLabel = new HTML();
-        VerticalPanel dialogVPanel = new VerticalPanel();
-        dialogVPanel.addStyleName("dialogVPanel");
-        dialogVPanel.add(new HTML("<b>Sending name to the server:</b>"));
-        dialogVPanel.add(textToServerLabel);
-        dialogVPanel.add(new HTML("<br><b>Server replies:</b>"));
-        dialogVPanel.add(serverResponseLabel);
-        dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-        dialogVPanel.add(closeButton);
-        dialogBox.setWidget(dialogVPanel);
-
-        // Add a handler to close the DialogBox
-        closeButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                dialogBox.hide();
-                sendButton.setEnabled(true);
-                sendButton.setFocus(true);
+    private void load(final FailureAction failureAction) {
+        saveCharsheetService.loadCharsheet(characterId, new AsyncCallback<String>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                failureAction.onFailure(caught);
+            }
+            @Override
+            public void onSuccess(String result) {
+                JSONValue jsonValue = JSONParser.parse(result);
+                JSONDeserializer deserializer = new JSONDeserializer();
+                deserializer.update(jsonValue, zithiaCharacter);
             }
         });
-
-        // Create a handler for the sendButton and nameField
-        class MyHandler implements ClickHandler, KeyUpHandler {
-            /**
-             * Fired when the user clicks on the sendButton.
-             */
-            public void onClick(ClickEvent event) {
-                sendNameToServer();
+    }
+    
+    
+    /**
+     * Saves the character data, overwriting whatever is currently stored
+     * for this character.
+     */
+    private void save() {
+        JSONSerializer serializer = new JSONSerializer(false);
+        serializer.serialize(zithiaCharacter);
+        String output = serializer.output();
+        saveCharsheetService.saveCharsheet(characterId, output, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Window.alert("onFailure " + caught);
             }
-
-            /**
-             * Fired when the user types in the nameField.
-             */
-            public void onKeyUp(KeyUpEvent event) {
-                if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-                    sendNameToServer();
-                }
+            @Override
+            public void onSuccess(Void result) {
+                // Nothing to do
             }
-
-            /**
-             * Send the name from the nameField to the server and wait for a response.
-             */
-            private void sendNameToServer() {
-                sendButton.setEnabled(false);
-                String textToServer = nameField.getText();
-                textToServerLabel.setText(textToServer);
-                serverResponseLabel.setText("");
-                greetingService.greetServer(textToServer,
-                        new AsyncCallback<String>() {
-                            public void onFailure(Throwable caught) {
-                                // Show the RPC error message to the user
-                                dialogBox
-                                        .setText("Remote Procedure Call - Failure");
-                                serverResponseLabel
-                                        .addStyleName("serverResponseLabelError");
-                                serverResponseLabel.setHTML(SERVER_ERROR);
-                                dialogBox.center();
-                                closeButton.setFocus(true);
-                            }
-
-                            public void onSuccess(String result) {
-                                dialogBox.setText("Remote Procedure Call");
-                                serverResponseLabel
-                                        .removeStyleName("serverResponseLabelError");
-                                serverResponseLabel.setHTML(result);
-                                dialogBox.center();
-                                closeButton.setFocus(true);
-                            }
-                        });
-            }
-        }
-
-        // Add a handler to send the name to the server
-        MyHandler handler = new MyHandler();
-        sendButton.addClickHandler(handler);
-        nameField.addKeyUpHandler(handler);
+        });
     }
 }

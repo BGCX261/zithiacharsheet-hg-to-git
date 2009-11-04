@@ -172,7 +172,9 @@ public class JSONSerializer {
         putStartDict();
         serialize("skill", skillValue.getSkill());
         serialize("levels", skillValue.getLevels());
-        serialize("roll", skillValue.getRoll());
+        if (skillValue.getSkill().hasRoll()) {
+            serialize("roll", skillValue.getRoll());
+        }
         serialize("cost", skillValue.getCost());
         putEndDict();
     }
