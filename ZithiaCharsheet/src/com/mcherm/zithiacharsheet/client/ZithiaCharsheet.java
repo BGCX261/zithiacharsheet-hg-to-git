@@ -13,8 +13,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.mcherm.zithiacharsheet.client.model.CharacterStorage;
 import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
-import com.mcherm.zithiacharsheet.client.model.JSONSerializer;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
 
@@ -87,19 +87,6 @@ public class ZithiaCharsheet implements EntryPoint {
         } });
     }
 
-    
-    /**
-     * Loads the character data, overwriting what is currently displayed.
-     * <p>
-     * FIXME: In the long run, is this method needed?
-     */
-    private void load() {
-        load(new FailureAction() {
-            public void onFailure(Throwable caught) {
-                Window.alert("Could not load the data: " + caught);
-            }
-        });
-    }
 
     /** A function that can be passed to load(). */
     private interface FailureAction {
@@ -130,6 +117,7 @@ public class ZithiaCharsheet implements EntryPoint {
      * for this character.
      */
     private void save() {
+        /* OLD VERSION // FIXME: Remove if I switch over completely
         JSONSerializer serializer = new JSONSerializer(false);
         serializer.serialize(zithiaCharacter);
         String output = serializer.output();
@@ -143,5 +131,18 @@ public class ZithiaCharsheet implements EntryPoint {
                 // Nothing to do
             }
         });
+        */
+        CharacterStorage storage = new CharacterStorage(zithiaCharacter);
+        saveCharsheetService.saveCharsheet2(storage, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                Window.alert("onFailure " + caught);
+            }
+            @Override
+            public void onSuccess(Void result) {
+                // Nothing to do
+            }
+        });
     }
+
 }
