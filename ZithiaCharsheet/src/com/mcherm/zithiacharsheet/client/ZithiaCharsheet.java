@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.mcherm.zithiacharsheet.client.model.CharacterStorage;
 import com.mcherm.zithiacharsheet.client.model.JSONDeserializer;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
+import com.mcherm.zithiacharsheet.client.model.CharacterStorage.CharacterMetadata;
 
 
 /**
@@ -26,8 +27,12 @@ public class ZithiaCharsheet implements EntryPoint {
     private final ZithiaCharacter zithiaCharacter;
     private String characterId;
     
-    // FIXME: Move or doc this or something after it works.
-    private final SaveCharsheetServiceAsync saveCharsheetService = GWT.create(SaveCharsheetService.class);
+    /**
+     * Create the service object which allows us to save and load the
+     * character data.
+     */
+    private final SaveCharsheetServiceAsync saveCharsheetService =
+        GWT.create(SaveCharsheetService.class);
     
     
     public ZithiaCharsheet() {
@@ -65,15 +70,28 @@ public class ZithiaCharsheet implements EntryPoint {
         // -- Determine character id --
         characterId = Window.Location.getParameter("character");
         if (characterId == null) {
-            characterId = "onlyCharacter"; // FIXME: Does this stay?
+            // FIXME: This whole thing is a hack. Fix later.
+            Window.alert("Character not specified: Will create new character.");
+            saveCharsheetService.newCharsheet(new AsyncCallback<CharacterMetadata>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    Window.alert("Unable to create character: " + caught);
+                }
+                @Override
+                public void onSuccess(CharacterMetadata result) {
+                    characterId = result.getId();
+                    System.out.println("Result = " + result + ", result.getId() = " + result.getId()); // FIXME: Remove
+                    System.out.println("Character Id = " + characterId); // FIXME: Remove
+                }
+            });
+        } else {
+            // -- Load character --
+            load(new FailureAction() {
+                public void onFailure(Throwable caught) {
+                    Window.alert("Load of character failed: " + caught);
+                }
+            });
         }
-        
-        // -- Load character --
-        load(new FailureAction() {
-            public void onFailure(Throwable caught) {
-                save(); // if the character doesn't exist, populate it with the default values
-            }
-        });
         
         // -- Show save/load buttons --
         final Button saveButton = new Button("Save");
@@ -117,26 +135,11 @@ public class ZithiaCharsheet implements EntryPoint {
      * for this character.
      */
     private void save() {
-        /* OLD VERSION // FIXME: Remove if I switch over completely
-        JSONSerializer serializer = new JSONSerializer(false);
-        serializer.serialize(zithiaCharacter);
-        String output = serializer.output();
-        saveCharsheetService.saveCharsheet(characterId, output, new AsyncCallback<Void>() {
+        CharacterStorage storage = new CharacterStorage(characterId, zithiaCharacter);
+        saveCharsheetService.saveCharsheet(storage, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
-                Window.alert("onFailure " + caught);
-            }
-            @Override
-            public void onSuccess(Void result) {
-                // Nothing to do
-            }
-        });
-        */
-        CharacterStorage storage = new CharacterStorage(zithiaCharacter);
-        saveCharsheetService.saveCharsheet2(storage, new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable caught) {
-                Window.alert("onFailure " + caught);
+                Window.alert("Save failed: " + caught);
             }
             @Override
             public void onSuccess(Void result) {

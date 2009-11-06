@@ -8,7 +8,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * character.
  */
 public class CharacterStorage implements IsSerializable {
-    public String id;
     public CharacterMetadata metadata;
     public String serializedData;
     
@@ -16,28 +15,40 @@ public class CharacterStorage implements IsSerializable {
      * Inner class that stores the metadata.
      */
     public static class CharacterMetadata implements IsSerializable {
+        private String id;
         public String playerName;
         public String characterName;
         
         /**
          * No-args constructor for the deserializer.
          */
-        CharacterMetadata() {
+        @SuppressWarnings("unused")
+        private CharacterMetadata() {
         }
         
         /**
-         * Constructor that initializes it from a ZithiaCharacter.
+         * Constructor that initializes it from a ZithiaCharacter and id.
          */
-        public CharacterMetadata(ZithiaCharacter zithiaCharacter) {
+        public CharacterMetadata(String id, ZithiaCharacter zithiaCharacter) {
+            this.id = id;
             playerName = zithiaCharacter.getNames().getPlayerName().getValue();
             characterName = zithiaCharacter.getNames().getCharacterName().getValue();
         }
+        
+        /**
+         * Returns the id if known, or null if not.
+         */
+        public String getId() {
+            return id;
+        }
+        
     }
 
     /**
      * No-args constructor for the deserializer.
      */
-    CharacterStorage() {
+    @SuppressWarnings("unused")
+    private CharacterStorage() {
     }
     
     /**
@@ -45,39 +56,25 @@ public class CharacterStorage implements IsSerializable {
      * using the specified id.
      */
     public CharacterStorage(String id, ZithiaCharacter zithiaCharacter) {
-        this.id = id;
-        metadata = new CharacterMetadata(zithiaCharacter);
+        metadata = new CharacterMetadata(id, zithiaCharacter);
         JSONSerializer serializer = new JSONSerializer(false);
         serializer.serialize(zithiaCharacter);
         serializedData = serializer.output();
     }
     
+    /**
+     * Returns the metadata.
+     */
+    public CharacterMetadata getMetadata() {
+        return metadata;
+    }
     
     /**
-     * Constructor which builds a CharacterStorage from a ZithiaCharacter
-     * using a default id.
+     * Returns the id.
      */
-    public CharacterStorage(ZithiaCharacter zithiaCharacter) {
-        this(getDefaultId(zithiaCharacter), zithiaCharacter);
+    public String getId() {
+        return metadata.getId();
     }
     
     
-    /**
-     * Subroutine to obtain a default id from a character. This uses the
-     * character name replacing everything but letters with underscores.
-     */
-    private static String getDefaultId(ZithiaCharacter zithiaCharacter) {
-        String baseName = zithiaCharacter.getNames().getCharacterName().getValue();
-        char[] outputChars = new char[baseName.length()];
-        for (int i=0; i<baseName.length(); i++) {
-            char c = baseName.charAt(i);
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')) {
-                outputChars[i] = c;
-            } else {
-                outputChars[i] = '_';
-            }
-        }
-        return new String(outputChars);
-    }
-
 }

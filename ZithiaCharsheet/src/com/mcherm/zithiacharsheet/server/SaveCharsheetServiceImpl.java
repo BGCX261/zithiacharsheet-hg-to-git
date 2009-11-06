@@ -1,9 +1,13 @@
 package com.mcherm.zithiacharsheet.server;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.mcherm.zithiacharsheet.client.SaveCharsheetService;
 import com.mcherm.zithiacharsheet.client.model.CharacterStorage;
+import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
+import com.mcherm.zithiacharsheet.client.model.CharacterStorage.CharacterMetadata;
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -13,30 +17,30 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-// FIXME: One of these save methods gets removed.
-// FIXME: Needs docs, right?
 
+/**
+ * Server-side implementation of services to store and retrieve charsheets.
+ */
 @SuppressWarnings("serial")
 public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements SaveCharsheetService {
-
-    @Override
-    public void saveCharsheet(String characterId, String saveStr) {
-        byte[] saveStrData;
-        try {
-            saveStrData = saveStr.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException err) {
-            throw new Error("JVM did not support encoding 'UTF-8', which is mandatory.", err);
-        }
-        Blob blob = new Blob(saveStrData);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key key = KeyFactory.createKey("zithiaCharacterV1", characterId);
-        Entity characterEntity = new Entity(key);
-        characterEntity.setProperty("jsonData", blob);
-        datastore.put(characterEntity);
-    }
+    
+    
+    final static String CHARSHEET_ENTITY_KIND = "zithiaCharacterV1";
+    
     
     @Override
-    public void saveCharsheet2(CharacterStorage characterStorage) {
+    public CharacterMetadata newCharsheet() {
+        Entity characterEntity = new Entity(CHARSHEET_ENTITY_KIND);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(characterEntity);
+        String keyStr = KeyFactory.keyToString(characterEntity.getKey());
+        CharacterStorage characterStorage = new CharacterStorage(keyStr, new ZithiaCharacter());
+        saveCharsheet(characterStorage); // write it out
+        return characterStorage.getMetadata();
+    }
+
+    @Override
+    public void saveCharsheet(CharacterStorage characterStorage) {
         byte[] saveStrData;
         try {
             saveStrData = characterStorage.serializedData.getBytes("UTF-8");
@@ -45,7 +49,7 @@ public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements Sa
         }
         Blob blob = new Blob(saveStrData);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key key = KeyFactory.createKey("zithiaCharacterV1", characterStorage.id);
+        Key key = KeyFactory.stringToKey(characterStorage.getId());
         Entity characterEntity = new Entity(key);
         characterEntity.setProperty("jsonData", blob);
         characterEntity.setProperty("playerName", characterStorage.metadata.playerName);
@@ -55,7 +59,7 @@ public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements Sa
     
     @Override
     public String loadCharsheet(String characterId) {
-        Key key = KeyFactory.createKey("zithiaCharacterV1", characterId);
+        Key key = KeyFactory.stringToKey(characterId);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
             Entity characterEntity = datastore.get(key);
@@ -66,6 +70,11 @@ public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements Sa
         } catch (UnsupportedEncodingException err) {
             throw new Error("JVM did not support encoding 'UTF-8', which is mandatory.", err);
         }
+    }
+
+    @Override
+    public List<CharacterMetadata> listCharsheets() {
+        return new ArrayList<CharacterMetadata>(); // FIXME: Return real results.
     }
 
 }
