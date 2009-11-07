@@ -68,13 +68,17 @@ public class CharacterList extends FlexTable {
             }
         };
         
+        Label number = new Label(Integer.toString(row));
+        number.addClickHandler(rowClickHandler);
+        setWidget(row, 0, number);
+        
         Label playerName = new Label(metadata.playerName);
         playerName.addClickHandler(rowClickHandler);
-        setWidget(row, 0, playerName);
+        setWidget(row, 1, playerName);
 
         Label characterName = new Label(metadata.characterName);
         characterName.addClickHandler(rowClickHandler);
-        setWidget(row, 1, characterName);
+        setWidget(row, 2, characterName);
     }
 
 }
