@@ -15,6 +15,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 
@@ -27,13 +29,14 @@ public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements Sa
     
     final static String CHARSHEET_ENTITY_KIND = "zithiaCharacterV1";
     
+    private DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    
     
     @Override
     public CharacterMetadata newCharsheet() {
-        Entity characterEntity = new Entity(CHARSHEET_ENTITY_KIND);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(characterEntity);
-        String keyStr = KeyFactory.keyToString(characterEntity.getKey());
+        Entity entity = new Entity(CHARSHEET_ENTITY_KIND);
+        datastore.put(entity);
+        String keyStr = KeyFactory.keyToString(entity.getKey());
         CharacterStorage characterStorage = new CharacterStorage(keyStr, new ZithiaCharacter());
         saveCharsheet(characterStorage); // write it out
         return characterStorage.getMetadata();
@@ -48,22 +51,20 @@ public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements Sa
             throw new Error("JVM did not support encoding 'UTF-8', which is mandatory.", err);
         }
         Blob blob = new Blob(saveStrData);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Key key = KeyFactory.stringToKey(characterStorage.getId());
-        Entity characterEntity = new Entity(key);
-        characterEntity.setProperty("jsonData", blob);
-        characterEntity.setProperty("playerName", characterStorage.metadata.playerName);
-        characterEntity.setProperty("characterName", characterStorage.metadata.characterName);
-        datastore.put(characterEntity);
+        Entity entity = new Entity(key);
+        entity.setProperty("jsonData", blob);
+        entity.setProperty("playerName", characterStorage.metadata.playerName);
+        entity.setProperty("characterName", characterStorage.metadata.characterName);
+        datastore.put(entity);
     }
     
     @Override
     public String loadCharsheet(String characterId) {
         Key key = KeyFactory.stringToKey(characterId);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         try {
-            Entity characterEntity = datastore.get(key);
-            Blob blob = (Blob) characterEntity.getProperty("jsonData");
+            Entity entity = datastore.get(key);
+            Blob blob = (Blob) entity.getProperty("jsonData");
             return new String(blob.getBytes(), "UTF-8");
         } catch (EntityNotFoundException err) {
             throw new RuntimeException("No character found with the id '" + characterId + "'.", err);
@@ -74,7 +75,16 @@ public class SaveCharsheetServiceImpl extends RemoteServiceServlet implements Sa
 
     @Override
     public List<CharacterMetadata> listCharsheets() {
-        return new ArrayList<CharacterMetadata>(); // FIXME: Return real results.
+        Query query = new Query(CHARSHEET_ENTITY_KIND);
+        PreparedQuery preparedQuery = datastore.prepare(query);
+        List<CharacterMetadata> result = new ArrayList<CharacterMetadata>(1000);
+        for (Entity entity : preparedQuery.asIterable()) {
+            String id = KeyFactory.keyToString(entity.getKey());
+            String playerName = (String) entity.getProperty("playerName");
+            String characterName = (String) entity.getProperty("characterName");
+            result.add(new CharacterMetadata(id, playerName, characterName));
+        }
+        return result;
     }
 
 }

@@ -27,6 +27,15 @@ public class CharacterStorage implements IsSerializable {
         }
         
         /**
+         * Constructor that is passed all of the data fields.
+         */
+        public CharacterMetadata(String id, String playerName, String characterName) {
+            this.id = id;
+            this.playerName = playerName;
+            this.characterName = characterName;
+        }
+        
+        /**
          * Constructor that initializes it from a ZithiaCharacter and id.
          */
         public CharacterMetadata(String id, ZithiaCharacter zithiaCharacter) {

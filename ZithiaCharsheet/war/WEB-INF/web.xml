@@ -7,19 +7,9 @@
   
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>com.mcherm.zithiacharsheet.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet>
     <servlet-name>saveCharsheetServlet</servlet-name>
     <servlet-class>com.mcherm.zithiacharsheet.server.SaveCharsheetServiceImpl</servlet-class>
   </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/zithiacharsheet/greet</url-pattern>
-  </servlet-mapping>
   
   <servlet-mapping>
     <servlet-name>saveCharsheetServlet</servlet-name>

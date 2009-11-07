@@ -10,5 +10,5 @@
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='com.mcherm.zithiacharsheet.client.ZithiaCharsheet'/>
+  <entry-point class='com.mcherm.zithiacharsheet.client.ZithiaCharsheetEntryPoint'/>
 </module>
