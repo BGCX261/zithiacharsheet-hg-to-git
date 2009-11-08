@@ -100,3 +100,7 @@ table.characterList {
   height: auto !important;
 }
 
+.talents .descriptionCol input {
+  width: 340px;
+}
+

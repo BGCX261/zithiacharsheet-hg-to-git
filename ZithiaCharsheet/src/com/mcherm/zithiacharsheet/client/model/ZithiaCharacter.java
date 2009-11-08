@@ -9,6 +9,7 @@ public class ZithiaCharacter {
     private final StatValues statValues;
     private final SkillList skillList;
     private final WeaponTraining weaponTraining;
+    private final TalentList talentList;
     private final ZithiaCosts zithiaCosts;
     private final Names names;
     
@@ -21,7 +22,8 @@ public class ZithiaCharacter {
         addNewSkill(SkillCatalog.get("climbing"));
         addNewSkill(SkillCatalog.get("stealth"));
         weaponTraining = WeaponTraining.createAllCombatTraining();
-        zithiaCosts = new ZithiaCosts(statValues, skillList, weaponTraining);
+        talentList = new TalentList();
+        zithiaCosts = new ZithiaCosts(statValues, skillList, weaponTraining, talentList);
         names = new Names();
     }
     
@@ -52,6 +54,13 @@ public class ZithiaCharacter {
      */
     public WeaponTraining getWeaponTraining() {
         return weaponTraining;
+    }
+    
+    /**
+     * Obtains the talent list.
+     */
+    public TalentList getTalentList() {
+        return talentList;
     }
     
     public ZithiaCosts getCosts() {

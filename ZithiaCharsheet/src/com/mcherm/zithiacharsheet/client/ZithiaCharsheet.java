@@ -48,7 +48,7 @@ public class ZithiaCharsheet extends Grid {
         super(1,2); // initialize to a 2-column, 1 row grid
         final Grid leftSide = new Grid(4,1);
         setWidget(0, 0, leftSide);
-        final Grid rightSide = new Grid(2,1);
+        final Grid rightSide = new Grid(3,1);
         setWidget(0, 1, rightSide);
         
         // -- Create the character --
@@ -70,6 +70,9 @@ public class ZithiaCharsheet extends Grid {
         } });
         DeferredCommand.addCommand(new Command() { public void execute() {
             rightSide.setWidget(1, 0, new ZithiaWeaponSkillsSection(zithiaCharacter));
+        } });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            rightSide.setWidget(2, 0, new TalentSection(zithiaCharacter.getTalentList()));
         } });
         
         // -- Show save/load buttons --

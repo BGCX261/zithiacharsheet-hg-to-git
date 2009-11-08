@@ -203,8 +203,7 @@ public class JSONSerializer {
         serialize(wt);
     }
     
-    // FIXME: Make this protected instead
-    public void serialize(WeaponTraining wt) {
+    protected void serialize(WeaponTraining wt) {
         putStartDict();
         serialize("weaponSkill", wt.getWeaponSkill());
         serialize("basicTrainingPurchased", wt.getBasicTrainingPurchased());
@@ -222,6 +221,25 @@ public class JSONSerializer {
             putEndList();
         }
         putEndDict();
+    }
+    
+    protected void serialize(TalentValue talentValue) {
+        putStartDict();
+        serialize("description", talentValue.getDescription());
+        serialize("cost", talentValue.getCost());
+        putEndDict();
+    }
+    
+    protected void serialize(String fieldName, TalentList talentList) {
+        if (!talentList.isEmpty()) {
+            putStartField(fieldName);
+            putStartList();
+            for (TalentValue talentValue : talentList) {
+                putComma();
+                serialize(talentValue);
+            }
+            putEndList();
+        }
     }
     
     protected void serialize(String fieldName, ZithiaCosts zithiaCosts) {
@@ -248,6 +266,7 @@ public class JSONSerializer {
         serialize("statValues", zithiaCharacter.getStatValues());
         serialize("skillList", zithiaCharacter.getSkillList());
         serialize("weaponTraining", zithiaCharacter.getWeaponTraining());
+        serialize("talentList", zithiaCharacter.getTalentList());
         serialize("costs", zithiaCharacter.getCosts());
         putEndDict();
     }
@@ -259,7 +278,7 @@ public class JSONSerializer {
     public static void main(String[] args) {
         final SkillCatalog skillCatalog = SkillCatalog.getSingleton();
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
-        final JSONSerializer jss = new JSONSerializer(false);
+        final JSONSerializer jss = new JSONSerializer(true);
         ZithiaCharacter character = new ZithiaCharacter();
         character.getNames().getCharacterName().setValue("Entarm");
         character.getStat(ZithiaStat.OBS).getValue().setValue(16);
@@ -274,6 +293,10 @@ public class JSONSerializer {
                 newWT.createChild(weaponsCatalog.getWeaponSkillById("swords")).getLevelsPurchased().setValue(4);
             }
         }
+        TalentValue talent = new TalentValue();
+        talent.getDescription().setValue("Limps");
+        talent.getCost().setValue(-4);
+        character.getTalentList().add(talent);
         character.getCosts().getWeaponSkillCost().setAdjustments(0, null);
         character.getCosts().getTotalCost().setAdjustments(null, -10);
         jss.serialize(character);

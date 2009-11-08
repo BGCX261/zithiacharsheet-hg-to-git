@@ -3,7 +3,7 @@ package com.mcherm.zithiacharsheet.client.model;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation1;
-import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation3;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation4;
 
 
 /**
@@ -16,12 +16,17 @@ public class ZithiaCosts {
     private final TweakableIntValue statCost;
     private final TweakableIntValue skillCost;
     private final TweakableIntValue weaponSkillCost;
+    private final TweakableIntValue talentCost;
     private final TweakableIntValue totalCost;
     
     /**
      * Constructor.
      */
-    public ZithiaCosts(StatValues statValues, SkillList skillList, WeaponTraining weaponTraining) {
+    public ZithiaCosts(StatValues statValues,
+                       SkillList skillList, 
+                       WeaponTraining weaponTraining,
+                       TalentList talentList)
+    {
         Equation1 identity = new Equation1() {
             public int getValue(int x) {
                 return x;
@@ -30,9 +35,10 @@ public class ZithiaCosts {
         statCost = new EquationIntValue(statValues.getCost(), identity);
         skillCost = new EquationIntValue(skillList.getCost(), identity);
         weaponSkillCost = new EquationIntValue(weaponTraining.getTotalCost(), identity);
-        totalCost = new EquationIntValue(statCost, skillCost, weaponSkillCost, new Equation3() {
-            public int getValue(int statCost, int skillCost, int weaponSkillCost) {
-                return statCost + skillCost + weaponSkillCost;
+        talentCost = new EquationIntValue(talentList.getCost(), identity);
+        totalCost = new EquationIntValue(statCost, skillCost, weaponSkillCost, talentCost, new Equation4() {
+            public int getValue(int statCost, int skillCost, int weaponSkillCost, int talentCost) {
+                return statCost + skillCost + weaponSkillCost + talentCost;
             }
         });
     }
@@ -48,6 +54,10 @@ public class ZithiaCosts {
     
     public TweakableIntValue getWeaponSkillCost() {
         return weaponSkillCost;
+    }
+    
+    public TweakableIntValue getTalentCost() {
+        return talentCost;
     }
     
     public TweakableIntValue getTotalCost() {
