@@ -28,7 +28,7 @@ public class ZithiaSkillsSection extends VerticalPanel {
         });
         Button addSkillButton = new Button("Add Skill", new ClickHandler() {
             public void onClick(ClickEvent event) {
-                testDialog.show();
+                testDialog.center();
             }
         });
         this.add(addSkillButton);
