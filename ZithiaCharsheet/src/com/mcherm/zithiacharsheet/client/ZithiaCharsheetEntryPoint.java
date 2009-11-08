@@ -1,12 +1,9 @@
 package com.mcherm.zithiacharsheet.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.mcherm.zithiacharsheet.client.CharacterList.SelectAction;
 import com.mcherm.zithiacharsheet.client.ZithiaCharsheet.FailureAction;
 import com.mcherm.zithiacharsheet.client.model.CharacterStorage.CharacterMetadata;
 
@@ -33,14 +30,24 @@ public class ZithiaCharsheetEntryPoint implements EntryPoint {
         RootPanel.get("charsheet").add(mainPanel);
         
         // -- Set up the card in the deck for showing the list --
-        mainPanel.add(new CharacterList(new SelectAction() {
-            public void onSelect(CharacterMetadata metadata) {
+        mainPanel.add(new CharacterList(new CharacterList.ButtonActions() {
+
+            @Override
+            public void onGoButton(CharacterMetadata metadata) {
                 mainPanel.showWidget(1); // Show the character sheet
                 zithiaCharsheet.setCharacterId(metadata.getId(), new FailureAction() {
                     public void onFailure(Throwable caught) {
                         Window.alert("Load of character failed: " + caught);
+                        mainPanel.showWidget(0);
                     }
                 });
+            }
+
+            @Override
+            public void onNewButton() {
+                mainPanel.showWidget(1); // Show the character sheet
+                // FIXME: Maybe we need to empty it out; for now we won't.
+                zithiaCharsheet.saveAsNewCharacter();
             }
         }));
         
