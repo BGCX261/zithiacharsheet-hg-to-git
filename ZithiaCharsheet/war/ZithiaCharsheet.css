@@ -95,3 +95,8 @@ input.settableInt {
 .namesSection input {
   width: 130px;
 }
+
+table.characterList {
+  height: 35px;
+}
+

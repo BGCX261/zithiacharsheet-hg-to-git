@@ -41,6 +41,8 @@ public class CharacterList extends VerticalPanel {
      */
     public CharacterList(final ButtonActions buttonActions) {
         addStyleName("characterList");
+        setHorizontalAlignment(ALIGN_CENTER);
+        setVerticalAlignment(ALIGN_TOP);
         final ListBox listBox = new ListBox();
         listBox.setVisibleItemCount(10);
         add(listBox);
