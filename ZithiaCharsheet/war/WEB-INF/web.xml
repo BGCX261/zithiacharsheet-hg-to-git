@@ -16,6 +16,16 @@
     <url-pattern>/zithiacharsheet/saveCharsheet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>dumpDBServlet</servlet-name>
+    <servlet-class>com.mcherm.zithiacharsheet.server.DumpDBServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>dumpDBServlet</servlet-name>
+    <url-pattern>/zithiacharsheet/dumpDB</url-pattern>
+  </servlet-mapping>
+
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>ZithiaCharsheet.html</welcome-file>

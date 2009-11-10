@@ -119,14 +119,10 @@ public class ZithiaCharsheet extends Grid {
         // -- Determine character id --
         characterId = Window.Location.getParameter("character");
         if (characterId == null) {
-            // FIXME: This whole thing is a hack. Fix later.
-            Window.alert("Character not specified: Will create new character.");
             saveCharsheetService.newCharsheet(new AsyncCallback<CharacterMetadata>() {
-                @Override
                 public void onFailure(Throwable caught) {
                     Window.alert("Unable to create character: " + caught);
                 }
-                @Override
                 public void onSuccess(CharacterMetadata result) {
                     characterId = result.getId();
                     System.out.println("Result = " + result + ", result.getId() = " + result.getId()); // FIXME: Remove

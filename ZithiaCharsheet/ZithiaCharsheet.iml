@@ -8,7 +8,26 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="module-library">
+      <library name="WEB-INF/lib">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/war/WEB-INF/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/war/WEB-INF/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="project.class.path">
+        <CLASSES>
+          <root url="jar://C:/Program Files/gwt-windows-1.7.1/gwt-user.jar!/" />
+          <root url="jar://C:/Program Files/gwt-windows-1.7.1/gwt-dev-windows.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

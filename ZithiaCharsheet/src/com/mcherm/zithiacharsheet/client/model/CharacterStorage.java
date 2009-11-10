@@ -66,7 +66,7 @@ public class CharacterStorage implements IsSerializable {
      */
     public CharacterStorage(String id, ZithiaCharacter zithiaCharacter) {
         metadata = new CharacterMetadata(id, zithiaCharacter);
-        JSONSerializer serializer = new JSONSerializer(false);
+        JSONSerializer serializer = JSONSerializer.newInstance(false);
         serializer.serialize(zithiaCharacter);
         serializedData = serializer.output();
     }

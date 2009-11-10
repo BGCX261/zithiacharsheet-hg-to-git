@@ -41,7 +41,6 @@ public class ZithiaStatsTable extends FlexTable {
                 setWidget(row, 3, rollField);
             } else {
                 setText(row, 3, "n/a");
-                rollField = null;
             }
             // -- Value --
             getFlexCellFormatter().addStyleName(row, 2, "valueCol");

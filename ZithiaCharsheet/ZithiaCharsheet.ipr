@@ -78,10 +78,6 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="ErrorTreeViewConfiguration">
-    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
-    <option name="HIDE_WARNINGS" value="false" />
-  </component>
   <component name="HierarchyBrowserManager">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
     <option name="SORT_ALPHABETICALLY" value="false" />
@@ -244,6 +240,21 @@
   <component name="ProjectDetails">
     <option name="projectName" value="ZithiaCharsheet" />
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="mcherm">
+      <words>
+        <w>charsheet</w>
+        <w>charsheets</w>
+        <w>datastore</w>
+        <w>metadata</w>
+        <w>threadsafe</w>
+        <w>tweakable</w>
+        <w>unescape</w>
+        <w>zithia</w>
+        <w>zithiacharsheet</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ZithiaCharsheet.iml" filepath="$PROJECT_DIR$/ZithiaCharsheet.iml" />
@@ -343,22 +354,5 @@
     </GetOptions>
   </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
-  <component name="libraryTable">
-    <library name="lib">
-      <CLASSES>
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/datanucleus-jpa-1.1.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/appengine-api-labs-1.2.6.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/datanucleus-core-1.1.5.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/gwt-servlet.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/datanucleus-appengine-1.0.3.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/geronimo-jpa_3.0_spec-1.1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/appengine-api-1.0-sdk-1.2.6.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/geronimo-jta_1.1_spec-1.1.1.jar!/" />
-        <root url="jar://$PROJECT_DIR$/war/WEB-INF/lib/jdo2-api-2.3-eb.jar!/" />
-      </CLASSES>
-      <JAVADOC />
-      <SOURCES />
-    </library>
-  </component>
 </project>
 

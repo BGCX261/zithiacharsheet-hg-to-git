@@ -7,204 +7,152 @@ import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
+import com.mcherm.zithiacharsheet.client.util.JSONSerializerBase;
+
 
 /**
- * FIXME: Document this once it works.
+ * This serializes a ZithiaCharsheet into a String in JSON format. To use, create
+ * an instance using the newInstance() factory method (optionally specifying whether
+ * to use "prettyPrinting"). Then call the serialize() method with a ZithiaCharacter.
+ * Finally, call the output() method to obtain the results as a String.
  */
-public class JSONSerializer {
-    
-    private final boolean prettyPrint;
-    private final StringBuilder out = new StringBuilder();
-    private int indentLevel;
-    private boolean lineHasOpenBracket;
-    
-    public JSONSerializer(boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
-        indentLevel = 0;
-        lineHasOpenBracket = false;
+public class JSONSerializer extends JSONSerializerBase {
+
+    private final InMemoryWriter inMemoryWriter;
+
+
+    private static class InMemoryWriter implements Writer {
+        private final StringBuilder stringBuilder = new StringBuilder();
+        public void write(String s) {
+            stringBuilder.append(s);
+        }
+        public String getOutput() {
+            return stringBuilder.toString();
+        }
     }
-    
+
+    /** Constructor is private: use factory function. */
+    private JSONSerializer(InMemoryWriter inMemoryWriter, boolean prettyPrint) {
+        super(inMemoryWriter, prettyPrint);
+        this.inMemoryWriter = inMemoryWriter;
+    }
+
+
+
+    /**
+     * Factory function to obtain instances.
+     */
+    public static JSONSerializer newInstance() {
+        return newInstance(false); // default prettyPrint to false.
+    }
+
+    /**
+     * Factory function to obtain instances.
+     */
+    public static JSONSerializer newInstance(boolean prettyPrint) {
+        return new JSONSerializer(new InMemoryWriter(), prettyPrint);
+    }
+
+    /**
+     * Extracts the output after the whole thing is serialized. If this is called
+     * while the tree is unbalanced (opened more things than were closed) then an
+     * exception will be thrown.
+     */
     public String output() {
-        return out.toString();
+        return inMemoryWriter.getOutput();
     }
-    
-    protected void indent() {
-        if (prettyPrint) {
-            out.append("\n");
-            for (int i=0; i<indentLevel; i++) {
-                out.append("  ");
-            }
-        }
-        lineHasOpenBracket = false;
-    }
-    
-    protected void putAttributeEqInline(String name) {
-        out.append("\"");
-        out.append(name);
-        out.append("\":");
-    }
-    protected void putAttributeEq(String name) {
-        indent();
-        putAttributeEqInline(name);
-    }
-    
-    protected void putComma() {
-        if (!lineHasOpenBracket) {
-            out.append(",");
-        }
-    }
-    
-    protected void putStartField(String fieldName) {
-        putComma();
-        putAttributeEq(fieldName);
-    }
-    
-    protected void putStartDict() {
-        if (lineHasOpenBracket) {
-            indent();
-        }
-        out.append("{");
-        indentLevel++;
-        lineHasOpenBracket = true;
-    }
-    
-    protected void putEndDict() {
-        indentLevel--;
-        indent();
-        out.append("}");
-    }
-    
-    protected void putStartList() {
-        if (lineHasOpenBracket) {
-            indent();
-        }
-        out.append("[");
-        indentLevel++;
-        lineHasOpenBracket = true;
-    }
-    
-    protected void putEndList() {
-        indentLevel--;
-        indent();
-        out.append("]");
-    }
-    
-    
-    protected void serialize(String string) {
-        out.append("\"");
-        out.append(string); // FIXME: Need escaping of double-quotes and newlines!
-        out.append("\"");
-    }
-    
-    protected void serialize(int i) {
-        out.append(i);
-    }
-    
+
     protected void serialize(String fieldName, TweakableIntValue value) {
         if (value.isTweaked()) {
-            putStartField(fieldName);
-            Integer override = value.getOverride();
-            Integer modifier = value.getModifier();
-            out.append("{");
-            if (override != null) {
-                putAttributeEqInline("override");
-                serialize(override.intValue());
+            emitStartDictItem(fieldName);
+            emitStartDict();
+            if (value.getOverride() != null) {
+                emitDictItem("override", value.getOverride());
             }
-            if (modifier != null) {
-                putAttributeEqInline("modifier");
-                serialize(modifier.intValue());
+            if (value.getModifier() != null) {
+                emitDictItem("modifier", value.getModifier());
             }
-            out.append("}");
+            emitEndDict();
         }
     }
     
     protected void serialize(String fieldName, SettableIntValue value) {
-        putStartField(fieldName);
-        out.append(value.getValue());
+        emitDictItem(fieldName, value.getValue());
     }
     
     protected void serialize(String fieldName, SettableBooleanValue value) {
-        putStartField(fieldName);
-        out.append(value.getValue() ? "true" : "false");
+        emitDictItem(fieldName, value.getValue());
     }
     
     protected void serialize(String fieldName, SettableStringValue value) {
-        if (value.getValue() != "") {
-            putStartField(fieldName);
-            out.append("\"");
-            out.append(value.getValue());
-            out.append("\"");
+        if (!"".equals(value.getValue())) {
+            emitDictItem(fieldName, value.getValue());
         }
     }
 
     
     protected void serialize(StatValue statValue) {
-        putStartDict();
-        if (prettyPrint) {
-            putAttributeEq("stat");
-            serialize(statValue.getStat().getName());
-        }
+        emitStartDict();
+        emitDictItem("stat", statValue.getStat().getName()); // NOTE: this is ONLY for readability
         serialize("value", statValue.getValue());
         serialize("roll", statValue.getRoll());
         serialize("cost", statValue.getCost());
-        putEndDict();
+        emitEndDict();
     }
     
     protected void serialize(String fieldName, StatValues statValues) {
-        putStartField(fieldName);
-        putStartList();
+        emitStartDictItem(fieldName);
+        emitStartList();
         for (StatValue statValue : statValues) {
-            putComma();
+            emitStartListItem();
             serialize(statValue);
         }
-        putEndList();
+        emitEndList();
     }
     
     protected void serialize(String fieldName, ZithiaSkill skill) {
-        putStartField(fieldName);
-        putStartDict();
-        putAttributeEq("id");
-        serialize(skill.getId());
-        putEndDict();
+        emitStartDictItem(fieldName);
+        emitStartDict();
+        emitDictItem("id", skill.getId());
+        emitEndDict();
     }
     
     protected void serialize(SkillValue skillValue) {
-        putStartDict();
+        emitStartDict();
         serialize("skill", skillValue.getSkill());
         serialize("levels", skillValue.getLevels());
         if (skillValue.getSkill().hasRoll()) {
             serialize("roll", skillValue.getRoll());
         }
         serialize("cost", skillValue.getCost());
-        putEndDict();
+        emitEndDict();
     }
     
     
     protected void serialize(String fieldName, SkillList skillList) {
-        putStartField(fieldName);
-        putStartList();
+        emitStartDictItem(fieldName);
+        emitStartList();
         for (SkillValue skillValue : skillList) {
-            putComma();
+            emitStartListItem();
             serialize(skillValue);
         }
-        putEndList();
+        emitEndList();
     }
     
     protected void serialize(String fieldName, WeaponSkill weaponSkill) {
-        putStartField(fieldName);
-        putStartDict();
-        putAttributeEq("id");
-        serialize(weaponSkill.getId());
-        putEndDict();
+        emitStartDictItem(fieldName);
+        emitStartDict();
+        emitDictItem("id", weaponSkill.getId());
+        emitEndDict();
     }
     
     protected void serialize(String fieldName, WeaponTraining wt) {
-        putStartField(fieldName);
+        emitStartDictItem(fieldName);
         serialize(wt);
     }
     
     protected void serialize(WeaponTraining wt) {
-        putStartDict();
+        emitStartDict();
         serialize("weaponSkill", wt.getWeaponSkill());
         serialize("basicTrainingPurchased", wt.getBasicTrainingPurchased());
         serialize("levelsPurchased", wt.getLevelsPurchased());
@@ -212,63 +160,63 @@ public class JSONSerializer {
         serialize("thisCost", wt.getThisCost());
         serialize("totalCost", wt.getTotalCost());
         if (wt.hasChildren()) {
-            putStartField("children");
-            putStartList();
+            emitStartDictItem("children");
+            emitStartList();
             for (WeaponTraining child : wt.getChildren()) {
-                putComma();
+                emitStartListItem();
                 serialize(child);
             }
-            putEndList();
+            emitEndList();
         }
-        putEndDict();
+        emitEndDict();
     }
     
     protected void serialize(TalentValue talentValue) {
-        putStartDict();
+        emitStartDict();
         serialize("description", talentValue.getDescription());
         serialize("cost", talentValue.getCost());
-        putEndDict();
+        emitEndDict();
     }
     
     protected void serialize(String fieldName, TalentList talentList) {
         if (!talentList.isEmpty()) {
-            putStartField(fieldName);
-            putStartList();
+            emitStartDictItem(fieldName);
+            emitStartList();
             for (TalentValue talentValue : talentList) {
-                putComma();
+                emitStartListItem();
                 serialize(talentValue);
             }
-            putEndList();
+            emitEndList();
         }
     }
     
     protected void serialize(String fieldName, ZithiaCosts zithiaCosts) {
-        putStartField(fieldName);
-        putStartDict();
+        emitStartDictItem(fieldName);
+        emitStartDict();
         serialize("statCost", zithiaCosts.getStatCost());
         serialize("skillCost", zithiaCosts.getSkillCost());
         serialize("weaponSkillCost", zithiaCosts.getWeaponSkillCost());
         serialize("totalCost", zithiaCosts.getTotalCost());
-        putEndDict();
+        emitEndDict();
     }
     
     protected void serialize(String fieldName, Names names) {
-        putStartField(fieldName);
-        putStartDict();
+        emitStartDictItem(fieldName);
+        emitStartDict();
         serialize("name", names.getCharacterName());
         serialize("player", names.getPlayerName());
-        putEndDict();
+        emitEndDict();
     }
     
     public void serialize(ZithiaCharacter zithiaCharacter) {
-        putStartDict();
+        emitStartDict();
         serialize("names", zithiaCharacter.getNames());
         serialize("statValues", zithiaCharacter.getStatValues());
         serialize("skillList", zithiaCharacter.getSkillList());
         serialize("weaponTraining", zithiaCharacter.getWeaponTraining());
         serialize("talentList", zithiaCharacter.getTalentList());
         serialize("costs", zithiaCharacter.getCosts());
-        putEndDict();
+        emitEndDict();
     }
     
     
@@ -278,7 +226,7 @@ public class JSONSerializer {
     public static void main(String[] args) {
         final SkillCatalog skillCatalog = SkillCatalog.getSingleton();
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
-        final JSONSerializer jss = new JSONSerializer(true);
+        final JSONSerializer jss = JSONSerializer.newInstance(true);
         ZithiaCharacter character = new ZithiaCharacter();
         character.getNames().getCharacterName().setValue("Entarm");
         character.getStat(ZithiaStat.OBS).getValue().setValue(16);

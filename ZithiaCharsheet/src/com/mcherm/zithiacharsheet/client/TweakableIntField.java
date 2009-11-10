@@ -25,7 +25,7 @@ import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
  * A field that is tied to a value. If the value changes,
  * the field changes. You cannot edit the value (for now).
  */
-class TweakableIntField extends HorizontalPanel implements HasClickHandlers {
+public class TweakableIntField extends HorizontalPanel implements HasClickHandlers {
     
     private final TweakableIntValue value;
     private final TextBox fieldValue;
