@@ -59,7 +59,11 @@ public class JSONSerializer extends JSONSerializerBase {
      * exception will be thrown.
      */
     public String output() {
-        return inMemoryWriter.getOutput();
+        if (!isDone()) {
+            throw new RuntimeException("JSON output obtained before the tree was completed.");
+        } else {
+            return inMemoryWriter.getOutput();
+        }
     }
 
     protected void serialize(String fieldName, TweakableIntValue value) {

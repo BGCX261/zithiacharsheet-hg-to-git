@@ -71,7 +71,7 @@ public abstract class JSONSerializerBase {
                 final char c = s.charAt(i);
                 switch(c) {
                     case '\\': result.append("\\\\"); break;
-                    case '"': result.append("\\"); break;
+                    case '"': result.append("\\\""); break;
                     case '\n': result.append("\\n"); break;
                     default: result.append(c); break;
                 }
@@ -194,5 +194,17 @@ public abstract class JSONSerializerBase {
 
     protected final void emitItem(boolean b) {
         outputBoolean(b);
+    }
+
+    /**
+     * This should only be called in special circumstances. It should be used
+     * when an item is expected and it emits raw JSON (which is expected to
+     * be balanced).
+     *
+     * @param s the contents, which should be a complete, balanced entity in
+     * JSON.
+     */
+    protected final void emitRawJSON(String s) {
+        write(s);
     }
 }

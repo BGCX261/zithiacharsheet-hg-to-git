@@ -246,10 +246,12 @@
         <w>charsheet</w>
         <w>charsheets</w>
         <w>datastore</w>
+        <w>javac</w>
         <w>metadata</w>
         <w>threadsafe</w>
         <w>tweakable</w>
         <w>unescape</w>
+        <w>xstart</w>
         <w>zithia</w>
         <w>zithiacharsheet</w>
       </words>

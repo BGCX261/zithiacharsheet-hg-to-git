@@ -91,7 +91,10 @@ public class DumpDBServlet extends HttpServlet {
                 if (fieldValue instanceof String) {
                     emitDictItem(fieldName, (String) fieldValue);
                 } else if (fieldValue instanceof Text) {
-                    emitDictItem(fieldName, ((Text) fieldValue).getValue());
+                    // Treat all Text objects as containing JSON data:
+                    String jsonContent = ((Text) fieldValue).getValue();
+                    emitStartDictItem(fieldName);
+                    emitRawJSON(jsonContent);
                 } else {
                     throw new RuntimeException("Unsupported type.");
                 }
