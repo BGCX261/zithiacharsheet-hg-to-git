@@ -1,5 +1,7 @@
 package com.mcherm.zithiacharsheet.client.util;
 
+import java.util.LinkedList;
+
 
 /**
  * An abstract class that can be extended to form a JSON serializer for some
@@ -18,9 +20,24 @@ public abstract class JSONSerializerBase {
 
     private final boolean prettyPrint;
     private final Writer writer;
-    private int indentLevel;
     private boolean lineHasOpenBracket;
-    // FIXME: Should maintain inDict and inList variables and use them for validation that the call sequence is correct
+
+    private enum State {
+        IN_DICT, IN_LIST, ITEM
+    }
+    /**
+     * At all times, this will contain a stack of IN_DICT and IN_LIST states in all but the
+     * topmost item in the stack. The topmost item will be an ITEM state if we are ready to
+     * emit an item, and will NOT be ITEM if we are ready to emit separation (like a comma
+     * or whatever).
+     */
+    private final LinkedList<State> stateStack;
+
+
+    /** An exception thrown when JSON Serializer is used wrong. */
+    public static class JSONSerializerException extends RuntimeException {
+    }
+
 
     // ==== Inner Classes ====
 
@@ -37,8 +54,9 @@ public abstract class JSONSerializerBase {
     protected JSONSerializerBase(Writer writer, boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
         this.writer = writer;
-        indentLevel = 0;
         lineHasOpenBracket = false;
+        stateStack = new LinkedList<State>();
+        stateStack.addFirst(State.ITEM);
     }
 
     /**
@@ -46,7 +64,7 @@ public abstract class JSONSerializerBase {
      * opened.
      */
     protected boolean isDone() {
-        return indentLevel == 0;
+        return stateStack.isEmpty();
     }
 
     // ==== Raw String Manipulation ====
@@ -111,6 +129,7 @@ public abstract class JSONSerializerBase {
 
     private void indent() {
         if (prettyPrint) {
+            final int indentLevel = stateStack.size();
             write("\n");
             for (int i=0; i<indentLevel; i++) {
                 write(INDENT_STR);
@@ -125,29 +144,41 @@ public abstract class JSONSerializerBase {
         }
     }
 
+    /** Call this to assert that the top state on the stack should be State */
+    private void expectState(State state) {
+        if (stateStack.peek() != state) {
+            throw new JSONSerializerException();
+        }
+    }
+
     // ==== Emit Routines for Subclasses ====
 
 
     protected final void emitStartDict() {
+        expectState(State.ITEM);
+        stateStack.removeFirst();
         if (lineHasOpenBracket) {
             indent();
         }
         write("{");
-        indentLevel++;
         lineHasOpenBracket = true;
+        stateStack.addFirst(State.IN_DICT);
     }
 
     protected final void emitEndDict() {
-        indentLevel--;
+        expectState(State.IN_DICT);
+        stateStack.removeFirst();
         indent();
         write("}");
     }
 
     protected final void emitStartDictItem(String fieldName) {
+        expectState(State.IN_DICT);
         smartComma();
         indent();
         outputString(fieldName);
         write(":");
+        stateStack.addFirst(State.ITEM);
     }
 
     protected final void emitDictItem(String fieldName, String str) {
@@ -166,34 +197,45 @@ public abstract class JSONSerializerBase {
     }
 
     protected final void emitStartList() {
+        expectState(State.ITEM);
+        stateStack.removeFirst();
         if (lineHasOpenBracket) {
             indent();
         }
         write("[");
-        indentLevel++;
         lineHasOpenBracket = true;
+        stateStack.addFirst(State.IN_LIST);
     }
 
     protected final void emitEndList() {
-        indentLevel--;
+        expectState(State.IN_LIST);
+        stateStack.removeFirst();
         indent();
         write("]");
     }
 
     protected final void emitStartListItem() {
+        expectState(State.IN_LIST);
         smartComma();
+        stateStack.addFirst(State.ITEM);
     }
     
     protected final void emitItem(String s) {
+        expectState(State.ITEM);
         outputString(s);
+        stateStack.removeFirst();
     }
 
     protected final void emitItem(int i) {
+        expectState(State.ITEM);
         outputInt(i);
+        stateStack.removeFirst();
     }
 
     protected final void emitItem(boolean b) {
+        expectState(State.ITEM);
         outputBoolean(b);
+        stateStack.removeFirst();
     }
 
     /**
@@ -205,6 +247,8 @@ public abstract class JSONSerializerBase {
      * JSON.
      */
     protected final void emitRawJSON(String s) {
+        expectState(State.ITEM);
         write(s);
+        stateStack.removeFirst();
     }
 }
