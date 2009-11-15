@@ -201,10 +201,17 @@ public class JSONDeserializer {
         JSONValue fieldValue = inputObject.get(fieldName);
         if (fieldValue != null) {
             JSONObject fieldObject = notNull(fieldValue.isObject());
+            updateFromField(fieldObject, "raceCost", zithiaCosts.getRaceCost());
             updateFromField(fieldObject, "statCost", zithiaCosts.getStatCost());
             updateFromField(fieldObject, "skillCost", zithiaCosts.getSkillCost());
             updateFromField(fieldObject, "weaponSkillCost", zithiaCosts.getWeaponSkillCost());
             updateFromField(fieldObject, "totalCost", zithiaCosts.getTotalCost());
+            updateFromField(fieldObject, "basePts", zithiaCosts.getBasePts());
+            updateFromField(fieldObject, "loanPts", zithiaCosts.getLoanPts());
+            updateFromField(fieldObject, "expSpent", zithiaCosts.getExpSpent());
+            updateFromField(fieldObject, "expEarned", zithiaCosts.getExpEarned());
+            updateFromField(fieldObject, "paidForLoan", zithiaCosts.getPaidForLoan());
+            updateFromField(fieldObject, "expUnspent", zithiaCosts.getExpUnspent());
         }
     }
     

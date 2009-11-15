@@ -12,12 +12,10 @@ public class SettableIntValueImpl extends SimpleObservable implements SettableIn
         this.value = initialValue;
     }
     
-    @Override
     public int getValue() {
         return this.value;
     }
     
-    @Override
     public void setValue(int value) {
         this.value = value;
         alertObservers();

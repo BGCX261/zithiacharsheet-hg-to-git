@@ -1,8 +1,13 @@
 package com.mcherm.zithiacharsheet.client.model;
 
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableIntValueImpl;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation0;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation1;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation2;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation3;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation4;
 
 
@@ -12,12 +17,19 @@ import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation4;
  * start.
  */
 public class ZithiaCosts {
-    
+
+    private final TweakableIntValue raceCost;
     private final TweakableIntValue statCost;
     private final TweakableIntValue skillCost;
     private final TweakableIntValue weaponSkillCost;
     private final TweakableIntValue talentCost;
     private final TweakableIntValue totalCost;
+    private final SettableIntValue  basePts;
+    private final SettableIntValue  loanPts;
+    private final TweakableIntValue expSpent;
+    private final SettableIntValue  expEarned;
+    private final TweakableIntValue paidForLoan;
+    private final TweakableIntValue expUnspent;
     
     /**
      * Constructor.
@@ -32,6 +44,11 @@ public class ZithiaCosts {
                 return x;
             }
         };
+        raceCost = new EquationIntValue(new Equation0() {
+            public int getValue() {
+                return 0;
+            }
+        });
         statCost = new EquationIntValue(statValues.getCost(), identity);
         skillCost = new EquationIntValue(skillList.getCost(), identity);
         weaponSkillCost = new EquationIntValue(weaponTraining.getTotalCost(), identity);
@@ -41,8 +58,32 @@ public class ZithiaCosts {
                 return statCost + skillCost + weaponSkillCost + talentCost;
             }
         });
+        basePts = new SettableIntValueImpl(30);
+        loanPts = new SettableIntValueImpl(0);
+        expSpent = new EquationIntValue(totalCost, basePts, loanPts, new Equation3() {
+            public int getValue(int totalCost, int basePts, int loanPts) {
+                return totalCost - (basePts + loanPts);
+            }
+        });
+        expEarned = new SettableIntValueImpl(0);
+        paidForLoan = new EquationIntValue(loanPts, expEarned, new Equation2() {
+            public int getValue(int loanPts, int expEarned) {
+                // NOTE: both divisions are intended to round down when an odd number is used
+                return Math.min(expEarned / 2, loanPts + loanPts / 2);
+            }
+        });
+        // NOTE: When expUnspent is <0 it means the character is not paid for properly
+        expUnspent = new EquationIntValue(expEarned, paidForLoan, expSpent, new Equation3() {
+            public int getValue(int expEarned, int paidForLoan, int expSpent) {
+                return expEarned - (expSpent + paidForLoan);
+            }
+        });
     }
 
+
+    public TweakableIntValue getRaceCost() {
+        return raceCost;
+    }
 
     public TweakableIntValue getStatCost() {
         return statCost;
@@ -63,4 +104,29 @@ public class ZithiaCosts {
     public TweakableIntValue getTotalCost() {
         return totalCost;
     }
+
+    public SettableIntValue getBasePts() {
+        return basePts;
+    }
+
+    public SettableIntValue getLoanPts() {
+        return loanPts;
+    }
+
+    public TweakableIntValue getExpSpent() {
+        return expSpent;
+    }
+
+    public SettableIntValue getExpEarned() {
+        return expEarned;
+    }
+
+    public TweakableIntValue getPaidForLoan() {
+        return paidForLoan;
+    }
+
+    public TweakableIntValue getExpUnspent() {
+        return expUnspent;
+    }
+
 }

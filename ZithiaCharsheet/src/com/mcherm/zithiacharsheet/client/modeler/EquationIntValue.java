@@ -1,7 +1,10 @@
 package com.mcherm.zithiacharsheet.client.modeler;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
+
+import com.mcherm.zithiacharsheet.client.util.ImmutableList;
 
 
 /**
@@ -9,7 +12,11 @@ import java.util.Iterator;
  * applies a simple equation to determine the value.
  */
 public class EquationIntValue extends CalculatedIntValue<ObservableInt> {
-    
+
+    public static interface Equation0 {
+        public int getValue();
+    }
+
     public static interface Equation1 {
         public int getValue(int x1);
     }
@@ -27,6 +34,19 @@ public class EquationIntValue extends CalculatedIntValue<ObservableInt> {
     }
     
     
+    public EquationIntValue(
+            final Equation0 equation)
+    {
+        super(
+            new ImmutableList<ObservableInt>(),
+            new ValueCalculator<ObservableInt>() {
+                public int calculateValue(Iterable<? extends ObservableInt> inputs) {
+                    return equation.getValue();
+                }
+            }
+        );
+    }
+
     public EquationIntValue(
             ObservableInt in1,
             final Equation1 equation)

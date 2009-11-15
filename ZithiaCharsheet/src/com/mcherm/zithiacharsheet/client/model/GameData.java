@@ -1,6 +1,5 @@
 package com.mcherm.zithiacharsheet.client.model;
 
-import com.mcherm.zithiacharsheet.client.model.ZithiaStat;
 import com.mcherm.zithiacharsheet.client.model.SkillCatalog.SkillCategory;
 
 

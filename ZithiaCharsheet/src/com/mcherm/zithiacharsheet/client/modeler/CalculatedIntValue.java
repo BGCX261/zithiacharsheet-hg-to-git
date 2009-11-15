@@ -43,7 +43,6 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
         }
     }
 
-    @Override
     public int getValue() {
         if (override != null) {
             return override.intValue();
@@ -54,22 +53,18 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
         }
     }
 
-    @Override
     public boolean isTweaked() {
         return override != null || modifier != null;
     }
 
-    @Override
     public Integer getOverride() {
         return override;
     }
 
-    @Override
     public Integer getModifier() {
         return modifier;
     }
 
-    @Override
     public void setAdjustments(Integer override, Integer modifier) {
         if (override != null && modifier != null) {
             throw new IllegalArgumentException("Either override or modifier must be null.");

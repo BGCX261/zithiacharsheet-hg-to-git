@@ -197,10 +197,17 @@ public class JSONSerializer extends JSONSerializerBase {
     protected void serialize(String fieldName, ZithiaCosts zithiaCosts) {
         emitStartDictItem(fieldName);
         emitStartDict();
+        serialize("raceCost", zithiaCosts.getRaceCost());
         serialize("statCost", zithiaCosts.getStatCost());
         serialize("skillCost", zithiaCosts.getSkillCost());
         serialize("weaponSkillCost", zithiaCosts.getWeaponSkillCost());
         serialize("totalCost", zithiaCosts.getTotalCost());
+        serialize("basePts", zithiaCosts.getBasePts());
+        serialize("loanPts", zithiaCosts.getLoanPts());
+        serialize("expSpent", zithiaCosts.getExpSpent());
+        serialize("expEarned", zithiaCosts.getExpEarned());
+        serialize("paidForLoan", zithiaCosts.getPaidForLoan());
+        serialize("expUnspent", zithiaCosts.getExpUnspent());
         emitEndDict();
     }
     
