@@ -4,3 +4,4 @@ syntax: glob
 regexp:ZithiaCharsheet/war/WEB-INF/classes/.*
 regexp:ZithiaCharsheet/war/zithiacharsheet/.*
 regexp:ZithiaCharsheet/war/WEB-INF/appengine-generated/.*
+regexp:ZithiaCharsheet/out/.*
