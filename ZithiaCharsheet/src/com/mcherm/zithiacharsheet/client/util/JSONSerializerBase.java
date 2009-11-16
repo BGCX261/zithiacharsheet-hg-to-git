@@ -88,9 +88,14 @@ public abstract class JSONSerializerBase {
             for (int i=0; i<s.length(); i++) {
                 final char c = s.charAt(i);
                 switch(c) {
+                    case '"':  result.append("\\\""); break;
                     case '\\': result.append("\\\\"); break;
-                    case '"': result.append("\\\""); break;
+                    case '/':  result.append("\\/"); break;
+                    case '\b': result.append("\\b"); break;
+                    case '\f': result.append("\\f"); break;
                     case '\n': result.append("\\n"); break;
+                    case '\r': result.append("\\r"); break;
+                    case '\t': result.append("\\t"); break;
                     default: result.append(c); break;
                 }
             }

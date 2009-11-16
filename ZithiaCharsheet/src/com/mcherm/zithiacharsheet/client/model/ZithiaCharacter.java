@@ -12,6 +12,7 @@ public class ZithiaCharacter {
     private final TalentList talentList;
     private final ZithiaCosts zithiaCosts;
     private final Names names;
+    private final CharacterNotes characterNotes;
     
     /**
      * Creates a default blank character sheet.
@@ -25,6 +26,7 @@ public class ZithiaCharacter {
         talentList = new TalentList();
         zithiaCosts = new ZithiaCosts(statValues, skillList, weaponTraining, talentList);
         names = new Names();
+        characterNotes = new CharacterNotes();
     }
     
     public StatValues getStatValues() {
@@ -69,6 +71,10 @@ public class ZithiaCharacter {
     
     public Names getNames() {
         return names;
+    }
+
+    public CharacterNotes getCharacterNotes() {
+        return characterNotes;
     }
 
 }

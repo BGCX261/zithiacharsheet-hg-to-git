@@ -222,6 +222,16 @@ public class JSONDeserializer {
         updateFromField(fieldObject, "player", names.getPlayerName());
     }
     
+    protected void updateFromField(JSONObject inputObject, String fieldName, CharacterNotes notes) {
+        JSONValue fieldValue = inputObject.get(fieldName);
+        if (fieldValue == null) {
+            notes.getBackground().setValue("");
+        } else {
+            JSONObject fieldObject = notNull(fieldValue.isObject());
+            updateFromField(fieldObject, "background", notes.getBackground());
+        }
+    }
+
     public void update(JSONValue inputValue, ZithiaCharacter zithiaCharacter) {
         JSONObject inputObject = notNull(inputValue.isObject());
         updateFromField(inputObject, "names", zithiaCharacter.getNames());
@@ -230,6 +240,7 @@ public class JSONDeserializer {
         updateFromField(inputObject, "weaponTraining", zithiaCharacter.getWeaponTraining());
         updateFromField(inputObject, "talentList", zithiaCharacter.getTalentList());
         updateFromField(inputObject, "costs", zithiaCharacter.getCosts());
+        updateFromField(inputObject, "notes", zithiaCharacter.getCharacterNotes());
     }
 
 }

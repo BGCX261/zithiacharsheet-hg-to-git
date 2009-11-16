@@ -219,6 +219,15 @@ public class JSONSerializer extends JSONSerializerBase {
         emitEndDict();
     }
     
+    protected void serialize(String fieldName, CharacterNotes notes) {
+        if (notes.getBackground().getValue().length() != 0) {
+            emitStartDictItem(fieldName);
+            emitStartDict();
+            serialize("background", notes.getBackground());
+            emitEndDict();
+        }
+    }
+
     public void serialize(ZithiaCharacter zithiaCharacter) {
         emitStartDict();
         serialize("names", zithiaCharacter.getNames());
@@ -227,6 +236,7 @@ public class JSONSerializer extends JSONSerializerBase {
         serialize("weaponTraining", zithiaCharacter.getWeaponTraining());
         serialize("talentList", zithiaCharacter.getTalentList());
         serialize("costs", zithiaCharacter.getCosts());
+        serialize("notes", zithiaCharacter.getCharacterNotes());
         emitEndDict();
     }
     

@@ -243,12 +243,19 @@
   <component name="ProjectDictionaryState">
     <dictionary name="mcherm">
       <words>
+        <w>async</w>
         <w>charsheet</w>
         <w>charsheets</w>
         <w>datastore</w>
+        <w>deserializer</w>
+        <w>fixme</w>
+        <w>formatters</w>
+        <w>internationalizable</w>
         <w>javac</w>
         <w>metadata</w>
+        <w>outdent</w>
         <w>threadsafe</w>
+        <w>toolbar's</w>
         <w>tweakable</w>
         <w>unescape</w>
         <w>xstart</w>
