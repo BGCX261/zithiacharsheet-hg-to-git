@@ -39,7 +39,6 @@ public class CalculatedBooleanValue extends SimpleObservable implements Observab
     }
     
     
-    @Override
     public boolean getValue() {
         return value;
     }

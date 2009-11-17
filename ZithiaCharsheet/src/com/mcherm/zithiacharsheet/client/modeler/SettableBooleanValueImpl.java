@@ -11,12 +11,10 @@ public class SettableBooleanValueImpl extends SimpleObservable implements Settab
         this.value = initialValue;
     }
     
-    @Override
     public boolean getValue() {
         return value;
     }
     
-    @Override
     public void setValue(boolean value) {
         this.value = value;
         alertObservers();

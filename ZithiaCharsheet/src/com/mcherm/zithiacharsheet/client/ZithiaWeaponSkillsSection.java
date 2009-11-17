@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.mcherm.zithiacharsheet.client.FancyListSelectionDialog.ItemDisplayCallback;
@@ -26,9 +27,22 @@ import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
  * A section within a character sheet for displaying the
  * weapon levels and such.
  */
-public class ZithiaWeaponSkillsSection extends VerticalPanel {
-
+public class ZithiaWeaponSkillsSection extends TabPanel {
     public ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
+        OLD_ZithiaWeaponSkillsSection oldView = new OLD_ZithiaWeaponSkillsSection(zithiaCharacter);
+        add(oldView, "Raw");
+        add(new HTML("Empty."), "Empty");
+        add(new WeaponsUseTree(zithiaCharacter), "Use");
+        selectTab(0);
+    }
+}
+
+
+
+// FIXME: This is a temp hack until I have it working. It's the messy first-draft of weapon skills
+class OLD_ZithiaWeaponSkillsSection extends VerticalPanel {
+
+    public OLD_ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
         this.addStyleName("weaponSkills");
         final WeaponTraining wt = zithiaCharacter.getWeaponTraining();
         showWTInPanel(this, wt);

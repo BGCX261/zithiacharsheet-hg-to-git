@@ -75,7 +75,6 @@ public class CharacterList extends VerticalPanel {
         
         saveCharsheetService.listCharsheets(new AsyncCallback<List<CharacterMetadata>>() {
 
-            @Override
             public void onSuccess(List<CharacterMetadata> result) {
                 for (CharacterMetadata metadata : result) {
                     String textOfItem = metadata.playerName + " :: " + metadata.characterName;
@@ -84,7 +83,6 @@ public class CharacterList extends VerticalPanel {
                 metadataList = result;
             }
             
-            @Override
             public void onFailure(Throwable caught) {
                 Window.alert("Could not load the list of characters: " + caught);
             }

@@ -18,7 +18,6 @@ public class SummableList<T> extends ObservableList<T> {
     }
     
     private class ObservableSum extends SimpleObservable implements ObservableInt, Observer {
-        @Override
         public int getValue() {
             int result = 0;
             for (T item : SummableList.this) {
@@ -27,7 +26,6 @@ public class SummableList<T> extends ObservableList<T> {
             return result;
         }
 
-        @Override
         public void onChange() {
             alertObservers(); // When a value we observe changes, notify our observers.
         }

@@ -24,9 +24,7 @@ public class SkillValue {
      * Constructor.
      * 
      * @param skill the skill that will be created
-     * @param zithiaCharacter the character it will be created for. This MAY be
-     *   only partially initialized, but the stats and race must have been initialized
-     *   already.
+     * @param statValues the StatValues it will be created for.
      */
     public SkillValue(final ZithiaSkill skill, StatValues statValues) {
         this.skill = skill;

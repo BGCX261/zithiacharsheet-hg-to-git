@@ -25,7 +25,6 @@ public class SelectSkillDialog extends DialogBox {
         final Button closeButton = new Button("Close");
         final SelectSkillDialog theDialog = this;
         closeButton.addClickHandler(new ClickHandler() {
-            @Override
             public void onClick(ClickEvent event) {
                 theDialog.hide();
             }

@@ -109,8 +109,8 @@ public class ImmutableList<T> implements Iterable<T> {
      * create a list where the type of newer items is broader than
      * the type of the tail of the list.
      * @param <T> the type of the items in the list
-     * @param item the new head of the list
      * @param tail the rest of the list
+     * @param item the new head of the list
      * @return a new list where item is the head and the rest is rest.
      */
     public static <T> ImmutableList<T> add(final ImmutableList<? extends T> tail, final T item) {
