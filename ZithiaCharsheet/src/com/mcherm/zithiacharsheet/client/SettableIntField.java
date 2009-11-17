@@ -30,7 +30,6 @@ public class SettableIntField extends TextBox {
             }
         });
         addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
             public void onValueChange(ValueChangeEvent<String> event) {
                 try {
                     int newValue = Integer.parseInt(event.getValue());

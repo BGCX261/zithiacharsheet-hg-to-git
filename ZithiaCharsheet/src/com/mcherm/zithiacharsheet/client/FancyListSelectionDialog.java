@@ -89,7 +89,6 @@ public class FancyListSelectionDialog<T> extends DialogBox {
         dialogVPanel.add(table);
         final Button closeButton = new Button("Cancel");
         closeButton.addClickHandler(new ClickHandler() {
-            @Override
             public void onClick(ClickEvent event) {
                 dialogCompleted();
             }

@@ -229,7 +229,6 @@ public class WeaponTraining {
     /**
      * A subroutine of clean() so that we don't have to carefully reset values
      * on items which will be deleted in a moment.
-     * @param resetValues
      */
     private void clobber() {
         for (WeaponTraining child : children) {

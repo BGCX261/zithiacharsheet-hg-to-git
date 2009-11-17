@@ -8,7 +8,6 @@ package com.mcherm.zithiacharsheet.client.modeler;
 public class SumOfIntsValue extends CalculatedIntValue<ObservableInt> {
     
     public static class SumValueCalculator implements ValueCalculator<ObservableInt> {
-        @Override
         public int calculateValue(Iterable<? extends ObservableInt> inputs) {
             int result = 0;
             for (ObservableInt input : inputs) {

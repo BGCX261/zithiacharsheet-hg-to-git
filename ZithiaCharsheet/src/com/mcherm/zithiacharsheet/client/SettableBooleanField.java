@@ -16,13 +16,11 @@ public class SettableBooleanField extends HorizontalPanel {
         final CheckBox checkBox = new CheckBox(text);
         checkBox.setValue(value.getValue());
         value.addObserver(new Observer() {
-            @Override
             public void onChange() {
                 checkBox.setValue(value.getValue());
             }
         });
         checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
                 value.setValue(event.getValue());
             }

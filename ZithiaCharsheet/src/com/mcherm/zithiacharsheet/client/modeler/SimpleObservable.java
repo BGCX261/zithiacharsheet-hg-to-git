@@ -10,12 +10,10 @@ public class SimpleObservable implements Observable {
 
     private ImmutableList<Observer> observers = new ImmutableList<Observer>();
     
-    @Override
     public void addObserver(Observer observer) {
         observers = observers.add(observer);
     }
     
-    @Override
     public void removeObserver(Observer observer) {
         observers = observers.remove(observer);
     }

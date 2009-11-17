@@ -32,7 +32,6 @@ public class ZithiaCharsheetEntryPoint implements EntryPoint {
         // -- Set up the card in the deck for showing the list --
         mainPanel.add(new CharacterList(new CharacterList.ButtonActions() {
 
-            @Override
             public void onGoButton(CharacterMetadata metadata) {
                 mainPanel.showWidget(1); // Show the character sheet
                 zithiaCharsheet.setCharacterId(metadata.getId(), new FailureAction() {
@@ -43,7 +42,6 @@ public class ZithiaCharsheetEntryPoint implements EntryPoint {
                 });
             }
 
-            @Override
             public void onNewButton() {
                 mainPanel.showWidget(1); // Show the character sheet
                 // FIXME: Maybe we need to empty it out; for now we won't.

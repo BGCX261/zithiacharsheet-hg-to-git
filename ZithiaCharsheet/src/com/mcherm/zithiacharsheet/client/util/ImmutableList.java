@@ -35,18 +35,14 @@ public class ImmutableList<T> implements Iterable<T> {
         throw new IllegalStateException();
     }
 
-    @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            @Override
             public boolean hasNext() {
                 return false;
             }
-            @Override
             public T next() {
                 throw new NoSuchElementException();
             }
-            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
@@ -113,8 +109,8 @@ public class ImmutableList<T> implements Iterable<T> {
      * create a list where the type of newer items is broader than
      * the type of the tail of the list.
      * @param <T>
+     * @param tail the rest of the list
      * @param item the new head of the list
-     * @param rest the rest of the list
      * @return a new list where item is the head and the rest is rest.
      */
     public static <T> ImmutableList<T> add(final ImmutableList<? extends T> tail, final T item) {
@@ -151,11 +147,9 @@ public class ImmutableList<T> implements Iterable<T> {
             final ImmutableList<? extends T> thisList = this;
             return new Iterator<T>() {
                 private ImmutableList<? extends T> currentPosition = thisList;
-                @Override
                 public boolean hasNext() {
                     return ! currentPosition.isEmpty();
                 }
-                @Override
                 public T next() {
                     if (currentPosition.isEmpty()) {
                         throw new NoSuchElementException();
@@ -164,7 +158,6 @@ public class ImmutableList<T> implements Iterable<T> {
                     currentPosition = currentPosition.tail();
                     return result;
                 }
-                @Override
                 public void remove() {
                     throw new UnsupportedOperationException();
                 }

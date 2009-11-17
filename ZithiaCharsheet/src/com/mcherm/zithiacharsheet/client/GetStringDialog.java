@@ -28,7 +28,6 @@ public class GetStringDialog extends DialogBox {
         final Button okButton = new Button("OK");
         final DialogBox theDialog = this;
         okButton.addClickHandler(new ClickHandler() {
-            @Override
             public void onClick(ClickEvent event) {
                 theDialog.hide();
             }

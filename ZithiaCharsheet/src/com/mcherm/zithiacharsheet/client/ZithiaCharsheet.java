@@ -161,11 +161,9 @@ public class ZithiaCharsheet extends Grid {
     public void saveAsNewCharacter() {
         Window.alert("Character not specified: Will create new character.");
         saveCharsheetService.newCharsheet(new AsyncCallback<CharacterMetadata>() {
-            @Override
             public void onFailure(Throwable caught) {
                 Window.alert("Unable to create character: " + caught);
             }
-            @Override
             public void onSuccess(CharacterMetadata result) {
                 characterId = result.getId();
                 System.out.println("Result = " + result + ", result.getId() = " + result.getId()); // FIXME: Remove
@@ -194,11 +192,9 @@ public class ZithiaCharsheet extends Grid {
      */
     public void load(final FailureAction failureAction) {
         saveCharsheetService.loadCharsheet(characterId, new AsyncCallback<String>() {
-            @Override
             public void onFailure(Throwable caught) {
                 failureAction.onFailure(caught);
             }
-            @Override
             public void onSuccess(String result) {
                 JSONValue jsonValue = JSONParser.parse(result);
                 JSONDeserializer deserializer = new JSONDeserializer();
@@ -215,11 +211,9 @@ public class ZithiaCharsheet extends Grid {
     private void save() {
         CharacterStorage storage = new CharacterStorage(characterId, zithiaCharacter);
         saveCharsheetService.saveCharsheet(storage, new AsyncCallback<Void>() {
-            @Override
             public void onFailure(Throwable caught) {
                 Window.alert("Save failed: " + caught);
             }
-            @Override
             public void onSuccess(Void result) {
                 // Nothing to do
             }

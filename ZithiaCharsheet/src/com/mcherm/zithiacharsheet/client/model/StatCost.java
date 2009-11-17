@@ -16,7 +16,6 @@ public interface StatCost {
 
 
     static class NormalStatCost implements StatCost {
-        @Override
         public int getCost(int pointsRaised) {
             int pseudoStat = 10 + pointsRaised;
             if (pseudoStat >= 10) {
@@ -69,7 +68,6 @@ public interface StatCost {
     }
     
     static class SpdStatCost implements StatCost {
-        @Override
         public int getCost(int pointsRaised) {
             int pseudoStat = 6 + pointsRaised;
             switch (pseudoStat) {
