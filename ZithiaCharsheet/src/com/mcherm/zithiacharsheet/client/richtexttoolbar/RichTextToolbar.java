@@ -36,6 +36,8 @@ import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.mcherm.zithiacharsheet.client.RichTextPalate;
+
 
 /**
  * A sample toolbar for use with {@link RichTextArea}. It provides a simple UI
@@ -86,6 +88,8 @@ public class RichTextToolbar extends Composite {
     AbstractImagePrototype ul();
 
     AbstractImagePrototype underline();
+
+    AbstractImagePrototype viewHtml();
   }
 
   /**
@@ -99,8 +103,6 @@ public class RichTextToolbar extends Composite {
     String blue();
 
     String bold();
-
-    String color();
 
     String createLink();
 
@@ -163,6 +165,8 @@ public class RichTextToolbar extends Composite {
     String xxsmall();
 
     String yellow();
+
+    String viewHtml();
   }
 
   /**
@@ -175,10 +179,7 @@ public class RichTextToolbar extends Composite {
     public void onChange(ChangeEvent event) {
       Widget sender = (Widget) event.getSource();
 
-      if (sender == backColors) {
-        basic.setBackColor(backColors.getValue(backColors.getSelectedIndex()));
-        backColors.setSelectedIndex(0);
-      } else if (sender == foreColors) {
+      if (sender == foreColors) {
         basic.setForeColor(foreColors.getValue(foreColors.getSelectedIndex()));
         foreColors.setSelectedIndex(0);
       } else if (sender == fonts) {
@@ -235,6 +236,8 @@ public class RichTextToolbar extends Composite {
         extended.insertUnorderedList();
       } else if (sender == removeFormat) {
         extended.removeFormat();
+      } else if (sender == viewHtml) {
+          richTextPalate.switchToHTMLSourceMode();
       } else if (sender == richText) {
         // We use the RichTextArea's onKeyUp event to update the toolbar status.
         // This will catch any cases where the user moves the cursur using the
@@ -264,6 +267,7 @@ public class RichTextToolbar extends Composite {
   private Strings strings = (Strings) GWT.create(Strings.class);
   private EventHandler handler = new EventHandler();
 
+  private RichTextPalate richTextPalate;
   private RichTextArea richText;
   private RichTextArea.BasicFormatter basic;
   private RichTextArea.ExtendedFormatter extended;
@@ -290,18 +294,19 @@ public class RichTextToolbar extends Composite {
   private PushButton removeLink;
   private PushButton removeFormat;
 
-  private ListBox backColors;
   private ListBox foreColors;
   private ListBox fonts;
   private ListBox fontSizes;
+  private PushButton viewHtml;
 
   /**
    * Creates a new toolbar that drives the given rich text area.
    * 
-   * @param richText the rich text area to be controlled
+   * @param richTextPalate the rich text palate this is to work with.
    */
-  public RichTextToolbar(RichTextArea richText) {
-    this.richText = richText;
+  public RichTextToolbar(RichTextPalate richTextPalate) {
+    this.richTextPalate = richTextPalate;
+    this.richText = richTextPalate.getRichTextArea();
     this.basic = richText.getBasicFormatter();
     this.extended = richText.getExtendedFormatter();
 
@@ -352,8 +357,7 @@ public class RichTextToolbar extends Composite {
     }
 
     if (basic != null) {
-      bottomPanel.add(backColors = createColorList("Background"));
-      bottomPanel.add(foreColors = createColorList("Foreground"));
+      bottomPanel.add(foreColors = createColorList("Color"));
       bottomPanel.add(fonts = createFontList());
       bottomPanel.add(fontSizes = createFontSizes());
 
@@ -362,6 +366,7 @@ public class RichTextToolbar extends Composite {
       richText.addKeyUpHandler(handler);
       richText.addClickHandler(handler);
     }
+    bottomPanel.add(viewHtml = createPushButton(images.viewHtml(), strings.viewHtml()));
   }
 
   private ListBox createColorList(String caption) {

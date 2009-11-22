@@ -30,7 +30,7 @@ public class SettableRichStringField extends RichTextPalate {
                 }
             }
         });
-        getRichTextArea().addBlurHandler(new BlurHandler() {
+        addBlurHandler(new BlurHandler() {
             public void onBlur(BlurEvent blurEvent) {
                 ignoreValueUpdates = true;
                 value.setValue(getHTML());
