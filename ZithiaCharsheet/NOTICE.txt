@@ -1,0 +1,7 @@
+Zithia Charsheet
+Copyright 2009 Michael Chermside
+
+This product includes software developed by
+ - Michael Chermside (mcherm@mcherm.com)
+ - Google Inc (http://google.com/)
+   - Google Web Toolkit (http://code.google.com/webtoolkit/)
