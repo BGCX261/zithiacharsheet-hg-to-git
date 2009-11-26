@@ -15,6 +15,11 @@
  */
 package com.mcherm.zithiacharsheet.client;
 
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,7 +46,7 @@ public class TreeGrid extends Composite {
     private final boolean showHeader;
     private final FlexTable table;
 
-    public TreeGrid(TreeGridItem rootItem, int numColumns, TreeImages treeImages, boolean showHeader) {
+    public TreeGrid(TreeGridItem rootItem, int numColumns, final TreeImages treeImages, boolean showHeader) {
         if (showHeader != false) {
             new RuntimeException("Cannot do headers yet.");
         }
@@ -52,40 +57,8 @@ public class TreeGrid extends Composite {
         table = new FlexTable();
         table.setCellPadding(0);
         table.setCellSpacing(0);
-        drawRow(rootItem, 0);
+        TreeGridBranchLive rootBranchLive = new TreeGridBranchLive(rootItem, 0);
         initWidget(table);
-    }
-
-    /** This uses a particular TreeGridItem and renders it to a given row of the table. */
-    private void drawRow(TreeGridItem item, int row) {
-        // --- Column 0 has tree indent ---
-        HorizontalPanel colZeroPanel;
-        {
-            Image treeControlsImage = treeImages.treeClosed().createImage();
-            Widget displayWidget;
-            {
-                WidgetOrText widgetOrText = item.getContents(0);
-                if (widgetOrText.isWidget()) {
-                    displayWidget = widgetOrText.getWidget();
-                } else {
-                    displayWidget = new Label(widgetOrText.getText());
-                }
-            }
-            colZeroPanel = new HorizontalPanel();
-            colZeroPanel.add(treeControlsImage);
-            colZeroPanel.add(displayWidget);
-        }
-        table.setWidget(row, 0, colZeroPanel);
-
-        // --- All other columns ---
-        for (int col=1; col<numColumns; col++) {
-            WidgetOrText widgetOrText = item.getContents(col);
-            if (widgetOrText.isWidget()) {
-                table.setWidget(row, col, widgetOrText.getWidget());
-            } else {
-                table.setText(row, col, widgetOrText.getText());
-            }
-        }
     }
 
     /** An interface for a thing which returns text and widgets to populate a row. */
@@ -101,6 +74,77 @@ public class TreeGrid extends Composite {
         boolean hasChildren();
         /** Returns the list of children of this TreeGridItem or null to indicate no children. */
         Iterable<TreeGridItem> getChildren();
+    }
+
+    /** Wraps a TreeGridItem and also keep track of its current state. */
+    private class TreeGridBranchLive {
+        private final TreeGridItem treeGridItem;
+        private final Image treeControlsImage;
+        private int row;
+        private boolean isOpen;
+
+        /** Constructor. */
+        public TreeGridBranchLive(TreeGridItem treeGridItem, int row) {
+            this.treeGridItem = treeGridItem;
+            this.row = row;
+            this.isOpen = false;
+            treeControlsImage = treeImages.treeClosed().createImage();
+            drawRow();
+        }
+
+        /** Toggles between the open and closed state. */
+        public void toggle() {
+            isOpen = ! isOpen;
+            updateTreeImage();
+        }
+
+        private void updateTreeImage() {
+            AbstractImagePrototype desiredImage;
+            if (isOpen) {
+                desiredImage = treeImages.treeOpen();
+            } else {
+                desiredImage = treeImages.treeClosed();
+            }
+            desiredImage.applyTo(treeControlsImage);
+        }
+
+        /** This uses a particular TreeGridItem and renders it to a given row of the table. */
+        private void drawRow() {
+            // --- Column 0 has tree indent ---
+            HorizontalPanel colZeroPanel;
+            {
+                Widget displayWidget;
+                {
+                    WidgetOrText widgetOrText = treeGridItem.getContents(0);
+                    if (widgetOrText.isWidget()) {
+                        displayWidget = widgetOrText.getWidget();
+                    } else {
+                        displayWidget = new Label(widgetOrText.getText());
+                    }
+                }
+                // FIXME: Better to share a common click handler.
+                treeControlsImage.addClickHandler(new ClickHandler() {
+                    public void onClick(ClickEvent clickEvent) {
+                        toggle();
+                    }
+                });
+                colZeroPanel = new HorizontalPanel();
+                colZeroPanel.add(treeControlsImage);
+                colZeroPanel.add(displayWidget);
+            }
+            table.setWidget(row, 0, colZeroPanel);
+
+            // --- All other columns ---
+            for (int col=1; col<numColumns; col++) {
+                WidgetOrText widgetOrText = treeGridItem.getContents(col);
+                if (widgetOrText.isWidget()) {
+                    table.setWidget(row, col, widgetOrText.getWidget());
+                } else {
+                    table.setText(row, col, widgetOrText.getText());
+                }
+            }
+        }
+
     }
 
     /**
