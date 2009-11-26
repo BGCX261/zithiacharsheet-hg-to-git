@@ -148,7 +148,9 @@ public class WeaponsCatalog {
             String name = line[2];
             int strMin = Integer.parseInt(line[3]);
             int spd = Integer.parseInt(line[4]);
-            Weapon weapon = new Weapon(currentSpan2Group, id, name, strMin, spd);
+            DamageRoll hpDmg = new DamageRoll(line[5]);
+            DamageRoll stunDmg = new DamageRoll(line[6]);
+            Weapon weapon = new Weapon(currentSpan2Group, id, name, strMin, spd, hpDmg, stunDmg);
             weaponsList.add(weapon);
             final int basicTrainingCost = 1;
             final int firstLevelCost = 2;

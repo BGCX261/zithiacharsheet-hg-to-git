@@ -49,6 +49,7 @@ public class ZithiaWeaponSkillsSection extends TabPanel {
         add(oldView, "Raw");
         add(new HTML("Empty."), "Empty");
         add(new WeaponsUseTree(zithiaCharacter), "Use");
+        add(new WeaponUseTreeGrid(zithiaCharacter), "UseGrid");
         selectTab(0);
     }
 }

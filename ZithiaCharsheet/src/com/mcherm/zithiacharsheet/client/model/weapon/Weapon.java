@@ -26,17 +26,20 @@ public class Weapon {
     private final String name;
     private final int strMin;
     private final int spd;
-    // FIXME: Also has damage, but I have to figure out how that is stored first.
-    
+    private final DamageRoll hpDmg;
+    private final DamageRoll stunDmg;
+
     /**
      * Constructor.
      */
-    public Weapon(WeaponGroup weaponGroup, String id, String name, int strMin, int spd) {
+    public Weapon(WeaponGroup weaponGroup, String id, String name, int strMin, int spd, DamageRoll hpDmg, DamageRoll stunDmg) {
         this.weaponGroup = weaponGroup;
         this.id = id;
         this.name = name;
         this.strMin = strMin;
         this.spd = spd;
+        this.hpDmg = hpDmg;
+        this.stunDmg = stunDmg;
     }
     
     public WeaponGroup getWeaponGroup() {
@@ -57,6 +60,14 @@ public class Weapon {
     
     public int getSpd() {
         return spd;
+    }
+
+    public DamageRoll getHpDmg() {
+        return hpDmg;
+    }
+
+    public DamageRoll getStunDmg() {
+        return stunDmg;
     }
     
 }
