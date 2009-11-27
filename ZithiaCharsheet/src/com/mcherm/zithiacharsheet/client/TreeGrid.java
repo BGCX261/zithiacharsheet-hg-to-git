@@ -15,13 +15,18 @@
  */
 package com.mcherm.zithiacharsheet.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -57,7 +62,7 @@ public class TreeGrid extends Composite {
         table = new FlexTable();
         table.setCellPadding(0);
         table.setCellSpacing(0);
-        TreeGridBranchLive rootBranchLive = new TreeGridBranchLive(rootItem, 0);
+        TreeGridBranchLive rootBranchLive = new TreeGridBranchLive(rootItem, null, 0);
         initWidget(table);
     }
 
@@ -79,25 +84,71 @@ public class TreeGrid extends Composite {
     /** Wraps a TreeGridItem and also keep track of its current state. */
     private class TreeGridBranchLive {
         private final TreeGridItem treeGridItem;
+        private final TreeGridBranchLive parent;
+        private final int childNo;
         private final Image treeControlsImage;
-        private int row;
+        private final int indentLevel;
         private boolean isOpen;
+        private List<TreeGridBranchLive> children;
 
-        /** Constructor. */
-        public TreeGridBranchLive(TreeGridItem treeGridItem, int row) {
+        /**
+         * Constructor.
+         *
+         * @param treeGridItem the TreeGridItem to display
+         * @param parent the TreeGridBranchLive that is this one's parent, or null for the root.
+         * @param childNo position of this within the children of the parent.
+         *    0 for first child; 0 for the root item.
+         */
+        public TreeGridBranchLive(TreeGridItem treeGridItem, TreeGridBranchLive parent, int childNo) {
             this.treeGridItem = treeGridItem;
-            this.row = row;
-            this.isOpen = false;
+            this.parent = parent;
+            this.childNo = childNo;
             treeControlsImage = treeImages.treeClosed().createImage();
-            drawRow();
+            this.indentLevel = parent == null ? 0 : parent.getIndentLevel() + 1;
+            this.isOpen = false;
+            children = null;
+            drawRow(getCurrentRow());
+        }
+
+        /** Returns the indent level of this item. The root has level 0. */
+        public int getIndentLevel() {
+            return indentLevel;
         }
 
         /** Toggles between the open and closed state. */
         public void toggle() {
             isOpen = ! isOpen;
             updateTreeImage();
+            if (isOpen) {
+                openChildren();
+            }
         }
 
+        /** Obtains the current row number for this item within the table. */
+        int getCurrentRow() {
+            if (parent == null) {
+                return 0;
+            } else {
+                return parent.getCurrentRow() + childNo + 1;
+            }
+        }
+
+        /** Displays the previously-hidden children (creating them if needed). */
+        public void openChildren() {
+            if (children == null) {
+                children = new ArrayList<TreeGridBranchLive>();
+                int newChildNo = 0;
+                for (TreeGridItem childItem : treeGridItem.getChildren()) {
+                    TreeGridBranchLive child = new TreeGridBranchLive(childItem, this, newChildNo);
+                    children.add(child);
+                    newChildNo++;
+                }
+            } else {
+                Window.alert("Should show existing children."); // FIXME: Write this
+            }
+        }
+
+        /** Displays the correct tree image. */
         private void updateTreeImage() {
             AbstractImagePrototype desiredImage;
             if (isOpen) {
@@ -108,8 +159,23 @@ public class TreeGrid extends Composite {
             desiredImage.applyTo(treeControlsImage);
         }
 
+        /**
+         * This creates a new row at position 'row'.
+         * @param row
+         */
+        private void insertRow(int row) {
+            if (row < table.getRowCount()) {
+                table.insertRow(row);
+            } else if (row == table.getRowCount()) {
+                // Nothing to do... appending happens automatically in a FlexTable.
+            } else {
+                throw new RuntimeException("Attempt to add beyond the end of the table.");
+            }
+        }
+
         /** This uses a particular TreeGridItem and renders it to a given row of the table. */
-        private void drawRow() {
+        private void drawRow(int row) {
+            insertRow(row);
             // --- Column 0 has tree indent ---
             HorizontalPanel colZeroPanel;
             {
@@ -128,7 +194,10 @@ public class TreeGrid extends Composite {
                         toggle();
                     }
                 });
+                int indentPixels = 16 * getIndentLevel(); // FIXME: Don't hardcode 16
+                Widget indentSpacer = new HTML("<div style=\"width: " + indentPixels + "px\"></div>");
                 colZeroPanel = new HorizontalPanel();
+                colZeroPanel.add(indentSpacer);
                 colZeroPanel.add(treeControlsImage);
                 colZeroPanel.add(displayWidget);
             }

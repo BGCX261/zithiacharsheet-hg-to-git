@@ -15,6 +15,10 @@
  */
 package com.mcherm.zithiacharsheet.client;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.TreeImages;
 import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
@@ -92,7 +96,11 @@ public class WeaponUseTreeGrid extends TreeGrid {
         }
 
         public Iterable<TreeGridItem> getChildren() {
-            return null;
+            List<TreeGridItem> result = new ArrayList<TreeGridItem>();
+            for (WeaponTraining childWt : wt.getChildren()) {
+                result.add(new WeaponUseTreeGridItem(zithiaCharacter, childWt));
+            }
+            return result;
         }
     }
 }
