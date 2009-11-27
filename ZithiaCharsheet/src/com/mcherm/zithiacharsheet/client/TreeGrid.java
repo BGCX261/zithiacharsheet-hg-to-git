@@ -21,7 +21,6 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
@@ -45,17 +44,15 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class TreeGrid extends Composite {
 
-    private final TreeGridItem rootItem;
     private final int numColumns;
     private final TreeImages treeImages;
     private final boolean showHeader;
     private final FlexTable table;
 
     public TreeGrid(TreeGridItem rootItem, int numColumns, final TreeImages treeImages, boolean showHeader) {
-        if (showHeader != false) {
-            new RuntimeException("Cannot do headers yet.");
+        if (showHeader) {
+            throw new RuntimeException("Cannot do headers yet.");
         }
-        this.rootItem = rootItem;
         this.numColumns = numColumns;
         this.treeImages = treeImages;
         this.showHeader = showHeader;
@@ -85,10 +82,11 @@ public class TreeGrid extends Composite {
     private class TreeGridBranchLive {
         private final TreeGridItem treeGridItem;
         private final TreeGridBranchLive parent;
-        private final int childNo;
         private final Image treeControlsImage;
         private final int indentLevel;
-        private boolean isOpen;
+
+        private boolean currentlyOpen;
+        /** List of children, or null if children need to be initialized. */
         private List<TreeGridBranchLive> children;
 
         /**
@@ -96,18 +94,17 @@ public class TreeGrid extends Composite {
          *
          * @param treeGridItem the TreeGridItem to display
          * @param parent the TreeGridBranchLive that is this one's parent, or null for the root.
-         * @param childNo position of this within the children of the parent.
-         *    0 for first child; 0 for the root item.
+         * @param row the row of the table this should be displayed in (which may not
+         *    exist at the moment).
          */
-        public TreeGridBranchLive(TreeGridItem treeGridItem, TreeGridBranchLive parent, int childNo) {
+        public TreeGridBranchLive(TreeGridItem treeGridItem, TreeGridBranchLive parent, int row) {
             this.treeGridItem = treeGridItem;
             this.parent = parent;
-            this.childNo = childNo;
             treeControlsImage = treeImages.treeClosed().createImage();
             this.indentLevel = parent == null ? 0 : parent.getIndentLevel() + 1;
-            this.isOpen = false;
+            this.currentlyOpen = false;
             children = null;
-            drawRow(getCurrentRow());
+            drawRow(row);
         }
 
         /** Returns the indent level of this item. The root has level 0. */
@@ -117,41 +114,117 @@ public class TreeGrid extends Composite {
 
         /** Toggles between the open and closed state. */
         public void toggle() {
-            isOpen = ! isOpen;
+            currentlyOpen = !currentlyOpen;
             updateTreeImage();
-            if (isOpen) {
+            if (currentlyOpen) {
                 openChildren();
+            } else {
+                closeChildren();
             }
         }
 
-        /** Obtains the current row number for this item within the table. */
+        /** Returns true if this particular node is a branch which is currently open. */
+        public boolean isOpen() {
+            return currentlyOpen;
+        }
+
+        /**
+         * Obtains the current row number for this item within the table.
+         * <p>
+         * NOTE: This may need some caching for performance. We would have
+         * to clear the cache whenever any row had new children added
+         * (but NOT on open and close).
+         */
         int getCurrentRow() {
-            if (parent == null) {
-                return 0;
-            } else {
-                return parent.getCurrentRow() + childNo + 1;
+            return parent == null ? 0 : parent.getRowWhereAChildBegins(this);
+        }
+
+        int getRowsUsedByThisAndAllDescendants() {
+            int result = 1;
+            if (children != null) {
+                for (TreeGridBranchLive child : children) {
+                    result += child.getRowsUsedByThisAndAllDescendants();
+                }
             }
+            return result;
+        }
+        
+        int getRowWhereAChildBegins(TreeGridBranchLive specificChild) {
+            if (children == null) {
+                throw new RuntimeException("getRowWhereAChildBegins() called on node without children.");
+            }
+            int result = getCurrentRow();
+            for (TreeGridBranchLive child : children) {
+                if (child.equals(specificChild)) {
+                    result += 1; // That's what was used; add one more for the child...
+                    return result;
+                } else {
+                    result += child.getRowsUsedByThisAndAllDescendants();
+                }
+            }
+            throw new RuntimeException("getRowWhereAChildBegins() called with node not found in children.");
         }
 
         /** Displays the previously-hidden children (creating them if needed). */
         public void openChildren() {
             if (children == null) {
                 children = new ArrayList<TreeGridBranchLive>();
-                int newChildNo = 0;
+                int row = this.getCurrentRow();
                 for (TreeGridItem childItem : treeGridItem.getChildren()) {
-                    TreeGridBranchLive child = new TreeGridBranchLive(childItem, this, newChildNo);
+                    row++;
+                    TreeGridBranchLive child = new TreeGridBranchLive(childItem, this, row);
                     children.add(child);
-                    newChildNo++;
                 }
             } else {
-                Window.alert("Should show existing children."); // FIXME: Write this
+                for (TreeGridBranchLive child : children) {
+                    child.show();
+                }
+            }
+        }
+
+        /** Call this to hide all the children. Called only when they HAD BEEN open. */
+        public void closeChildren() {
+            if (children == null) {
+                throw new RuntimeException("Should be impossible to try closing a node without children.");
+            }
+            for (TreeGridBranchLive child : children) {
+                child.hide();
+            }
+        }
+
+        /** Returns false if any parent is collapsed; true if all are open. */
+        public boolean isVisible() {
+            return parent.isOpen() && parent.isVisible();
+        }
+
+        /** Calling this will hide this item (and its children). Called only when it HAD BEEN visible. */
+        public void hide() {
+            Element tdElem = table.getFlexCellFormatter().getElement(getCurrentRow(), 0);
+            Element trElem = tdElem.getParentElement();
+            trElem.getStyle().setProperty("display", "none");
+            if (isOpen()) {
+                for (TreeGridBranchLive child : children) {
+                    child.hide();
+                }
+            }
+        }
+
+        /** Calling this will show the item (and decendends). Called only when it HAD BEEN hidden. */
+        public void show() {
+            Element tdElem = table.getFlexCellFormatter().getElement(getCurrentRow(), 0);
+            Element trElem = tdElem.getParentElement();
+            trElem.getStyle().setProperty("display", "table-row");
+            if (isOpen()) {
+                for (TreeGridBranchLive child : children) {
+                    child.show();
+                }
             }
         }
 
         /** Displays the correct tree image. */
         private void updateTreeImage() {
             AbstractImagePrototype desiredImage;
-            if (isOpen) {
+            if (currentlyOpen) {
                 desiredImage = treeImages.treeOpen();
             } else {
                 desiredImage = treeImages.treeClosed();
@@ -161,7 +234,7 @@ public class TreeGrid extends Composite {
 
         /**
          * This creates a new row at position 'row'.
-         * @param row
+         * @param row the number of the new row
          */
         private void insertRow(int row) {
             if (row < table.getRowCount()) {
