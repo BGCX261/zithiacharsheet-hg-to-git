@@ -21,7 +21,6 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -39,52 +38,60 @@ import com.google.gwt.user.client.ui.Widget;
  * where there are columns and rows (the indentation happens in the first
  * column) or, viewed differently, it's a grid where certain rows can be
  * "opened" and "closed" to show "child" rows.
- * <p>
- * // FIXME: As of this moment, the design is still VERY much in flux.
  */
 public class TreeGrid extends Composite {
 
     private final int numColumns;
     private final TreeImages treeImages;
-    private final boolean showHeader;
     private final FlexTable table;
 
-    public TreeGrid(TreeGridItem rootItem, int numColumns, final TreeImages treeImages, boolean showHeader) {
-        if (showHeader) {
-            throw new RuntimeException("Cannot do headers yet.");
-        }
+    public TreeGrid(TreeGridItem rootItem, int numColumns, final TreeImages treeImages) {
         this.numColumns = numColumns;
         this.treeImages = treeImages;
-        this.showHeader = showHeader;
         table = new FlexTable();
         table.setCellPadding(0);
         table.setCellSpacing(0);
-        TreeGridBranchLive rootBranchLive = new TreeGridBranchLive(rootItem, null, 0);
+        int row = 0;
+        List<WidgetOrText> header = getHeader();
+        if (header != null) {
+            createHeader(header);
+            row += 1;
+        }
+        new TreeGridBranchLiveTop(rootItem, null, row);
         initWidget(table);
     }
 
-    /** An interface for a thing which returns text and widgets to populate a row. */
-    public static interface TreeGridRowValues {
-        /** Returns the contents of the indicated column. */
-        WidgetOrText getContents(int column);
-    }
 
-    public static interface TreeGridItem extends TreeGridRowValues {
+    /**
+     * An item in the TreeGrid. Items can either be a leaf (cannot possibly
+     * have children; shown without an "open/close" image) or branches.
+     * Branches, when shown, will have an open/close image. They will be
+     * displayed with a state which can be toggled between open and closed.
+     * They start out closed. The children of a branch will be created
+     * lazily the first time that the branch is opened.
+     */
+    public static interface TreeGridItem {
+        /**
+         * Returns a list of the items that go in the row. The list returned
+         * must be exactly numColumns long.
+         */
+        List<WidgetOrText> getContents();
         /** Return true if this is a leaf. Implies no children. */
         boolean isLeaf();
-        /** Return true if this has children, false if not. */
-        boolean hasChildren();
         /** Returns the list of children of this TreeGridItem or null to indicate no children. */
         Iterable<TreeGridItem> getChildren();
     }
 
-    /** Wraps a TreeGridItem and also keep track of its current state. */
+    /**
+     * Wraps a TreeGridItem and also keep track of its current state.
+     */
     private class TreeGridBranchLive {
+        // -- final fields --
         private final TreeGridItem treeGridItem;
         private final TreeGridBranchLive parent;
         private final Image treeControlsImage;
         private final int indentLevel;
-
+        // -- mutable fields --
         private boolean currentlyOpen;
         /** List of children, or null if children need to be initialized. */
         private List<TreeGridBranchLive> children;
@@ -100,7 +107,11 @@ public class TreeGrid extends Composite {
         public TreeGridBranchLive(TreeGridItem treeGridItem, TreeGridBranchLive parent, int row) {
             this.treeGridItem = treeGridItem;
             this.parent = parent;
-            treeControlsImage = treeImages.treeClosed().createImage();
+            if (treeGridItem.isLeaf()) {
+                treeControlsImage = treeImages.treeLeaf().createImage();
+            } else {
+                treeControlsImage = treeImages.treeClosed().createImage();
+            }
             this.indentLevel = parent == null ? 0 : parent.getIndentLevel() + 1;
             this.currentlyOpen = false;
             children = null;
@@ -136,19 +147,16 @@ public class TreeGrid extends Composite {
          * (but NOT on open and close).
          */
         int getCurrentRow() {
-            return parent == null ? 0 : parent.getRowWhereAChildBegins(this);
+            return parent.getRowWhereAChildBegins(this);
         }
 
-        int getRowsUsedByThisAndAllDescendants() {
-            int result = 1;
-            if (children != null) {
-                for (TreeGridBranchLive child : children) {
-                    result += child.getRowsUsedByThisAndAllDescendants();
-                }
-            }
-            return result;
-        }
-        
+        /**
+         * Finds the row number where a particular child begins.
+         *
+         * @param specificChild this must be a TreeGridBranchLive which is a
+         *   child of the one on which the method is being called.
+         * @return the row number where that child currently resides.
+         */
         int getRowWhereAChildBegins(TreeGridBranchLive specificChild) {
             if (children == null) {
                 throw new RuntimeException("getRowWhereAChildBegins() called on node without children.");
@@ -163,6 +171,17 @@ public class TreeGrid extends Composite {
                 }
             }
             throw new RuntimeException("getRowWhereAChildBegins() called with node not found in children.");
+        }
+
+        /** Like the method name says. */
+        int getRowsUsedByThisAndAllDescendants() {
+            int result = 1;
+            if (children != null) {
+                for (TreeGridBranchLive child : children) {
+                    result += child.getRowsUsedByThisAndAllDescendants();
+                }
+            }
+            return result;
         }
 
         /** Displays the previously-hidden children (creating them if needed). */
@@ -209,7 +228,7 @@ public class TreeGrid extends Composite {
             }
         }
 
-        /** Calling this will show the item (and decendends). Called only when it HAD BEEN hidden. */
+        /** Calling this will show the item (and descendants). Called only when it HAD BEEN hidden. */
         public void show() {
             Element tdElem = table.getFlexCellFormatter().getElement(getCurrentRow(), 0);
             Element trElem = tdElem.getParentElement();
@@ -246,48 +265,81 @@ public class TreeGrid extends Composite {
             }
         }
 
+
         /** This uses a particular TreeGridItem and renders it to a given row of the table. */
         private void drawRow(int row) {
             insertRow(row);
+            List<WidgetOrText> contents = treeGridItem.getContents();
             // --- Column 0 has tree indent ---
             HorizontalPanel colZeroPanel;
             {
-                Widget displayWidget;
+                Widget normalColZeroContent;
                 {
-                    WidgetOrText widgetOrText = treeGridItem.getContents(0);
+                    WidgetOrText widgetOrText = contents.get(0);
                     if (widgetOrText.isWidget()) {
-                        displayWidget = widgetOrText.getWidget();
+                        normalColZeroContent = widgetOrText.getWidget();
                     } else {
-                        displayWidget = new Label(widgetOrText.getText());
+                        normalColZeroContent = new Label(widgetOrText.getText());
                     }
                 }
                 // FIXME: Better to share a common click handler.
-                treeControlsImage.addClickHandler(new ClickHandler() {
-                    public void onClick(ClickEvent clickEvent) {
-                        toggle();
-                    }
-                });
+                if (! treeGridItem.isLeaf()) {
+                    treeControlsImage.addClickHandler(new ClickHandler() {
+                        public void onClick(ClickEvent clickEvent) {
+                            toggle();
+                        }
+                    });
+                }
                 int indentPixels = 16 * getIndentLevel(); // FIXME: Don't hardcode 16
                 Widget indentSpacer = new HTML("<div style=\"width: " + indentPixels + "px\"></div>");
                 colZeroPanel = new HorizontalPanel();
                 colZeroPanel.add(indentSpacer);
                 colZeroPanel.add(treeControlsImage);
-                colZeroPanel.add(displayWidget);
+                colZeroPanel.add(normalColZeroContent);
             }
             table.setWidget(row, 0, colZeroPanel);
 
             // --- All other columns ---
-            for (int col=1; col<numColumns; col++) {
-                WidgetOrText widgetOrText = treeGridItem.getContents(col);
-                if (widgetOrText.isWidget()) {
-                    table.setWidget(row, col, widgetOrText.getWidget());
-                } else {
-                    table.setText(row, col, widgetOrText.getText());
-                }
-            }
+            populateRow(contents, row, 1);
         }
 
     }
+
+
+    /**
+     * This is a subclass of TreeGridBranchLive which is used for the top
+     * one in the tree.
+     */
+    private class TreeGridBranchLiveTop extends TreeGridBranchLive {
+
+        private final int row;
+
+        public TreeGridBranchLiveTop(TreeGridItem treeGridItem, TreeGridBranchLive parent, int row) {
+            super(treeGridItem, parent, row); // FIXME: Must think this through better
+            this.row = row;
+        }
+
+        @Override
+        int getCurrentRow() {
+            return row;
+        }
+
+        @Override
+        public boolean isVisible() {
+            throw new RuntimeException("Will never call isVisible on the top item.");
+        }
+
+        @Override
+        public void hide() {
+            throw new RuntimeException("Will never call isVisible on the top item.");
+        }
+
+        @Override
+        public void show() {
+            throw new RuntimeException("Will never call isVisible on the top item.");
+        }
+    }
+
 
     /**
      * A convenience class which wraps EITHER a string of html OR a Widget
@@ -330,4 +382,43 @@ public class TreeGrid extends Composite {
             return this.text;
         }
     }
+
+
+    /**
+     * Subclasses that wish to display a header can override this to
+     * return a non-null TreeGridRowValues. If so, then it will be
+     * shown as a header.
+     *
+     * @return null to display no header, or a List of exactly numColumns
+     *   WidgetOrText objects.
+     */
+    protected List<WidgetOrText> getHeader() {
+        return null; // default
+    }
+
+    /** Creates the header row. */
+    private void createHeader(List<WidgetOrText> headerContents) {
+        populateRow(headerContents, 0, 0);
+    }
+
+    /**
+     * Insert values from a TreeGridRowValues into the table. Displays to
+     * row <code>row</code> starting from column <code>firstCol</code> and
+     * continuing to the end of the row.
+     *
+     * @param contents the items to display; this must be exactly numColumns long.
+     * @param row the row to draw them in
+     * @param firstCol the column to start with; this and all later cols are done
+     */
+    private void populateRow(List<WidgetOrText> contents, int row, int firstCol) {
+        for (int col=firstCol; col<numColumns; col++) {
+            WidgetOrText widgetOrText = contents.get(col);
+            if (widgetOrText.isWidget()) {
+                table.setWidget(row, col, widgetOrText.getWidget());
+            } else {
+                table.setText(row, col, widgetOrText.getText());
+            }
+        }
+    }
+
 }

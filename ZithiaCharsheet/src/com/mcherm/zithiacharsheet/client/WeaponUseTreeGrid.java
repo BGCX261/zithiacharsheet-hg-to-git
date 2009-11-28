@@ -16,7 +16,7 @@
 package com.mcherm.zithiacharsheet.client;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -35,15 +35,29 @@ import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
  * TreeGrid class.
  */
 public class WeaponUseTreeGrid extends TreeGrid {
-    /*TreeGridItem rootItem, int numColumns, TreeImages treeImages, boolean showHeader*/
 
     private final static int NUM_COLUMNS = 5;
 
     /** Constructor. */
     public WeaponUseTreeGrid(ZithiaCharacter zithiaCharacter) {
         super(new WeaponUseTreeGridItem(zithiaCharacter, zithiaCharacter.getWeaponTraining()),
-                NUM_COLUMNS, GWT.<TreeImages> create(TreeImages.class), false);
+                NUM_COLUMNS, GWT.<TreeImages> create(TreeImages.class));
     }
+
+
+    /**
+     * Display a header giving the meaning of the different columns.
+     */
+    protected List<WidgetOrText> getHeader() {
+        return Arrays.asList(
+                new WidgetOrText("Name"),
+                new WidgetOrText("Levels"),
+                new WidgetOrText("Speed"),
+                new WidgetOrText("Hp"),
+                new WidgetOrText("Stun")
+        );
+    }
+
 
     private static class WeaponUseTreeGridItem implements TreeGridItem {
         private final ZithiaCharacter zithiaCharacter;
@@ -54,45 +68,37 @@ public class WeaponUseTreeGrid extends TreeGrid {
             this.wt = wt;
         }
 
-        public WidgetOrText getContents(int column) {
-            switch(column) {
-                case 0: return new WidgetOrText(wt.getWeaponSkill().getName());
-                case 1: return new WidgetOrText(new TweakableIntField(wt.getLevels()));
-            }
+        public List<WidgetOrText> getContents() {
+            WidgetOrText col_0 = new WidgetOrText(wt.getWeaponSkill().getName());
+            WidgetOrText col_1 = new WidgetOrText(new TweakableIntField(wt.getLevels()));
+            WidgetOrText col_2, col_3, col_4;
 
             if (wt.getWeaponSkill() instanceof SingleWeaponSkill) {
                 SingleWeaponSkill sws = (SingleWeaponSkill) wt.getWeaponSkill();
-                switch(column) {
-                    case 2: {
-                        final int weaponSpd = sws.getWeapon().getSpd();
-                        ObservableInt charSpd = zithiaCharacter.getStat(ZithiaStat.SPD).getValue();
-                        TweakableIntValue cycleTime = new EquationIntValue(charSpd, new EquationIntValue.Equation1() {
-                            public int getValue(int charSpd) {
-                                return charSpd + weaponSpd;
-                            }
-                        });
-                        return new WidgetOrText(new TweakableIntField(cycleTime));
+                final int weaponSpd = sws.getWeapon().getSpd();
+                ObservableInt charSpd = zithiaCharacter.getStat(ZithiaStat.SPD).getValue();
+                TweakableIntValue cycleTime = new EquationIntValue(charSpd, new EquationIntValue.Equation1() {
+                    public int getValue(int charSpd) {
+                        return charSpd + weaponSpd;
                     }
-                    case 3: return new WidgetOrText(sws.getWeapon().getHpDmg().getStr());
-                    case 4: return new WidgetOrText(sws.getWeapon().getStunDmg().getStr());
-                    default: throw new RuntimeException("Should not reach here.");
-                }
+                });
+                col_2 = new WidgetOrText(new TweakableIntField(cycleTime));
+                col_3 = new WidgetOrText(sws.getWeapon().getHpDmg().getStr());
+                col_4 = new WidgetOrText(sws.getWeapon().getStunDmg().getStr());
             } else {
-                switch(column) {
-                    case 2: return new WidgetOrText("");
-                    case 3: return new WidgetOrText("");
-                    case 4: return new WidgetOrText("");
-                    default: throw new RuntimeException("Should not reach here.");
-                }
+                col_2 = col_3 = col_4 = new WidgetOrText("");
             }
+            return Arrays.asList(
+                    col_0,
+                    col_1,
+                    col_2,
+                    col_3,
+                    col_4
+            );
         }
 
         public boolean isLeaf() {
-            return false;
-        }
-
-        public boolean hasChildren() {
-            return false;
+            return wt.getWeaponSkill() instanceof SingleWeaponSkill;
         }
 
         public Iterable<TreeGridItem> getChildren() {
