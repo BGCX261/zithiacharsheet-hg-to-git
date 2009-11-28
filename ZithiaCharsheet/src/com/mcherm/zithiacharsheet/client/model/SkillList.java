@@ -20,7 +20,7 @@ import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
 import com.mcherm.zithiacharsheet.client.modeler.SummableList;
 
 /**
- * This is the set of skills that a character.
+ * This is the set of skills that a character has.
  */
 public class SkillList extends SummableList<SkillValue> {
     
