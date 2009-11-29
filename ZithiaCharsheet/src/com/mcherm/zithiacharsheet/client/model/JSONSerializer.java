@@ -174,7 +174,7 @@ public class JSONSerializer extends JSONSerializerBase {
     protected void serialize(WeaponTraining wt) {
         emitStartDict();
         serialize("weaponSkill", wt.getWeaponSkill());
-        serialize("basicTrainingPurchased", wt.getBasicTrainingPurchased());
+        serialize("basicTrainingDesired", wt.getBasicTrainingDesired());
         serialize("levelsPurchased", wt.getLevelsPurchased());
         serialize("levels", wt.getLevels());
         serialize("thisCost", wt.getThisCost());

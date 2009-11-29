@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.mcherm.zithiacharsheet.client.model.Util;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
 import com.mcherm.zithiacharsheet.client.modeler.CalculatedIntValue;
@@ -53,19 +52,20 @@ import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation2;
 public class WeaponTraining {
     private final WeaponTraining parent;
     private final WeaponSkill weaponSkill;
-    private final SettableBooleanValue basicTrainingPurchased;
+    private final SettableBooleanValue basicTrainingDesired;
+    private final CalculatedBooleanValue basicTrainingPaidHere;
     private final SettableIntValue levelsPurchased;
     private final EquationIntValue levels;
     private final ObservableBoolean trained;
     private final CalculatedIntValue<Observable> thisCost;
     private final SummableList<WeaponTraining> children;
     private final EquationIntValue totalCost;
-    
+
     private WeaponTraining(final WeaponTraining parent, final WeaponSkill weaponSkill) {
         this.parent = parent;
         this.weaponSkill = weaponSkill;
-        final SettableBooleanValue basicTrainingPurchased = new SettableBooleanValueImpl(false);
-        this.basicTrainingPurchased = basicTrainingPurchased;
+        final SettableBooleanValue basicTrainingDesired = new SettableBooleanValueImpl(false);
+        this.basicTrainingDesired = basicTrainingDesired;
         levelsPurchased = new SettableIntValueImpl(0);
         if (parent == null) {
             levels = new EquationIntValue(levelsPurchased, new Equation1() {
@@ -74,10 +74,18 @@ public class WeaponTraining {
                 }
             });
             trained = new CalculatedBooleanValue(
-                Arrays.asList(basicTrainingPurchased),
+                Arrays.asList(basicTrainingDesired),
                 new BooleanValueCalculator() {
                     public boolean calculateValue() {
-                        return basicTrainingPurchased.getValue();
+                        return basicTrainingDesired.getValue();
+                    }
+                }
+            );
+            basicTrainingPaidHere = new CalculatedBooleanValue(
+                Arrays.asList(basicTrainingDesired),
+                new BooleanValueCalculator() {
+                    public boolean calculateValue() {
+                        return basicTrainingDesired.getValue();
                     }
                 }
             );
@@ -88,19 +96,28 @@ public class WeaponTraining {
                 }
             });
             trained = new CalculatedBooleanValue(
-                Arrays.asList(basicTrainingPurchased, parent.isTrained()),
+                Arrays.asList(basicTrainingDesired, parent.isTrained()),
                 new BooleanValueCalculator() {
                     public boolean calculateValue() {
-                        return basicTrainingPurchased.getValue() || parent.isTrained().getValue();
+                        return basicTrainingDesired.getValue() || parent.isTrained().getValue();
+                    }
+                }
+            );
+            final ObservableBoolean parentTrained = parent.isTrained();
+            basicTrainingPaidHere = new CalculatedBooleanValue(
+                Arrays.asList(basicTrainingDesired, parentTrained),
+                new BooleanValueCalculator() {
+                    public boolean calculateValue() {
+                        return basicTrainingDesired.getValue() && !parentTrained.getValue();
                     }
                 }
             );
         }
         thisCost = new CalculatedIntValue<Observable>(
-            Arrays.asList(basicTrainingPurchased, levelsPurchased),
+            Arrays.asList(basicTrainingPaidHere, levelsPurchased),
             new ValueCalculator<Observable>() {
                 public int calculateValue(Iterable<? extends Observable> inputs) {
-                    int basicTrainingCost = basicTrainingPurchased.getValue() ? weaponSkill.getBasicTrainingCost() : 0;
+                    int basicTrainingCost = basicTrainingPaidHere.getValue() ? weaponSkill.getBasicTrainingCost() : 0;
                     int firstLevelCost = weaponSkill.getFirstLevelCost();
                     int levels = levelsPurchased.getValue();
                     return Util.skillCost(basicTrainingCost, firstLevelCost, levels);
@@ -136,11 +153,23 @@ public class WeaponTraining {
     }
     
     /**
-     * Returns true if the character has paid for training with
-     * this particular WeaponSkill.
+     * A value which is true if the character has specified that
+     * they wish to learn basic training for this WeaponSkill.
+     * If this is true but the character has ALSO taken basic
+     * training in a parent WeaponSkill, then it will be no-cost
+     * here -- see also getBasicTrainingPaidHere().
      */
-    public SettableBooleanValue getBasicTrainingPurchased() {
-        return basicTrainingPurchased;
+    public SettableBooleanValue getBasicTrainingDesired() {
+        return basicTrainingDesired;
+    }
+
+    /**
+     * A value which is true if the character has paid for basic
+     * training at this level and false if the character is NOT
+     * trained in this weapon or IS trained at some parent WeaponSkill.
+     */
+    public ObservableBoolean getBasicTrainingPaidHere() {
+        return basicTrainingPaidHere;
     }
     
     /**
@@ -199,7 +228,7 @@ public class WeaponTraining {
     
     /**
      * This walks this WeaponTraining and all child WeaponTrainings, keeping
-     * every item that has basicTrainingPurchased, levelsPurchased, any tweaked
+     * every item that has basicTrainingDesired, levelsPurchased, any tweaked
      * values, or has child we keep, and removing all other items. This node itself
      * will still exist, even if empty, but the method returns true if this
      * WeaponTraining can itself be pruned and false if it cannot.
@@ -220,7 +249,7 @@ public class WeaponTraining {
             }
             hasChild = !children.isEmpty();
         }
-        boolean hasBTP = getBasicTrainingPurchased().getValue();
+        boolean hasBTP = getBasicTrainingPaidHere().getValue();
         boolean hasLevels = getLevelsPurchased().getValue() != 0;
         boolean hasTweaks = getLevels().isTweaked() ||  getThisCost().isTweaked() || getTotalCost().isTweaked();
         return !(hasChild || hasBTP || hasLevels || hasTweaks);
@@ -228,7 +257,7 @@ public class WeaponTraining {
     
     /**
      * This removes all children, all tweaks, and sets the levelsPurchased to 0 and
-     * basicTrainingPurchased to false. Essentially, it wipes clean this and all children.
+     * basicTrainingDesired to false. Essentially, it wipes clean this and all children.
      */
     public void clean() {
         for (WeaponTraining child : children) {
@@ -238,7 +267,7 @@ public class WeaponTraining {
         getLevels().setAdjustments(null, null);
         getThisCost().setAdjustments(null, null);
         getTotalCost().setAdjustments(null, null);
-        getBasicTrainingPurchased().setValue(false);
+        getBasicTrainingDesired().setValue(false);
         getLevelsPurchased().setValue(0);
     }
     
@@ -259,5 +288,5 @@ public class WeaponTraining {
     public static WeaponTraining createAllCombatTraining() {
         return new WeaponTraining(null, WeaponsCatalog.getSingleton().getAllCombatSkill());
     }
-    
+
 }

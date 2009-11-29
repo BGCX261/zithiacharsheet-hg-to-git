@@ -115,7 +115,7 @@ class O extends VerticalPanel {
             this.add(new HTML("["));
             this.add(new SettableIntField(wt.getLevelsPurchased()));
             this.add(new HTML("]"));
-            this.add(new SettableBooleanField("Trained", wt.getBasicTrainingPurchased()));
+            this.add(new SettableBooleanField("Trained", wt.getBasicTrainingDesired()));
             this.add(new HTML(" cost-"));
             this.add(new TweakableIntField(wt.getTotalCost()));
             this.add(new HTML("["));

@@ -153,7 +153,7 @@ public class JSONDeserializer {
         JSONObject inputObject = notNull(input.isObject());
         WeaponSkill weaponSkill = lookupWeaponSkill(notNull(inputObject.get("weaponSkill")));
         WeaponTraining result = parent.createChild(weaponSkill);
-        updateFromField(inputObject, "basicTrainingPurchased", result.getBasicTrainingPurchased());
+        updateFromField(inputObject, "basicTrainingDesired", result.getBasicTrainingDesired());
         updateFromField(inputObject, "levelsPurchased", result.getLevelsPurchased());
         updateFromField(inputObject, "levels", result.getLevels());
         updateFromField(inputObject, "thisCost", result.getThisCost());
@@ -173,7 +173,7 @@ public class JSONDeserializer {
         if (wt.getWeaponSkill() != weaponSkillFound) {
             throw new JSONBuildException();
         }
-        updateFromField(inputObject, "basicTrainingPurchased", wt.getBasicTrainingPurchased());
+        updateFromField(inputObject, "basicTrainingDesired", wt.getBasicTrainingDesired());
         updateFromField(inputObject, "levelsPurchased", wt.getLevelsPurchased());
         updateFromField(inputObject, "levels", wt.getLevels());
         updateFromField(inputObject, "thisCost", wt.getThisCost());

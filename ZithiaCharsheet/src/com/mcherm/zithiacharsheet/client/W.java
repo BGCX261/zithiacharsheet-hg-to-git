@@ -91,23 +91,25 @@ public class W extends TreeGrid {
     }
 
     private static class TrainingEntryField extends CheckBox {
-        private final SettableBooleanValue purchased;
         private final ObservableBoolean trained;
-        
+        private final SettableBooleanValue trainDesired;
+        private final ObservableBoolean trainPaidHere;
+
         public TrainingEntryField(WeaponTraining wt) {
-            purchased = wt.getBasicTrainingPurchased();
             trained = wt.isTrained();
+            trainDesired = wt.getBasicTrainingDesired();
+            trainPaidHere = wt.getBasicTrainingPaidHere();
             updateCheckboxState();
             final Observable.Observer observer = new Observable.Observer() {
                 public void onChange() {
                     updateCheckboxState();
                 }
             };
-            purchased.addObserver(observer);
             trained.addObserver(observer);
+            trainPaidHere.addObserver(observer);
             addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                 public void onValueChange(ValueChangeEvent<Boolean> event) {
-                    purchased.setValue(event.getValue());
+                    trainDesired.setValue(event.getValue());
                 }
             });
         }
@@ -118,7 +120,8 @@ public class W extends TreeGrid {
         private void updateCheckboxState() {
             boolean isTrained = trained.getValue();
             this.setValue(isTrained); // FIXME: Should I disable events during this?
-            this.setEnabled(purchased.getValue() || !isTrained);
+            boolean disableCheckbox = isTrained && ! trainPaidHere.getValue();
+            this.setEnabled(!disableCheckbox);
         }
 
     }
