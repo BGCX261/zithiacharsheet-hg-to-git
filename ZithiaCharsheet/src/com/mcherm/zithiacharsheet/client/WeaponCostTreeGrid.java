@@ -37,12 +37,12 @@ import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
  * skills.
  */
 // FIXME: Really named 'WeaponCostTreeGrid' -- PATHNAME ISSUES!
-public class W extends TreeGrid {
+public class WeaponCostTreeGrid extends TreeGrid {
 
     private final static int NUM_COLUMNS = 4;
 
     /** Constructor. */
-    public W(ZithiaCharacter zithiaCharacter) {
+    public WeaponCostTreeGrid(ZithiaCharacter zithiaCharacter) {
         super(new WeaponCostTreeGridItem(zithiaCharacter.getWeaponTraining()),
                 NUM_COLUMNS, GWT.<TreeImages> create(TreeImages.class));
     }
