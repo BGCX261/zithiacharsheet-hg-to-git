@@ -23,19 +23,21 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.TalentList;
 import com.mcherm.zithiacharsheet.client.model.TalentValue;
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.Observable;
 
 
 /**
  * The section where talents are displayed and edited.
  */
-public class TalentSection extends VerticalPanel {
-    private final TalentTable talentTable;
+public class TalentSection extends VerticalPanel implements Disposable {
+    private final Disposer disposer = new Disposer();
 
         
     public TalentSection(final TalentList talentList) {
         this.addStyleName("skills");
-        talentTable = new TalentTable(talentList);
+        final TalentTable talentTable = disposer.track(new TalentTable(talentList));
         this.add(talentTable);
         Button addSkillButton = new Button("Add", new ClickHandler() {
             public void onClick(ClickEvent event) {
@@ -49,8 +51,10 @@ public class TalentSection extends VerticalPanel {
     /**
      * The table of talents
      */
-    private static class TalentTable extends FlexTable {
-        
+    private static class TalentTable extends FlexTable implements Disposable {
+        private final Disposer disposer = new Disposer();
+        private Disposer contentDisposer = new Disposer();
+
         public TalentTable(final TalentList talentList) {
             this.addStyleName("talents");
             int row = 0;
@@ -60,11 +64,10 @@ public class TalentSection extends VerticalPanel {
             setText(row, 1, "Description");
             getFlexCellFormatter().addStyleName(row, 1, "nameCol");
             getRowFormatter().addStyleName(row, "header");
-            row++;
             // -- Fill in Talents --
             repopulateTalentTable(talentList);
             // -- Subscribe to future changes to the set of skills --
-            talentList.addObserver(new Observable.Observer() {
+            disposer.observe(talentList, new Observable.Observer() {
                 public void onChange() {
                     repopulateTalentTable(talentList);
                 }
@@ -78,22 +81,32 @@ public class TalentSection extends VerticalPanel {
         private void repopulateTalentTable(final TalentList talents) {
             int row;
             // -- Remove existing rows --
+            contentDisposer.dispose();
             for (row = getRowCount() - 1; row > 0; row--) {
                 removeRow(row);
             }
             row++;
             // -- Re-insert all talents as rows --
+            contentDisposer = new Disposer();
             for (final TalentValue talentValue : talents) {
                 // -- Cost --
                 getFlexCellFormatter().addStyleName(row, 0, "costCol");
-                setWidget(row, 0, new SettableIntField(talentValue.getCost()));
+                setWidget(row, 0, contentDisposer.track(new SettableIntField(talentValue.getCost())));
                 // -- Name --
                 getFlexCellFormatter().addStyleName(row, 1, "descriptionCol");
-                setWidget(row, 1, new SettableStringField(talentValue.getDescription()));
+                setWidget(row, 1, contentDisposer.track(new SettableStringField(talentValue.getDescription())));
                 // -- Continue loop --
                 row++;
             }
         }
 
+        public void dispose() {
+            contentDisposer.dispose();
+            disposer.dispose();
+        }
+    }
+
+    public void dispose() {
+        disposer.dispose();
     }
 }

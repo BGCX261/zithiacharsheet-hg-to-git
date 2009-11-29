@@ -45,10 +45,9 @@ import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
  */
 public class ZithiaWeaponSkillsSection extends TabPanel {
     public ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
-        OLD_ZithiaWeaponSkillsSection oldView = new OLD_ZithiaWeaponSkillsSection(zithiaCharacter);
         add(new WeaponUseTreeGrid(zithiaCharacter), "Use");
         add(new WeaponCostTreeGrid(zithiaCharacter), "Cost");
-        add(oldView, "Debug");
+        add(new OLD_ZithiaWeaponSkillsSection(zithiaCharacter), "Debug");
         add(new WeaponsUseTree(zithiaCharacter), "Use (old)");
         selectTab(0);
     }
@@ -57,6 +56,7 @@ public class ZithiaWeaponSkillsSection extends TabPanel {
 
 // FIXME: This SHOULD be named 'OLD_ZithiaWeaponSkillsSection'. I renamed it due to path length issues
 // FIXME: This is a temp hack until I have it working. It's the messy first-draft of weapon skills
+/** @deprecated */
 class OLD_ZithiaWeaponSkillsSection extends VerticalPanel {
 
     public OLD_ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {

@@ -20,6 +20,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TextBox;
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
 
@@ -29,9 +31,10 @@ import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
  * the field changes and you can edit the field to set
  * the value.
  */
-public class SettableIntField extends TextBox {
+public class SettableIntField extends TextBox implements Disposable {
     
     protected final SettableIntValue value;
+    private final Disposer disposer = new Disposer();
     
     /**
      * Constructor. Must specify the value to which this is tied.
@@ -40,7 +43,7 @@ public class SettableIntField extends TextBox {
         this.value = value;
         this.addStyleName("settableInt");
         updateDisplay();
-        value.addObserver(new Observer() {
+        disposer.observe(value, new Observer() {
             public void onChange() {
                 updateDisplay();
             }
@@ -63,5 +66,9 @@ public class SettableIntField extends TextBox {
      */
     protected void updateDisplay() {
         setValue(Integer.toString(value.getValue()));
+    }
+
+    public void dispose() {
+        disposer.dispose();
     }
 }

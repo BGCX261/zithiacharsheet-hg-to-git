@@ -21,8 +21,9 @@ package com.mcherm.zithiacharsheet.client.modeler;
  * A class where a boolean value can be calculated as depending on certain other
  * observable values.
  */
-public class CalculatedBooleanValue extends SimpleObservable implements ObservableBoolean {
+public class CalculatedBooleanValue extends SimpleObservable implements ObservableBoolean, Disposable {
 
+    private final Disposer disposer = new Disposer();
     private boolean value;
     
     public static interface BooleanValueCalculator {
@@ -50,7 +51,7 @@ public class CalculatedBooleanValue extends SimpleObservable implements Observab
             }
         };
         for (Observable input : inputs) {
-            input.addObserver(inputObserver);
+            disposer.observe(input, inputObserver);
         }
     }
     
@@ -59,4 +60,7 @@ public class CalculatedBooleanValue extends SimpleObservable implements Observab
         return value;
     }
 
+    public void dispose() {
+        disposer.dispose();
+    }
 }

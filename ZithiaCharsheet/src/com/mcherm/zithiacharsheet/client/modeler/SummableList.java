@@ -17,6 +17,7 @@
 package com.mcherm.zithiacharsheet.client.modeler;
 
 
+
 /**
  * This is a list of objects which can itself be observed
  * for changes to the list and which sums up the items in the list.
@@ -27,7 +28,7 @@ package com.mcherm.zithiacharsheet.client.modeler;
  * from the list. The sum field alerts ITS observers if the sum changes
  * and also when the list itself alerts.
  */
-public class SummableList<T> extends ObservableList<T> {
+public class SummableList<T> extends ObservableList<T> implements Disposable {
     
     public static interface Extractor<T> {
         public ObservableInt extractValue(T item);
@@ -90,5 +91,9 @@ public class SummableList<T> extends ObservableList<T> {
     public ObservableInt getSum() {
         return observableSum;
     }
-    
+
+    public void dispose() {
+        this.removeObserver(observableSum);
+        clear();
+    }
 }

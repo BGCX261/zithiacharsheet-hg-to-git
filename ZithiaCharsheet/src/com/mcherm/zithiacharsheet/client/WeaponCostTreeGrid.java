@@ -27,6 +27,8 @@ import com.google.gwt.user.client.ui.TreeImages;
 import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 import com.mcherm.zithiacharsheet.client.model.weapon.SingleWeaponSkill;
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.Observable;
 import com.mcherm.zithiacharsheet.client.modeler.ObservableBoolean;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
@@ -60,8 +62,9 @@ public class WeaponCostTreeGrid extends TreeGrid {
     }
 
     /** Contents to display in each row of this table. */
-    private static class WeaponCostTreeGridItem implements TreeGridItem {
+    private static class WeaponCostTreeGridItem implements TreeGridItem, Disposable {
         private final WeaponTraining wt;
+        private final Disposer disposer = new Disposer();
 
         /** Constructor. */
         public WeaponCostTreeGridItem(WeaponTraining wt) {
@@ -71,9 +74,9 @@ public class WeaponCostTreeGrid extends TreeGrid {
         public List<WidgetOrText> getContents() {
             return Arrays.asList(
                 new WidgetOrText(wt.getWeaponSkill().getName()),
-                new WidgetOrText(new SettableIntField(wt.getLevelsPurchased())),
-                new WidgetOrText(new TrainingEntryField(wt)),
-                new WidgetOrText(new TweakableIntField(wt.getThisCost()))
+                new WidgetOrText(disposer.track(new SettableIntField(wt.getLevelsPurchased()))),
+                new WidgetOrText(disposer.track(new TrainingEntryField(wt))),
+                new WidgetOrText(disposer.track(new TweakableIntField(wt.getThisCost())))
             );
         }
 
@@ -88,12 +91,18 @@ public class WeaponCostTreeGrid extends TreeGrid {
             }
             return result;
         }
+
+        public void dispose() {
+            disposer.dispose();
+        }
     }
 
-    private static class TrainingEntryField extends CheckBox {
+    private static class TrainingEntryField extends CheckBox implements Disposable {
         private final ObservableBoolean trained;
         private final SettableBooleanValue trainDesired;
         private final ObservableBoolean trainPaidHere;
+        private final Disposer disposer = new Disposer();
+
 
         public TrainingEntryField(WeaponTraining wt) {
             trained = wt.isTrained();
@@ -105,8 +114,8 @@ public class WeaponCostTreeGrid extends TreeGrid {
                     updateCheckboxState();
                 }
             };
-            trained.addObserver(observer);
-            trainPaidHere.addObserver(observer);
+            disposer.observe(trained, observer);
+            disposer.observe(trainPaidHere, observer);
             addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                 public void onValueChange(ValueChangeEvent<Boolean> event) {
                     trainDesired.setValue(event.getValue());
@@ -124,6 +133,9 @@ public class WeaponCostTreeGrid extends TreeGrid {
             this.setEnabled(!disableCheckbox);
         }
 
+        public void dispose() {
+            disposer.dispose();
+        }
     }
 
 }

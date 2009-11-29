@@ -28,6 +28,7 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
     }
     
         
+    private final Disposer disposer = new Disposer();
     private int value;
     private Integer override;
     private Integer modifier;
@@ -55,7 +56,7 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
             }
         };
         for (Observable input : inputs) {
-            input.addObserver(inputObserver);
+            disposer.observe(input, inputObserver);
         }
     }
 
@@ -90,4 +91,7 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
         alertObservers();
     }
     
+    public void dispose() {
+        disposer.dispose();
+    }
 }

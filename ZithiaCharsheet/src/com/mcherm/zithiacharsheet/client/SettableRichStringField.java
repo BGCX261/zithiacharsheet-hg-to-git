@@ -18,6 +18,8 @@ package com.mcherm.zithiacharsheet.client;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.Observable;
 import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
 
@@ -26,9 +28,10 @@ import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
  * This is a text field that is tied to a SettableStringValue, but in this
  * case the string can contain HTML markup, which is displayed.
  */
-public class SettableRichStringField extends RichTextPalate {
+public class SettableRichStringField extends RichTextPalate implements Disposable {
 
     protected final SettableStringValue value;
+    private final Disposer disposer = new Disposer();
     private boolean ignoreValueUpdates;
 
     /**
@@ -39,7 +42,7 @@ public class SettableRichStringField extends RichTextPalate {
         this.ignoreValueUpdates = false;
         addStyleName("settableString");
         setHTML(value.getValue());
-        value.addObserver(new Observable.Observer() {
+        disposer.observe(value, new Observable.Observer() {
             public void onChange() {
                 if (!ignoreValueUpdates) {
                     SettableRichStringField.this.setHTML(value.getValue());
@@ -55,4 +58,7 @@ public class SettableRichStringField extends RichTextPalate {
         });
     }
 
+    public void dispose() {
+        disposer.dispose();
+    }
 }

@@ -73,11 +73,11 @@ public class TreeGrid extends Composite {
          * Returns a list of the items that go in the row. The list returned
          * must be exactly numColumns long.
          */
-        List<WidgetOrText> getContents();
+        public List<WidgetOrText> getContents();
         /** Return true if this is a leaf. Implies no children. */
-        boolean isLeaf();
+        public boolean isLeaf();
         /** Returns the list of children of this TreeGridItem or null to indicate no children. */
-        Iterable<TreeGridItem> getChildren();
+        public Iterable<TreeGridItem> getChildren();
     }
 
 

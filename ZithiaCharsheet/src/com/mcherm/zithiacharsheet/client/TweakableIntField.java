@@ -32,6 +32,8 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
 
@@ -41,12 +43,13 @@ import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
  * A field that is tied to a value. If the value changes,
  * the field changes. You cannot edit the value (for now).
  */
-public class TweakableIntField extends HorizontalPanel implements HasClickHandlers {
+public class TweakableIntField extends HorizontalPanel implements HasClickHandlers, Disposable {
     
     private final TweakableIntValue value;
     private final TextBox fieldValue;
     private final AsterixThing asterixThing;
-    
+    private final Disposer disposer = new Disposer();
+
     
     private class TweakPopup extends PopupPanel {
         final TweakableIntValue value;
@@ -187,7 +190,7 @@ public class TweakableIntField extends HorizontalPanel implements HasClickHandle
         add(fieldValue);
         add(asterixThing);
         updateDisplay();
-        value.addObserver(new Observer() {
+        disposer.observe(value, new Observer() {
             public void onChange() {
                 updateDisplay();
             }
@@ -212,4 +215,7 @@ public class TweakableIntField extends HorizontalPanel implements HasClickHandle
          return addDomHandler(handler, ClickEvent.getType());
     }
 
+    public void dispose() {
+        disposer.dispose();
+    }
 }

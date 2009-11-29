@@ -20,12 +20,16 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.mcherm.zithiacharsheet.client.model.SkillList;
 import com.mcherm.zithiacharsheet.client.model.SkillValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.Observable;
 
 
 // FIXME: Can this share code with stats table? I'm thinking probably not, but right now it's nearly a perfect duplicate
-public class ZithiaSkillsTable extends FlexTable {
-    
+public class ZithiaSkillsTable extends FlexTable implements Disposable {
+    private final Disposer disposer = new Disposer();
+    private Disposer rowsDisposer;
+
     public ZithiaSkillsTable(final ZithiaCharacter zithiaCharacter) {
         this.addStyleName("skills");
         int row = 0;
@@ -39,12 +43,11 @@ public class ZithiaSkillsTable extends FlexTable {
         setText(row, 3, "Roll");
         getFlexCellFormatter().addStyleName(row, 3, "rollCol");
         getRowFormatter().addStyleName(row, "header");
-        row++;
         // -- Fill in Skills --
         final SkillList skillList = zithiaCharacter.getSkillList();
         repopulateSkillTable(skillList);
         // -- Subscribe to future changes to the set of skills --
-        skillList.addObserver(new Observable.Observer() {
+        disposer.observe(skillList, new Observable.Observer() {
             public void onChange() {
                 repopulateSkillTable(skillList);
             }
@@ -61,33 +64,37 @@ public class ZithiaSkillsTable extends FlexTable {
         for (row = getRowCount() - 1; row > 0; row--) {
             removeRow(row);
         }
+        if (rowsDisposer != null) {
+            rowsDisposer.dispose();
+        }
         row++;
+
         // -- Re-insert all skills as rows --
+        rowsDisposer = new Disposer();
         for (final SkillValue skillValue : skills) {
             // -- Name --
             getFlexCellFormatter().addStyleName(row, 1, "nameCol");
             setText(row, 1, skillValue.getSkill().getName());
             // -- Cost --
             getFlexCellFormatter().addStyleName(row, 0, "costCol");
-            final TweakableIntField costField = new TweakableIntField(skillValue.getCost());
-            setWidget(row, 0, costField);
+            setWidget(row, 0, rowsDisposer.track(new TweakableIntField(skillValue.getCost())));
             // -- Roll --
             getFlexCellFormatter().addStyleName(row, 3, "rollCol");
-            final TweakableIntField rollField;
             if (skillValue.getSkill().hasRoll()) {
-                rollField = new TweakableIntField(skillValue.getRoll());
-                setWidget(row, 3, rollField);
+                setWidget(row, 3, rowsDisposer.track(new TweakableIntField(skillValue.getRoll())));
             } else {
                 setText(row, 3, "n/a");
-                rollField = null;
             }
             // -- Value --
             getFlexCellFormatter().addStyleName(row, 2, "levelsCol");
-            final SettableIntField levelsField = new SettableIntField(skillValue.getLevels());
-            setWidget(row, 2, levelsField);
+            setWidget(row, 2, rowsDisposer.track(new SettableIntField(skillValue.getLevels())));
             // -- Continue loop --
             row++;
         }
     }
 
+    public void dispose() {
+        rowsDisposer.dispose();
+        disposer.dispose();
+    }
 }

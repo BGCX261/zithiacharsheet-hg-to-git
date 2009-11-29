@@ -33,6 +33,8 @@ import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 
 /**
  * A Tree view for viewing the weapons as they are used.
+ *
+ * @deprecated
  */
 public class WeaponsUseTree extends VerticalPanel {
     public WeaponsUseTree(ZithiaCharacter zithiaCharacter) {
