@@ -112,7 +112,6 @@ public class ZithiaCharsheet extends Grid {
      * entry, and retrieves a new characterId which replaces the ID currently in use.
      */
     public void saveAsNewCharacter() {
-        Window.alert("Character not specified: Will create new character.");
         saveCharsheetService.newCharsheet(new AsyncCallback<CharacterMetadata>() {
             public void onFailure(Throwable caught) {
                 Window.alert("Unable to create character: " + caught);

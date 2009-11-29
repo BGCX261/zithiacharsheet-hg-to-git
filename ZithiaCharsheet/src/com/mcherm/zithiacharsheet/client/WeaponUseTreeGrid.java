@@ -50,7 +50,7 @@ public class WeaponUseTreeGrid extends TreeGrid {
      */
     protected List<WidgetOrText> getHeader() {
         return Arrays.asList(
-                new WidgetOrText("Name"),
+                new WidgetOrText(""),
                 new WidgetOrText("Levels"),
                 new WidgetOrText("Speed"),
                 new WidgetOrText("Hp"),

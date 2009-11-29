@@ -45,21 +45,21 @@ import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
  */
 public class ZithiaWeaponSkillsSection extends TabPanel {
     public ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
-        OLD_ZithiaWeaponSkillsSection oldView = new OLD_ZithiaWeaponSkillsSection(zithiaCharacter);
-        add(oldView, "Raw");
-        add(new HTML("Empty."), "Empty");
-        add(new WeaponsUseTree(zithiaCharacter), "Use");
-        add(new WeaponUseTreeGrid(zithiaCharacter), "UseGrid");
+        O oldView = new O(zithiaCharacter);
+        add(new WeaponUseTreeGrid(zithiaCharacter), "Use");
+        add(new W(zithiaCharacter), "Cost");
+        add(oldView, "Debug");
+        add(new WeaponsUseTree(zithiaCharacter), "Use (old)");
         selectTab(0);
     }
 }
 
 
-
+// FIXME: This SHOULD be named 'OLD_ZithiaWeaponSkillsSection'. I renamed it due to path length issues
 // FIXME: This is a temp hack until I have it working. It's the messy first-draft of weapon skills
-class OLD_ZithiaWeaponSkillsSection extends VerticalPanel {
+class O extends VerticalPanel {
 
-    public OLD_ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
+    public O(final ZithiaCharacter zithiaCharacter) {
         this.addStyleName("weaponSkills");
         final WeaponTraining wt = zithiaCharacter.getWeaponTraining();
         showWTInPanel(this, wt);
@@ -74,7 +74,7 @@ class OLD_ZithiaWeaponSkillsSection extends VerticalPanel {
             }
         }));
     }
-    
+
     /**
      * To the panel, add up to 2 items: a row the the WeaponTraining wt and
      * (if appropriate) an inner pane with its children.
