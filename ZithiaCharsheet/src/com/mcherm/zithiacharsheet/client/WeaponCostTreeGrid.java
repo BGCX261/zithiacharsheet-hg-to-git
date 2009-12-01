@@ -15,7 +15,6 @@
  */
 package com.mcherm.zithiacharsheet.client;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +25,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.TreeImages;
 import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
-import com.mcherm.zithiacharsheet.client.model.weapon.SingleWeaponSkill;
 import com.mcherm.zithiacharsheet.client.modeler.Disposable;
 import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.Observable;
@@ -38,7 +36,6 @@ import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
  * A TreeGrid table for displaying and editing the spending on weapon
  * skills.
  */
-// FIXME: Really named 'WeaponCostTreeGrid' -- PATHNAME ISSUES!
 public class WeaponCostTreeGrid extends TreeGrid {
 
     private final static int NUM_COLUMNS = 4;
@@ -62,13 +59,15 @@ public class WeaponCostTreeGrid extends TreeGrid {
     }
 
     /** Contents to display in each row of this table. */
-    private static class WeaponCostTreeGridItem implements TreeGridItem, Disposable {
-        private final WeaponTraining wt;
-        private final Disposer disposer = new Disposer();
+    private static class WeaponCostTreeGridItem extends WeaponSkillTreeGridItem {
 
         /** Constructor. */
         public WeaponCostTreeGridItem(WeaponTraining wt) {
-            this.wt = wt;
+            super(wt);
+        }
+
+        public WeaponSkillTreeGridItem newInstance(WeaponTraining wt) {
+            return new WeaponCostTreeGridItem(wt);
         }
 
         public List<WidgetOrText> getContents() {
@@ -80,23 +79,14 @@ public class WeaponCostTreeGrid extends TreeGrid {
             );
         }
 
-        public boolean isLeaf() {
-            return wt.getWeaponSkill() instanceof SingleWeaponSkill;
-        }
-
-        public Iterable<TreeGridItem> getChildren() {
-            List<TreeGridItem> result = new ArrayList<TreeGridItem>();
-            for (WeaponTraining childWt : wt.getChildren()) {
-                result.add(new WeaponCostTreeGridItem(childWt));
-            }
-            return result;
-        }
-
-        public void dispose() {
-            disposer.dispose();
-        }
     }
 
+
+    /**
+     * A field for viewing the training status. Has three possible values:
+     * unchecked (is not trained), checked (paid to train in this weapon skill),
+     * and checked-and-disabled (inherited training from a parent weapon skill).
+     */
     private static class TrainingEntryField extends CheckBox implements Disposable {
         private final ObservableBoolean trained;
         private final SettableBooleanValue trainDesired;

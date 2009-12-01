@@ -92,7 +92,7 @@
       <jvmarg value="-Xmx256M"/>
       <jvmarg value="${XstartOnFirstThreadFlag}"/>
       <jvmarg value="${d32Flag}"/>
-	  <jvmarg value="-javaagent:${appengine.sdk}/lib/agent/appengine-agent.jar"/>
+      <jvmarg value="-javaagent:${appengine.sdk}/lib/agent/appengine-agent.jar"/>
       <arg value="-startupUrl"/>
       <arg value="ZithiaCharsheet.html"/>
       <!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->

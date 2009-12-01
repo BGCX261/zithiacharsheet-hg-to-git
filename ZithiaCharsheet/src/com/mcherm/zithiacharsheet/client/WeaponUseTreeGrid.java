@@ -15,7 +15,6 @@
  */
 package com.mcherm.zithiacharsheet.client;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,14 +57,17 @@ public class WeaponUseTreeGrid extends TreeGrid {
         );
     }
 
-
-    private static class WeaponUseTreeGridItem implements TreeGridItem {
+    /** Contents to display in each row of this table. */
+    private static class WeaponUseTreeGridItem extends WeaponSkillTreeGridItem {
         private final ZithiaCharacter zithiaCharacter;
-        private final WeaponTraining wt;
 
         public WeaponUseTreeGridItem(ZithiaCharacter zithiaCharacter, WeaponTraining wt) {
+            super(wt);
             this.zithiaCharacter = zithiaCharacter;
-            this.wt = wt;
+        }
+
+        public WeaponSkillTreeGridItem newInstance(WeaponTraining wt) {
+            return new WeaponUseTreeGridItem(zithiaCharacter, wt);
         }
 
         public List<WidgetOrText> getContents() {
@@ -97,16 +99,5 @@ public class WeaponUseTreeGrid extends TreeGrid {
             );
         }
 
-        public boolean isLeaf() {
-            return wt.getWeaponSkill() instanceof SingleWeaponSkill;
-        }
-
-        public Iterable<TreeGridItem> getChildren() {
-            List<TreeGridItem> result = new ArrayList<TreeGridItem>();
-            for (WeaponTraining childWt : wt.getChildren()) {
-                result.add(new WeaponUseTreeGridItem(zithiaCharacter, childWt));
-            }
-            return result;
-        }
     }
 }

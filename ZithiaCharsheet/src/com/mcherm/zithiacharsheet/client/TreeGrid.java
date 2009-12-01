@@ -21,6 +21,7 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -70,6 +71,12 @@ public class TreeGrid extends Composite {
      */
     public static interface TreeGridItem {
         /**
+         * This will be called on the TreeGridItem when it is first created. It
+         * provides an object which the TreeGridItem can use to control the
+         * display of the row.
+         */
+        public void setRowEditor(RowEditor rowEditor);
+        /**
          * Returns a list of the items that go in the row. The list returned
          * must be exactly numColumns long.
          */
@@ -78,8 +85,35 @@ public class TreeGrid extends Composite {
         public boolean isLeaf();
         /** Returns the list of children of this TreeGridItem or null to indicate no children. */
         public Iterable<TreeGridItem> getChildren();
+        /** Called when the row for this TreeGridItem is going to be deleted permanently. */
+        public void dispose();
     }
 
+    /**
+     * A TreeGrid.RowEditor is a class which is used to control a particular row
+     * in the table. It provides methods for doing things like marking the row
+     * a particular color, reseting a row's children or deleting a row. It may
+     * grow more abilities in the future. An instance will be provided to each
+     * TreeGridItem so it can control the display of its row.
+     */
+    public static class RowEditor {
+        private final TreeGridItemLive treeGridItemLive;
+
+        /**
+         * Constructor is private: they are created only within TreeGrid.
+         */
+        private RowEditor(TreeGridItemLive treeGridItemLive) {
+            this.treeGridItemLive = treeGridItemLive;
+        }
+
+        /**
+         * Calling this will delete all decedents of this row, and reset its list of
+         * children (which may later get re-populated with a call to getChildren()).
+         */
+        public void resetChildren() {
+            treeGridItemLive.removeChildren();
+        }
+    }
 
     /**
      * Wraps a TreeGridItem and also keep track of its current state. Has concrete
@@ -107,6 +141,7 @@ public class TreeGrid extends Composite {
             }
             children = null;
             drawRow(row);
+            treeGridItem.setRowEditor(new RowEditor(this));
         }
 
         /** Returns the indent level of this item. The root has level 0. */
@@ -125,12 +160,10 @@ public class TreeGrid extends Composite {
 
         /** Toggles between the open and closed state. */
         public void toggle() {
-            currentlyOpen = !currentlyOpen;
-            updateTreeImage();
             if (currentlyOpen) {
-                openChildren();
-            } else {
                 closeChildren();
+            } else {
+                openChildren();
             }
         }
 
@@ -155,9 +188,11 @@ public class TreeGrid extends Composite {
             if (children == null) {
                 throw new RuntimeException("Should be impossible to try closing a node without children.");
             }
+            currentlyOpen = false;
             for (TreeGridItemLiveBranch child : children) {
                 child.hide();
             }
+            updateTreeImage();
         }
         
         /**
@@ -196,6 +231,7 @@ public class TreeGrid extends Composite {
 
         /** Displays the previously-hidden children (creating them if needed). */
         public void openChildren() {
+            currentlyOpen = true;
             if (children == null) {
                 children = new ArrayList<TreeGridItemLiveBranch>();
                 int row = this.getCurrentRow();
@@ -209,6 +245,7 @@ public class TreeGrid extends Composite {
                     child.show();
                 }
             }
+            updateTreeImage();
         }
 
         /** Returns false if any parent is collapsed; true if all are open. */
@@ -263,6 +300,28 @@ public class TreeGrid extends Composite {
 
             // --- All other columns ---
             populateRow(contents, row, 1);
+        }
+
+        /**
+         * When this is called, all child rows in the table are removed, and the TreeGrid
+         * is set back to a state of not knowing what children it has.
+         */
+        public void removeChildren() {
+            if (children == null) {
+                return;
+            }
+            if (currentlyOpen) {
+                closeChildren();
+            }
+            List<TreeGridItemLiveBranch> oldChildren = children;
+            for (int i=oldChildren.size() - 1; i>= 0; i--) {
+                TreeGridItemLiveBranch child = oldChildren.get(i);
+                int childRow = child.getCurrentRow();
+                child.removeChildren();
+                table.removeRow(childRow);
+                child.treeGridItem.dispose();
+            }
+            children = null;
         }
 
     }
