@@ -22,11 +22,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -40,11 +36,6 @@ import com.mcherm.zithiacharsheet.client.model.weapon.SingleWeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponClusterSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
-import com.mcherm.zithiacharsheet.client.modeler.Disposable;
-import com.mcherm.zithiacharsheet.client.modeler.Disposer;
-import com.mcherm.zithiacharsheet.client.modeler.Observable;
-import com.mcherm.zithiacharsheet.client.modeler.ObservableBoolean;
-import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
 
 
 /**
@@ -175,51 +166,5 @@ public class WeaponCostTreeGrid extends TreeGrid {
         }
     }
 
-
-    /**
-     * A field for viewing the training status. Has three possible values:
-     * unchecked (is not trained), checked (paid to train in this weapon skill),
-     * and checked-and-disabled (inherited training from a parent weapon skill).
-     */
-    private static class TrainingEntryField extends CheckBox implements Disposable {
-        private final ObservableBoolean trained;
-        private final SettableBooleanValue trainDesired;
-        private final ObservableBoolean trainPaidHere;
-        private final Disposer disposer = new Disposer();
-
-
-        public TrainingEntryField(WeaponTraining wt) {
-            trained = wt.isTrained();
-            trainDesired = wt.getBasicTrainingDesired();
-            trainPaidHere = wt.getBasicTrainingPaidHere();
-            updateCheckboxState();
-            final Observable.Observer observer = new Observable.Observer() {
-                public void onChange() {
-                    updateCheckboxState();
-                }
-            };
-            disposer.observe(trained, observer);
-            disposer.observe(trainPaidHere, observer);
-            addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-                public void onValueChange(ValueChangeEvent<Boolean> event) {
-                    trainDesired.setValue(event.getValue());
-                }
-            });
-        }
-
-        /**
-         * Updates whether the checkbox is checked and/or enabled.
-         */
-        private void updateCheckboxState() {
-            boolean isTrained = trained.getValue();
-            this.setValue(isTrained); // FIXME: Should I disable events during this?
-            boolean disableCheckbox = isTrained && ! trainPaidHere.getValue();
-            this.setEnabled(!disableCheckbox);
-        }
-
-        public void dispose() {
-            disposer.dispose();
-        }
-    }
 
 }

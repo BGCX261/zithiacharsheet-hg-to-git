@@ -19,7 +19,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.TreeImages;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 import com.mcherm.zithiacharsheet.client.model.ZithiaStat;
@@ -35,7 +37,7 @@ import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
  */
 public class WeaponUseTreeGrid extends TreeGrid {
 
-    private final static int NUM_COLUMNS = 5;
+    private final static int NUM_COLUMNS = 6;
 
     /** Constructor. */
     public WeaponUseTreeGrid(ZithiaCharacter zithiaCharacter) {
@@ -48,9 +50,13 @@ public class WeaponUseTreeGrid extends TreeGrid {
      * Display a header giving the meaning of the different columns.
      */
     protected List<WidgetOrText> getHeader() {
+        VerticalPanel totalLevels = new VerticalPanel();
+        totalLevels.add(new HTML("Total"));
+        totalLevels.add(new HTML("Levels"));
         return Arrays.asList(
                 new WidgetOrText(""),
-                new WidgetOrText("Levels"),
+                new WidgetOrText("Trained"),
+                new WidgetOrText(totalLevels),
                 new WidgetOrText("Speed"),
                 new WidgetOrText("Hp"),
                 new WidgetOrText("Stun")
@@ -72,8 +78,9 @@ public class WeaponUseTreeGrid extends TreeGrid {
 
         public List<WidgetOrText> getContents() {
             WidgetOrText col_0 = new WidgetOrText(wt.getWeaponSkill().getName());
-            WidgetOrText col_1 = new WidgetOrText(new TweakableIntField(wt.getLevels()));
-            WidgetOrText col_2, col_3, col_4;
+            WidgetOrText col_1 = new WidgetOrText(new TrainingEntryField(wt));
+            WidgetOrText col_2 = new WidgetOrText(new TweakableIntField(wt.getLevels()));
+            WidgetOrText col_3, col_4, col_5;
 
             if (wt.getWeaponSkill() instanceof SingleWeaponSkill) {
                 SingleWeaponSkill sws = (SingleWeaponSkill) wt.getWeaponSkill();
@@ -84,18 +91,19 @@ public class WeaponUseTreeGrid extends TreeGrid {
                         return charSpd + weaponSpd;
                     }
                 });
-                col_2 = new WidgetOrText(new TweakableIntField(cycleTime));
-                col_3 = new WidgetOrText(sws.getWeapon().getHpDmg().getStr());
-                col_4 = new WidgetOrText(sws.getWeapon().getStunDmg().getStr());
+                col_3 = new WidgetOrText(new TweakableIntField(cycleTime));
+                col_4 = new WidgetOrText(sws.getWeapon().getHpDmg().getStr());
+                col_5 = new WidgetOrText(sws.getWeapon().getStunDmg().getStr());
             } else {
-                col_2 = col_3 = col_4 = new WidgetOrText("");
+                col_3 = col_4 = col_5 = new WidgetOrText("");
             }
             return Arrays.asList(
                     col_0,
                     col_1,
                     col_2,
                     col_3,
-                    col_4
+                    col_4,
+                    col_5
             );
         }
 
