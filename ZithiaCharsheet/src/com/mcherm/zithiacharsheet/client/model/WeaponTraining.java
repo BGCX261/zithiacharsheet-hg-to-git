@@ -225,7 +225,57 @@ public class WeaponTraining {
         children.add(result);
         return result;
     }
-    
+
+    /**
+     * This is passed a WeaponTraining which is expected to be a child of
+     * this one. If it is, then that child is removed. If it is not, then
+     * the behavior is unspecified (currently, it does nothing).
+     *
+     * @param child a WeaponTraining which is a child of this one.
+     */
+    public void removeChild(WeaponTraining child) {
+        children.remove(child);
+    }
+
+    /**
+     * This tests whether this WeaponTraining is currently storing no useful
+     * data, and can be pruned from the tree without affecting the character
+     * sheet. Any training, levels, tweaks, or any child which cannot be
+     * pruned will prevent pruning. Also, the top level WeaponTraining (the
+     * AllCombat level) cannot be pruned.
+     *
+     * @return true if it can be pruned, false if not.
+     */
+    public boolean canPrune() {
+        for (WeaponTraining child : children) {
+            if (!child.canPrune()) {
+                return false;
+            }
+        }
+        return !cannotPruneDueToFeatures();
+    }
+
+    /**
+     * Internal subroutine to share between prune() and canPrune(). It tests
+     * whether we can prune this WeaponTraining considering only the WeaponTraining
+     * itself, not considering it's children.
+     */
+    private boolean cannotPruneDueToFeatures() {
+        if(getBasicTrainingPaidHere().getValue()) {
+            return true;
+        }
+        if (getLevelsPurchased().getValue() != 0) {
+            return true;
+        }
+        if (getLevels().isTweaked() ||  getThisCost().isTweaked() || getTotalCost().isTweaked()) {
+            return true;
+        }
+        if (parent == null) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * This walks this WeaponTraining and all child WeaponTrainings, keeping
      * every item that has basicTrainingDesired, levelsPurchased, any tweaked
@@ -245,14 +295,11 @@ public class WeaponTraining {
                 }
             }
             for (WeaponTraining child : childrenToRemove) {
-                children.remove(child);
+                removeChild(child);
             }
             hasChild = !children.isEmpty();
         }
-        boolean hasBTP = getBasicTrainingPaidHere().getValue();
-        boolean hasLevels = getLevelsPurchased().getValue() != 0;
-        boolean hasTweaks = getLevels().isTweaked() ||  getThisCost().isTweaked() || getTotalCost().isTweaked();
-        return !(hasChild || hasBTP || hasLevels || hasTweaks);
+        return !(hasChild || cannotPruneDueToFeatures());
     }
     
     /**
