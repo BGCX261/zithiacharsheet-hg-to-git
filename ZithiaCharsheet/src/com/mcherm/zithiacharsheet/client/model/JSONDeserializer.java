@@ -23,6 +23,7 @@ import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableEnumValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
@@ -67,6 +68,13 @@ public class JSONDeserializer {
             actualValue = valueString.stringValue();
         }
         settableStringValue.setValue(actualValue);
+    }
+    
+    protected void updateFromField(JSONObject parent, String fieldName, SettableEnumValue<Race> settableRaceValue) {
+        JSONValue valueValue = notNull(parent.get(fieldName));
+        JSONString valueString = notNull(valueValue.isString());
+        String raceName = valueString.stringValue();
+        settableRaceValue.setValue(Race.valueOf(raceName));
     }
     
     protected void updateFromField(JSONObject parent, String fieldName, TweakableIntValue tweakableIntValue) {
@@ -231,6 +239,17 @@ public class JSONDeserializer {
         }
     }
     
+    protected void updateFromField(JSONObject inputObject, String fieldName, RaceValue raceValue) {
+        JSONValue fieldValue = inputObject.get(fieldName);
+        if (fieldValue == null) {
+            // If omitted, default to Human.
+            raceValue.getRace().setValue(Race.Human);
+        } else {
+            JSONObject fieldObject = notNull(fieldValue.isObject());
+            updateFromField(fieldObject, "race", raceValue.getRace());
+        }
+    }
+
     protected void updateFromField(JSONObject inputObject, String fieldName, Names names) {
         JSONValue fieldValue = notNull(inputObject.get(fieldName));
         JSONObject fieldObject = notNull(fieldValue.isObject());
@@ -250,6 +269,7 @@ public class JSONDeserializer {
 
     public void update(JSONValue inputValue, ZithiaCharacter zithiaCharacter) {
         JSONObject inputObject = notNull(inputValue.isObject());
+        updateFromField(inputObject, "race", zithiaCharacter.getRaceValue());
         updateFromField(inputObject, "names", zithiaCharacter.getNames());
         updateFromField(inputObject, "statValues", zithiaCharacter.getStatValues());
         updateFromField(inputObject, "skillList", zithiaCharacter.getSkillList());

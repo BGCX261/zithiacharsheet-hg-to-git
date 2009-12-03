@@ -62,7 +62,7 @@ public enum ZithiaStat {
      * amountRaised must be greater than or equal to -9 for stats other
      * than Spd.
      * 
-     * @param amountRaised the number of points it was raised.
+     * @param pointsRaised the number of points it was raised.
      * @return the cost
      */
     public int getCost(int pointsRaised) {

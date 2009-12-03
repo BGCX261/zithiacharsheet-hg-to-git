@@ -20,6 +20,7 @@ import com.mcherm.zithiacharsheet.client.model.weapon.WeaponClusterSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponSkill;
 import com.mcherm.zithiacharsheet.client.model.weapon.WeaponsCatalog;
 import com.mcherm.zithiacharsheet.client.modeler.SettableBooleanValue;
+import com.mcherm.zithiacharsheet.client.modeler.SettableEnumValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableStringValue;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
@@ -110,7 +111,10 @@ public class JSONSerializer extends JSONSerializerBase {
         }
     }
 
-    
+    protected void serialize(String fieldName, SettableEnumValue<Race> race) {
+        emitDictItem(fieldName, race.getValue().name());
+    }
+
     protected void serialize(StatValue statValue) {
         emitStartDict();
         emitDictItem("stat", statValue.getStat().getName()); // NOTE: this is ONLY for readability
@@ -226,7 +230,16 @@ public class JSONSerializer extends JSONSerializerBase {
         serialize("expUnspent", zithiaCosts.getExpUnspent());
         emitEndDict();
     }
-    
+
+    protected void serialize(String fieldName, RaceValue raceValue) {
+        if (raceValue.getRace().getValue() != Race.Human) {
+            emitStartDictItem(fieldName);
+            emitStartDict();
+            serialize("race", raceValue.getRace());
+            emitEndDict();
+        }
+    }
+
     protected void serialize(String fieldName, Names names) {
         emitStartDictItem(fieldName);
         emitStartDict();
@@ -246,6 +259,7 @@ public class JSONSerializer extends JSONSerializerBase {
 
     public void serialize(ZithiaCharacter zithiaCharacter) {
         emitStartDict();
+        serialize("race", zithiaCharacter.getRaceValue());
         serialize("names", zithiaCharacter.getNames());
         serialize("statValues", zithiaCharacter.getStatValues());
         serialize("skillList", zithiaCharacter.getSkillList());
@@ -265,6 +279,7 @@ public class JSONSerializer extends JSONSerializerBase {
         final WeaponsCatalog weaponsCatalog = WeaponsCatalog.getSingleton();
         final JSONSerializer jss = JSONSerializer.newInstance(true);
         ZithiaCharacter character = new ZithiaCharacter();
+        character.getRaceValue().getRace().setValue(Race.Elf);
         character.getNames().getCharacterName().setValue("Entarm");
         character.getStat(ZithiaStat.OBS).getValue().setValue(16);
         SkillValue skillValue = character.addNewSkill(skillCatalog.getSkill("flowers"));

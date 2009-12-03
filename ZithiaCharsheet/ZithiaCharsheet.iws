@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager" verified="true">
     <list default="true" id="f906720f-1b0a-4f8c-8317-297b695fd601" name="Default" comment="" />
-    <ignored path="ZithiaCharsheet.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="ZithiaCharsheet.iws" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,37 +75,10 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="WeaponSkillTreeGridItem.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponSkillTreeGridItem.java">
+      <file leaf-file-name="Race.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/Race.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="28" selection-start="1395" selection-end="1395" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WeaponTraining.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/WeaponTraining.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="276" column="0" selection-start="10898" selection-end="10898" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TreeGrid.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/TreeGrid.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="164" column="0" selection-start="6444" selection-end="6444" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ZithiaWeaponSkillsSection.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/ZithiaWeaponSkillsSection.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="0" selection-start="758" selection-end="758" vertical-scroll-proportion="0.08994709">
+            <state line="36" column="0" selection-start="1021" selection-end="1021" vertical-scroll-proportion="0.771134">
               <folding />
             </state>
           </provider>
@@ -121,22 +94,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/ZithiaSkillsTable.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/CalculatedBooleanValue.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/CalculatedIntValue.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponsUseTree.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/TalentSection.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/SummableList.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/Disposer.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/SampleMain.java" />
-        <option value="$PROJECT_DIR$/build.xml" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponSkillTreeGridItem.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/TreeGrid.java" />
-        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/WeaponTraining.java" />
         <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponCostTreeGrid.java" />
         <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/TrainingEntryField.java" />
         <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponUseTreeGrid.java" />
         <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/ZithiaWeaponSkillsSection.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/ZithiaStat.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/Race.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/Names.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/ZithiaCharacter.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/JSONSerializer.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/JSONDeserializer.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/RaceValue.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/ZithiaNamesSection.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/SettableEnumField.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/SettableEnumValueImpl.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/SettableEnumValue.java" />
+        <option value="$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/ObservableEnum.java" />
       </list>
     </option>
   </component>
@@ -378,6 +351,9 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Problems" />
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -474,12 +450,9 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
       <pane id="PackagesPane">
         <subPane />
-      </pane>
-      <pane id="Favorites" />
-      <pane id="Scope">
-        <subPane subId="Problems" />
       </pane>
     </panes>
   </component>
@@ -502,7 +475,24 @@
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="dynamic.classpath" value="false" />
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.JSONSerializer">
+    <configuration default="false" name="JSONSerializer" type="Application" factoryName="Application" temporary="true">
+      <extension name="snapshooter" />
+      <option name="MAIN_CLASS_NAME" value="com.mcherm.zithiacharsheet.client.model.JSONSerializer" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="ZithiaCharsheet" />
+      <envs />
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
       <option name="VM_PARAMETERS" value=" -Xms32m -Xmx256m -XX:MaxPermSize=150m -ea" />
@@ -646,7 +636,9 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="0" />
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="Application.JSONSerializer" />
+    </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
       <Port>5050</Port>
@@ -690,25 +682,25 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="916" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1456" height="916" extended-state="0" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.15107913" sideWeight="0.7755102" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15107913" sideWeight="0.65433675" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4119898" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4189781" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21556123" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33673468" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.329927" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26115108" sideWeight="0.7755102" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2266187" sideWeight="0.65433675" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6168639" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.6147959" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41234222" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="EJB" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -756,84 +748,108 @@
     </buildFile>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/GameData.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/ZithiaStat.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="13" selection-start="941" selection-end="941" vertical-scroll-proportion="0.0" />
+        <state line="25" column="7" selection-start="1014" selection-end="1014" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/SkillCatalog.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/Names.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="45" selection-start="1702" selection-end="1702" vertical-scroll-proportion="0.0" />
+        <state line="42" column="0" selection-start="873" selection-end="1292" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/server/SaveCharsheetServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/ZithiaCharacter.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="13" selection-start="1660" selection-end="1660" vertical-scroll-proportion="0.0" />
+        <state line="53" column="0" selection-start="1735" selection-end="1735" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/build.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="67" column="0" selection-start="2625" selection-end="2625" vertical-scroll-proportion="-15.583333" />
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/gwt-windows-1.7.1/gwt-dev-windows.jar!/org/apache/tools/ant/taskdefs/Javadoc.class">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/util/JSONSerializerBase.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/ObservableList.java">
+    <entry file="jar://$PROJECT_DIR$/war/WEB-INF/lib/gwt-servlet.jar!/com/google/gwt/event/dom/client/ChangeHandler.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="13" selection-start="969" selection-end="969" vertical-scroll-proportion="0.0" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/SummableList.java">
+    <entry file="jar://C:/Program Files/Java/jdk1.6.0_14/src.zip!/java/util/EnumMap.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="0" selection-start="2379" selection-end="2379" vertical-scroll-proportion="0.0" />
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/war/WEB-INF/lib/gwt-servlet.jar!/com/google/gwt/user/client/ui/VerticalPanel.class">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/ZithiaNamesSection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+        <state line="29" column="18" selection-start="1005" selection-end="1005" vertical-scroll-proportion="0.5107296">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/SettableBooleanField.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/SettableStringField.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+        <state line="60" column="0" selection-start="1246" selection-end="2120" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/TrainingEntryField.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/RaceValue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+        <state line="29" column="5" selection-start="1050" selection-end="1050" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponCostTreeGrid.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/JSONDeserializer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="178" column="4" selection-start="7092" selection-end="7092" vertical-scroll-proportion="0.0" />
+        <state line="243" column="0" selection-start="11611" selection-end="11611" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponUseTreeGrid.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/JSONSerializer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="75" selection-start="3232" selection-end="3232" vertical-scroll-proportion="0.0" />
+        <state line="281" column="62" selection-start="10219" selection-end="10219" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/WeaponSkillTreeGridItem.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/SettableEnumValueImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="28" selection-start="1395" selection-end="1395" vertical-scroll-proportion="0.0" />
+        <state line="20" column="52" selection-start="754" selection-end="754" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/WeaponTraining.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/ObservableEnum.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="276" column="0" selection-start="10898" selection-end="10898" vertical-scroll-proportion="0.0" />
+        <state line="20" column="49" selection-start="753" selection-end="753" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/TreeGrid.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/modeler/SettableEnumValue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="164" column="0" selection-start="6444" selection-end="6444" vertical-scroll-proportion="0.0" />
+        <state line="21" column="52" selection-start="801" selection-end="801" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/ZithiaWeaponSkillsSection.java">
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/SettableEnumField.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="758" selection-end="758" vertical-scroll-proportion="0.08994709">
+        <state line="46" column="48" selection-start="1787" selection-end="1787" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mcherm/zithiacharsheet/client/model/Race.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="0" selection-start="1021" selection-end="1021" vertical-scroll-proportion="0.771134">
           <folding />
         </state>
       </provider>

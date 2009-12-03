@@ -22,6 +22,7 @@ package com.mcherm.zithiacharsheet.client.model;
  */
 public class ZithiaCharacter {
 
+    private final RaceValue raceValue;
     private final StatValues statValues;
     private final SkillList skillList;
     private final WeaponTraining weaponTraining;
@@ -34,6 +35,7 @@ public class ZithiaCharacter {
      * Creates a default blank character sheet.
      */
     public ZithiaCharacter() {
+        raceValue = new RaceValue();
         statValues = new StatValues();
         skillList = new SkillList(statValues);
         addNewSkill(SkillCatalog.get("climbing"));
@@ -43,6 +45,10 @@ public class ZithiaCharacter {
         zithiaCosts = new ZithiaCosts(statValues, skillList, weaponTraining, talentList);
         names = new Names();
         characterNotes = new CharacterNotes();
+    }
+
+    public RaceValue getRaceValue() {
+        return raceValue;
     }
     
     public StatValues getStatValues() {
