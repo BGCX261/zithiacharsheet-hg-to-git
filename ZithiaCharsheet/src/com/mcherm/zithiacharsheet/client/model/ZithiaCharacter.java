@@ -16,12 +16,18 @@
  */
 package com.mcherm.zithiacharsheet.client.model;
 
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
+import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
+import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
+
 
 /**
  * A complete character sheet.
  */
-public class ZithiaCharacter {
+public class ZithiaCharacter implements Disposable {
 
+    private final Disposer disposer = new Disposer();
     private final RaceValue raceValue;
     private final StatValues statValues;
     private final SkillList skillList;
@@ -30,6 +36,7 @@ public class ZithiaCharacter {
     private final ZithiaCosts zithiaCosts;
     private final Names names;
     private final CharacterNotes characterNotes;
+    private Race previousRace; // Used by RaceChangeObserver. null means don't update stats
     
     /**
      * Creates a default blank character sheet.
@@ -45,6 +52,13 @@ public class ZithiaCharacter {
         zithiaCosts = new ZithiaCosts(raceValue, statValues, skillList, weaponTraining, talentList);
         names = new Names();
         characterNotes = new CharacterNotes();
+
+        // FIXME: Probably some other fields need disposing also. The disposing isn't universal yet.
+        disposer.addDisposable(raceValue);
+        disposer.addDisposable(skillList);
+        disposer.addDisposable(talentList);
+        disposer.observe(raceValue.getRace(), new RaceChangeObserver());
+        changeStatsOnRaceUpdate(true);
     }
 
     public RaceValue getRaceValue() {
@@ -99,4 +113,49 @@ public class ZithiaCharacter {
         return characterNotes;
     }
 
+    public void dispose() {
+        disposer.dispose();
+    }
+
+    /**
+     * We want to make sure that when a user switches the race of a
+     * character that we adjust the stat values. But we want the stat
+     * values themselves to be directly editable also. And we can't be
+     * editing the stat values when loading a saved character.
+     * <p>
+     * The solution is that we set up this listener to observe all race
+     * changes. It keeps a 'memory' of what the old race was and modifies
+     * the stats based on the difference in racial modifiers. The VERY
+     * FIRST time it is called the 'memory' will be empty and there will
+     * be no updates (that should be when the character is loaded).
+     * <p>
+     * I am not confident that this is a good solution; it may need to be
+     * revised later.
+     */
+    private class RaceChangeObserver implements Observer {
+        public void onChange() {
+            if (previousRace != null) {
+                Race newRace = getRaceValue().getRace().getValue();
+                for (ZithiaStat stat : ZithiaStat.values()) {
+                    int changeInModifier = newRace.getModifier(stat) - previousRace.getModifier(stat);
+                    SettableIntValue statValue = getStat(stat).getValue();
+                    statValue.setValue(statValue.getValue() + changeInModifier);
+                }
+                previousRace = newRace;
+            }
+        }
+    }
+
+    /**
+     * Use this to set whether the stats are updated when the race is changed. true
+     * means that they will be updated (this is the default) and false means that
+     * they won't be (useful when loading a character, for example).
+     */
+    public void changeStatsOnRaceUpdate(boolean change) {
+        if (change) {
+            previousRace = getRaceValue().getRace().getValue();
+        } else {
+            previousRace = null;
+        }
+    }
 }

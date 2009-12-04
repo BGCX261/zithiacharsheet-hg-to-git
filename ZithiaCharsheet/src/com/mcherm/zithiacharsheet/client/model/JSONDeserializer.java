@@ -268,6 +268,7 @@ public class JSONDeserializer {
     }
 
     public void update(JSONValue inputValue, ZithiaCharacter zithiaCharacter) {
+        zithiaCharacter.changeStatsOnRaceUpdate(false);
         JSONObject inputObject = notNull(inputValue.isObject());
         updateFromField(inputObject, "race", zithiaCharacter.getRaceValue());
         updateFromField(inputObject, "names", zithiaCharacter.getNames());
@@ -277,6 +278,7 @@ public class JSONDeserializer {
         updateFromField(inputObject, "talentList", zithiaCharacter.getTalentList());
         updateFromField(inputObject, "costs", zithiaCharacter.getCosts());
         updateFromField(inputObject, "notes", zithiaCharacter.getCharacterNotes());
+        zithiaCharacter.changeStatsOnRaceUpdate(true);
     }
 
 }
