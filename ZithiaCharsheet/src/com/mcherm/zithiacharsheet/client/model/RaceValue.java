@@ -15,22 +15,49 @@
  */
 package com.mcherm.zithiacharsheet.client.model;
 
+import com.mcherm.zithiacharsheet.client.modeler.Disposable;
+import com.mcherm.zithiacharsheet.client.modeler.Disposer;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableEnum;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
 import com.mcherm.zithiacharsheet.client.modeler.SettableEnumValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableEnumValueImpl;
+import com.mcherm.zithiacharsheet.client.modeler.SimpleObservable;
 
 
 /**
  * The value within a ZithiaCharacter of the race, and any related fields.
  */
-public class RaceValue {
+public class RaceValue implements Disposable {
+    private final Disposer disposer = new Disposer();
     private final SettableEnumValue<Race> race;
+    private final ObservableInt cost;
+
 
     public RaceValue() {
         race = new SettableEnumValueImpl<Race>(Race.class, Race.Human);
+        cost = new ObservableInt() {
+            public void addObserver(Observer observer) {
+                disposer.observe(race, observer);
+            }
+            public void removeObserver(Observer observer) {
+                throw new RuntimeException("Does not support removing observers.");
+            }
+            public int getValue() {
+                return race.getValue().getCost();
+            }
+        };
+
     }
 
     public SettableEnumValue<Race> getRace() {
         return race;
     }
 
+    public ObservableInt getCost() {
+        return cost;
+    }
+
+    public void dispose() {
+        disposer.dispose();
+    }
 }

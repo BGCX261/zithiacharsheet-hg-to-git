@@ -50,7 +50,8 @@ public class ZithiaCosts {
     /**
      * Constructor.
      */
-    public ZithiaCosts(StatValues statValues,
+    public ZithiaCosts(RaceValue raceValue,
+                       StatValues statValues,
                        SkillList skillList, 
                        WeaponTraining weaponTraining,
                        TalentList talentList)
@@ -60,11 +61,7 @@ public class ZithiaCosts {
                 return x;
             }
         };
-        raceCost = new EquationIntValue(new Equation0() {
-            public int getValue() {
-                return 0;
-            }
-        });
+        raceCost = new EquationIntValue(raceValue.getCost(), identity);
         statCost = new EquationIntValue(statValues.getCost(), identity);
         skillCost = new EquationIntValue(skillList.getCost(), identity);
         weaponSkillCost = new EquationIntValue(weaponTraining.getTotalCost(), identity);

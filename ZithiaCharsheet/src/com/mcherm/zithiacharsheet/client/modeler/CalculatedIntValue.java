@@ -37,8 +37,8 @@ public class CalculatedIntValue<T extends Observable> extends SimpleObservable i
      * Constructor.
      * 
      * @param inputs a list of inputs that this depends on. The list
-     *   passed must never change (it can be a clone of another list
-     *   if necessary).
+     *   passed will be iterated once; after that any changes made
+     *   to it would be ignored.
      * @param valueCalculator a function to calculate the value at
      *   any point in time.
      */

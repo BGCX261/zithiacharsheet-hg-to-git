@@ -16,7 +16,14 @@
  */
 package com.mcherm.zithiacharsheet.client.model;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
+import com.mcherm.zithiacharsheet.client.modeler.CalculatedIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
+import com.mcherm.zithiacharsheet.client.modeler.Observable;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableEnum;
+import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.SettableIntValueImpl;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
@@ -33,7 +40,7 @@ public class StatValue {
     private final TweakableIntValue roll;
     private final TweakableIntValue cost;
     
-    public StatValue(final ZithiaStat stat) {
+    public StatValue(final RaceValue raceValue, final ZithiaStat stat) {
         this.stat = stat;
         value = new SettableIntValueImpl(stat.getDefaultValue());
         roll = new EquationIntValue(value, new Equation1() {
@@ -41,12 +48,27 @@ public class StatValue {
                 return stat.getRoll(value);
             }
         });
-        cost = new EquationIntValue(value, new Equation1() {
-            public int getValue(int value) {
-                // FIXME: this needs to take race into account. But for now it won't.
-                return stat.getCost(value - stat.getDefaultValue());
-            }
-        });
+        cost = new StatCost(stat, raceValue.getRace(), value);
+    }
+
+    /** A class to store and calculate stat costs. */
+    private static class StatCost extends CalculatedIntValue<Observable> {
+        public StatCost(final ZithiaStat stat, ObservableEnum<Race> obsRace, ObservableInt obsValue) {
+            super(Arrays.asList(obsRace, obsValue), new ValueCalculator<Observable>() {
+                @SuppressWarnings("unchecked")
+                public int calculateValue(Iterable<? extends Observable> inputs) {
+                    Iterator<? extends Observable> iter = inputs.iterator();
+                    ObservableEnum<Race> obsRace = (ObservableEnum<Race>) iter.next();
+                    ObservableInt obsValue = (ObservableInt) iter.next();
+                    assert !iter.hasNext();
+                    int value = obsValue.getValue();
+                    Race race = obsRace.getValue();
+                    int pointsRaised = value - stat.getDefaultValue() - race.getModifier(stat);
+                    return stat.getCost(pointsRaised);
+                }
+            });
+        }
+
     }
     
     public ZithiaStat getStat() {

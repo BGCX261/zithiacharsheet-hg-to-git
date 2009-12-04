@@ -36,13 +36,13 @@ public class ZithiaCharacter {
      */
     public ZithiaCharacter() {
         raceValue = new RaceValue();
-        statValues = new StatValues();
+        statValues = new StatValues(raceValue);
         skillList = new SkillList(statValues);
         addNewSkill(SkillCatalog.get("climbing"));
         addNewSkill(SkillCatalog.get("stealth"));
         weaponTraining = WeaponTraining.createAllCombatTraining();
         talentList = new TalentList();
-        zithiaCosts = new ZithiaCosts(statValues, skillList, weaponTraining, talentList);
+        zithiaCosts = new ZithiaCosts(raceValue, statValues, skillList, weaponTraining, talentList);
         names = new Names();
         characterNotes = new CharacterNotes();
     }
