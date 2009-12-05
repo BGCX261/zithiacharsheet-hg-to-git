@@ -41,8 +41,9 @@ public class WeaponsCatalog {
     private final WeaponClusterSkill allCombatSkill;
     private final Map<String,WeaponSkill> weaponSkillById;
     private final Map<WeaponClusterSkill,List<WeaponSkill>> skillChildren;
-    
-    public WeaponsCatalog() {
+
+    /** Constructor is private; use getSingleton(). */
+    private WeaponsCatalog() {
         weaponSkillById = new HashMap<String,WeaponSkill>();
         LineReader lineReader = new LineReader(Arrays.asList(getData()));
         lineReader.processLines();
@@ -55,7 +56,8 @@ public class WeaponsCatalog {
             skillChildren.put(key, Collections.unmodifiableList(lineReader.skillChildren.get(key)));
         }
     }
-    
+
+
     /**
      * An inner class that exists just to carry some state around among some recursive
      * routines used when setting up the catalog.
@@ -198,46 +200,101 @@ public class WeaponsCatalog {
     
     private String[][] getData() {
         return new String[][] {
-            // 1: id, name strMin spd, hpDmg stunDmg
-            {"4:", "allcombat", "All Combat", "10", "7"},
+        // 1: id, name strMin spd, hpDmg stunDmg
+        {"4:", "allcombat", "All Combat", "10", "7"},
             {"3:", "melee", "Melee Weapons", "6", "5"},
-            {"2:", "daggers", "Daggers"},
-            {"1:", "knife", "Knife", "3", "3", "1D2-1", "1D3-1"},
-            {"1:", "dagger", "Dagger", "3", "5", "1D2", "1D3"},
-            {"1:", "stiletto", "Stiletto", "3", "5", "1D3-1", "1D2"},
-            {"2:", "swords", "Swords"},
-            {"1:", "shortsword", "Short Sword", "4", "8", "1D4", "1D6"},
-            {"1:", "rapier", "Rapier", "7", "6", "1D4", "1D6"},
-            {"1:", "scimitar", "Scimitar", "10", "5", "1D6", "1D8"},
-            {"1:", "longsword", "Long Sword", "11", "6", "2D3", "1D8+1"},
-            {"1:", "broadsword", "Broadsword", "12", "6", "1D8", "1D10"},
-            {"1:", "bastard1h", "Bastard Sword (1-handed)", "15", "7", "2D4+1", "2D6+1"},
-            {"2:", "2hswords", "Two-Handed Swords"},
-            {"1:", "bastard2h", "Bastard Sword (2-handed)", "13", "7", "2D4+1", "2D6+1"},
-            {"1:", "2hsword", "Two-Handed Sword", "17", "10", "2D8+1", "2D12"},
-            {"2:", "axes", "Axes"},
-            {"1:", "handaxe", "Hand Axe", "8", "5", "1D6", "1D4"},
-            {"1:", "francisca", "Francisca", "12", "6", "1D10", "2D4-1"},
-            {"1:", "battleaxe", "Battle Axe", "14", "7", "2D6", "2D4"},
-            {"1:", "bardiche", "Bardiche", "16", "9", "1D20", "2D6+1"},
-            {"1:", "halbard", "Halbard", "18", "9", "2D10+1", "2D8"},
-            {"2:", "clubmace", "Club/Mace"},
-            {"1:", "hammer", "Hammer", "10", "5", "1D3-1", "1D6+2"},
-            {"1:", "mace", "Mace", "13", "7", "1D6", "3D4+1"},
-            {"2:", "tridents", "Trident"},
-            {"1:", "trident", "Trident", "9", "9", "1D8", "1D8"},
-            {"2:", "naturalweap", "Natural Weaponry"},
-            {"2:", "unarmed", "Unarmed"},
-            {"1:", "fists", "Unarmed", "0", "0", "0-Str", "0"},
+                {"2:", "daggers", "Daggers"},
+                    {"1:", "knife", "Knife", "3", "3", "1D2-1", "1D3-1"},
+                    {"1:", "dagger", "Dagger", "3", "5", "1D2", "1D3"},
+                    {"1:", "stiletto", "Stiletto", "3", "5", "1D3-1", "1D2"},
+                {"2:", "swords", "Swords"},
+                    {"1:", "shortsword", "Short Sword", "4", "8", "1D4", "1D6"},
+                    {"1:", "rapier", "Rapier", "7", "6", "1D4", "1D6"},
+                    {"1:", "scimitar", "Scimitar", "10", "5", "1D6", "1D8"},
+                    {"1:", "longsword", "Long Sword", "11", "6", "2D3", "1D8+1"},
+                    {"1:", "broadsword", "Broadsword", "12", "6", "1D8", "1D10"},
+                    {"1:", "bastard1h", "Bastard Sword (1-handed)", "15", "7", "2D4+1", "2D6+1"},
+                {"2:", "2hswords", "Two-Handed Swords"},
+                    {"1:", "bastard2h", "Bastard Sword (2-handed)", "13", "7", "2D4+1", "2D6+1"},
+                    {"1:", "2hsword", "Two-Handed Sword", "17", "10", "2D8+1", "2D12"},
+                {"2:", "axes", "Axes"},
+                    {"1:", "handaxe", "Hand Axe", "8", "5", "1D6", "1D4"},
+                    {"1:", "francisca", "Francisca", "12", "6", "1D10", "2D4-1"},
+                    {"1:", "battleaxe", "Battle Axe", "14", "7", "2D6", "2D4"},
+                    {"1:", "bardiche", "Bardiche", "16", "9", "1D20", "2D6+1"},
+                    {"1:", "halbard", "Halbard", "18", "9", "2D10+1", "2D8"},
+                {"2:", "clubmace", "Club/Mace"},
+                    {"1:", "hammer", "Hammer", "10", "5", "1D3-1", "1D6+2"},
+                    {"1:", "mace", "Mace", "13", "7", "1D6", "3D4+1"},
+                    {"1:", "morningstar", "Morning Star", "14", "7", "1D6", "2D8"},
+                    {"1:", "baton", "Baton", "6", "4", "1D2-1", "1D6"},
+                    {"1:", "club", "Club", "11", "5", "1D3", "2D6"},
+                    {"1:", "largeclub", "Large Club", "16", "6", "1D6", "3D6"},
+                    {"1:", "greatclub", "Great Club", "20", "7", "2D4", "4D6"},
+                {"2:", "spears", "Spears"},
+                    {"1:", "spear", "Spear", "6", "6", "1D4", "1D4"},
+                    {"1:", "boarspear", "Boar Spear", "8", "9", "1D6", "2D4"},
+                    {"1:", "pike", "Pike", "10", "12", "1D10", "1D12+1"},
+                    {"1:", "lightlance", "Light Lance", "11", "8", "2D6", "2D8"},
+                    {"1:", "heavylance", "Heavy Lance", "15", "10", "1D20", "3D8"},
+                {"2:", "quarterstaves", "Quarterstaff"},
+                    {"1:", "quarterstaff", "Quarterstaff", "8", "8", "1D4", "2D4+1"},
+                {"2:", "whips", "Whip"},
+                    {"1:", "whip", "Whip", "9", "7", "1D2-1", "1D6"},
+                {"2:", "tridents", "Trident"},
+                    {"1:", "trident", "Trident", "9", "9", "1D8", "1D8"},
+                {"2:", "naturalweap", "Natural Weaponry"},
+                {"2:", "unarmed", "Unarmed"},
+                    {"1:", "fists", "Unarmed", "0", "0", "0-Str", "0"},
             {"3:", "ranged", "Ranged Weapons", "5", "5"},
-            {"2:", "bows", "Bow"},
-            {"1:", "shortlightbow", "Shortbow, Light Pull", "8", "5", "1D6", "1D6-1"},
-            {"1:", "shortmediumbow", "Showtbow, Medium Pull", "11", "5", "1D6", "1D6"},
-            {"1:", "shortheavybow", "Showtbow, Heavy Pull", "15", "5", "1D6+1", "1D6"},
-            {"1:", "longlightbow", "Longbow, Light Pull", "12", "7", "1D6", "1D6"},
-            {"1:", "longmediumbow", "Longbow, Medium Pull", "16", "7", "1D6+1", "1D6"},
-            {"1:", "longheavybow", "Longbow, Heavy Pull", "20", "7", "1D6+1", "1D6+1"},
+                {"2:", "bows", "Bow"},
+                    {"1:", "shortlightbow", "Shortbow, Light Pull", "8", "5", "1D6", "1D6-1"},
+                    {"1:", "shortmediumbow", "Showtbow, Medium Pull", "11", "5", "1D6", "1D6"},
+                    {"1:", "shortheavybow", "Showtbow, Heavy Pull", "15", "5", "1D6+1", "1D6"},
+                    {"1:", "longlightbow", "Longbow, Light Pull", "12", "7", "1D6", "1D6"},
+                    {"1:", "longmediumbow", "Longbow, Medium Pull", "16", "7", "1D6+1", "1D6"},
+                    {"1:", "longheavybow", "Longbow, Heavy Pull", "20", "7", "1D6+1", "1D6+1"},
+                {"2:", "crossbow", "Crossbow"},
+                    {"1:", "lightcrossbow", "Light Crossbow", "10", "9", "1D3+2", "1D3"},
+                    {"1:", "heavycrossbow", "Heavy Crossbow", "13", "13", "1D3+3", "1D3"},
+                    {"1:", "arbalest", "Arbalest", "15", "18", "1D4+5", "1D4"},
+                {"2:", "hurled", "Hurled"},
+                    {"1:", "hurleddagger", "Dagger", "7", "4", "1D4", "1D3"},
+                    {"1:", "hurledaxe", "Axe", "10", "5", "1D3+1", "1D4"},
+                    {"1:", "javelin", "Javelin", "8", "6", "1D6", "1D4"},
+                    {"1:", "hurledspear", "Spear", "12", "7", "1D6+1", "1D4+1"},
+                {"2:", "sling", "Sling"},
+                    {"1:", "slingstone", "Sling stone", "8", "5", "1D2", "1D3"},
+                    {"1:", "slingbullet", "Sling bullet", "8", "5", "1D3", "1D4"},
+                    {"1:", "staffsling", "Staff Sling", "10", "7", "1D4", "1D4+1"},
+                {"2:", "blowpipes", "Blowpipe"},
+                    {"1:", "blowpipe", "Blowpipe", "2", "7", "1D2-1", "0"},
+                {"2:", "thrown", "Thrown"},
+                    {"1:", "thrownstone", "Stone", "7", "3", "1D3-1", "1D4-1"},
+                    {"1:", "thrownrock", "Rock", "13", "5", "1D4-1", "1D4+1"},
+                    {"1:", "thrownbigrock", "Big Rock", "19", "7", "1D4", "2D4"},
+                    {"1:", "thrownboulder", "Boulder", "25", "9", "2D3", "3D4"},
         };
     }
     
+
+    /** For testing purposes, a main() that prints out the catalog names. */
+    public static void main(String[] args) {
+        WeaponsCatalog cat = WeaponsCatalog.getSingleton();
+        WeaponSkill allCombatS = cat.getAllCombatSkill();
+        printWeaponCluster(allCombatS);
+    }
+    public static void printWeaponCluster(WeaponSkill ws) {
+        for (int i=0; i<4-ws.getSpan(); i++) {
+            System.out.print("    ");
+        }
+        System.out.println(ws.getName());
+        if (ws instanceof WeaponClusterSkill) {
+            WeaponClusterSkill wcs = (WeaponClusterSkill) ws;
+            for (WeaponSkill wsChild : WeaponsCatalog.getSingleton().getChildren(wcs)) {
+                printWeaponCluster(wsChild);
+            }
+        }
+    }
+
 }
