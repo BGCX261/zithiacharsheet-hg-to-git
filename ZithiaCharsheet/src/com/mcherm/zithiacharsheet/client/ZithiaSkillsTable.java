@@ -16,6 +16,7 @@
  */
 package com.mcherm.zithiacharsheet.client;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.mcherm.zithiacharsheet.client.model.SkillList;
 import com.mcherm.zithiacharsheet.client.model.SkillValue;
@@ -34,14 +35,16 @@ public class ZithiaSkillsTable extends FlexTable implements Disposable {
         this.addStyleName("skills");
         int row = 0;
         // -- Draw Header --
-        setText(row, 0, "Cost");
-        getFlexCellFormatter().addStyleName(row, 0, "costCol");
-        setText(row, 1, "Skill");
-        getFlexCellFormatter().addStyleName(row, 1, "nameCol");
-        setText(row, 2, "Levels");
-        getFlexCellFormatter().addStyleName(row, 2, "levelsCol");
-        setText(row, 3, "Roll");
-        getFlexCellFormatter().addStyleName(row, 3, "rollCol");
+        setText(row, 0, "Checkbox");
+        getFlexCellFormatter().addStyleName(row, 0, "checkBox");
+        setText(row, 1, "Cost");
+        getFlexCellFormatter().addStyleName(row, 1, "costCol");
+        setText(row, 2, "Skill");
+        getFlexCellFormatter().addStyleName(row, 2, "nameCol");
+        setText(row, 3, "Levels");
+        getFlexCellFormatter().addStyleName(row, 3, "levelsCol");
+        setText(row, 4, "Roll");
+        getFlexCellFormatter().addStyleName(row, 4, "rollCol");
         getRowFormatter().addStyleName(row, "header");
         // -- Fill in Skills --
         final SkillList skillList = zithiaCharacter.getSkillList();
@@ -72,22 +75,25 @@ public class ZithiaSkillsTable extends FlexTable implements Disposable {
         // -- Re-insert all skills as rows --
         rowsDisposer = new Disposer();
         for (final SkillValue skillValue : skills) {
+            //---Checkbox for row selection--//
+            getFlexCellFormatter().addStyleName(row, 0, "checkBox");
+            setWidget(row, 0, new CheckBox());
             // -- Name --
-            getFlexCellFormatter().addStyleName(row, 1, "nameCol");
-            setText(row, 1, skillValue.getSkill().getName());
+            getFlexCellFormatter().addStyleName(row, 2, "nameCol");
+            setText(row, 2, skillValue.getSkill().getName());
             // -- Cost --
-            getFlexCellFormatter().addStyleName(row, 0, "costCol");
-            setWidget(row, 0, rowsDisposer.track(new TweakableIntField(skillValue.getCost())));
+            getFlexCellFormatter().addStyleName(row, 1, "costCol");
+            setWidget(row, 1, rowsDisposer.track(new TweakableIntField(skillValue.getCost())));
             // -- Roll --
-            getFlexCellFormatter().addStyleName(row, 3, "rollCol");
+            getFlexCellFormatter().addStyleName(row, 4, "rollCol");
             if (skillValue.getSkill().hasRoll()) {
-                setWidget(row, 3, rowsDisposer.track(new TweakableIntField(skillValue.getRoll())));
+                setWidget(row, 4, rowsDisposer.track(new TweakableIntField(skillValue.getRoll())));
             } else {
-                setText(row, 3, "n/a");
+                setText(row, 4, "n/a");
             }
             // -- Value --
-            getFlexCellFormatter().addStyleName(row, 2, "levelsCol");
-            setWidget(row, 2, rowsDisposer.track(new SettableIntField(skillValue.getLevels())));
+            getFlexCellFormatter().addStyleName(row, 3, "levelsCol");
+            setWidget(row, 3, rowsDisposer.track(new SettableIntField(skillValue.getLevels())));
             // -- Continue loop --
             row++;
         }

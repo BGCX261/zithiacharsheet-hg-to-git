@@ -47,7 +47,14 @@ public class ZithiaSkillsSection extends VerticalPanel {
                 testDialog.center();
             }
         });
+        Button deleteSkillButton = new Button("Delete Skill", new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                testDialog.center();
+            }
+        });
+
         this.add(addSkillButton);
+        this.add(deleteSkillButton);
     }
 
 }
