@@ -34,6 +34,7 @@ public class ZithiaCharacter implements Disposable {
     private final WeaponTraining weaponTraining;
     private final TalentList talentList;
     private final ZithiaCosts zithiaCosts;
+    private final CombatValues combatValues;
     private final Names names;
     private final CharacterNotes characterNotes;
     private Race previousRace; // Used by RaceChangeObserver. null means don't update stats
@@ -50,6 +51,7 @@ public class ZithiaCharacter implements Disposable {
         weaponTraining = WeaponTraining.createAllCombatTraining();
         talentList = new TalentList();
         zithiaCosts = new ZithiaCosts(raceValue, statValues, skillList, weaponTraining, talentList);
+        combatValues = new CombatValues(statValues);
         names = new Names();
         characterNotes = new CharacterNotes();
 
@@ -103,6 +105,10 @@ public class ZithiaCharacter implements Disposable {
     
     public ZithiaCosts getCosts() {
         return zithiaCosts;
+    }
+
+    public CombatValues getCombatValues() {
+        return combatValues;
     }
     
     public Names getNames() {

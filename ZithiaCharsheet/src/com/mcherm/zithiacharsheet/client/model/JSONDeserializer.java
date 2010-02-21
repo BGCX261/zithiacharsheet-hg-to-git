@@ -250,6 +250,19 @@ public class JSONDeserializer {
         }
     }
 
+    protected void updateFromField(JSONObject inputObject, String fieldName, CombatValues combatValues) {
+        JSONValue fieldValue = inputObject.get(fieldName);
+        if (fieldValue == null) {
+            // If omitted, then all fields take default values
+            combatValues.getOffense().setAdjustments(null, null);
+            combatValues.getDefense().setAdjustments(null, null);
+        } else {
+            JSONObject fieldObject = notNull(fieldValue.isObject());
+            updateFromField(fieldObject, "offense", combatValues.getOffense());
+            updateFromField(fieldObject, "defense", combatValues.getDefense());
+        }
+    }
+
     protected void updateFromField(JSONObject inputObject, String fieldName, Names names) {
         JSONValue fieldValue = notNull(inputObject.get(fieldName));
         JSONObject fieldObject = notNull(fieldValue.isObject());
@@ -277,6 +290,7 @@ public class JSONDeserializer {
         updateFromField(inputObject, "weaponTraining", zithiaCharacter.getWeaponTraining());
         updateFromField(inputObject, "talentList", zithiaCharacter.getTalentList());
         updateFromField(inputObject, "costs", zithiaCharacter.getCosts());
+        updateFromField(inputObject, "combatValues", zithiaCharacter.getCombatValues());
         updateFromField(inputObject, "notes", zithiaCharacter.getCharacterNotes());
         zithiaCharacter.changeStatsOnRaceUpdate(true);
     }

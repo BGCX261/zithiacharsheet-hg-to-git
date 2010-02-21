@@ -61,7 +61,7 @@ public class ZithiaCharsheet extends Grid {
     public ZithiaCharsheet() {
         // -- Set up 2 columns, with specific numbers of items in each --
         super(1,2); // initialize to a 2-column, 1 row grid
-        final Grid leftSide = new Grid(4,1);
+        final Grid leftSide = new Grid(5,1);
         setWidget(0, 0, leftSide);
         final Grid rightSide = new Grid(4,1);
         setWidget(0, 1, rightSide);
@@ -78,7 +78,10 @@ public class ZithiaCharsheet extends Grid {
             leftSide.setWidget(1, 0, new ZithiaStatsTable(zithiaCharacter));
         } });
         DeferredCommand.addCommand(new Command() { public void execute() {
-            leftSide.setWidget(2, 0, new ZithiaCostsSection(zithiaCharacter));
+            leftSide.setWidget(2, 0, new CombatValuesSection(zithiaCharacter));
+        } });
+        DeferredCommand.addCommand(new Command() { public void execute() {
+            leftSide.setWidget(3, 0, new ZithiaCostsSection(zithiaCharacter));
         } });
         DeferredCommand.addCommand(new Command() { public void execute() {
             rightSide.setWidget(0, 0, new ZithiaSkillsSection(zithiaCharacter));
@@ -102,7 +105,7 @@ public class ZithiaCharsheet extends Grid {
                     save();
                 }
             });
-            leftSide.setWidget(3, 0, saveButton);
+            leftSide.setWidget(4, 0, saveButton);
         } });
     }
 
