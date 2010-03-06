@@ -19,7 +19,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeImages;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.WeaponTraining;
@@ -39,6 +42,7 @@ public class WeaponUseTreeGrid extends TreeGrid {
 
     private final static int NUM_COLUMNS = 6;
 
+
     /** Constructor. */
     public WeaponUseTreeGrid(ZithiaCharacter zithiaCharacter) {
         super(new WeaponUseTreeGridItem(zithiaCharacter, zithiaCharacter.getWeaponTraining()),
@@ -50,11 +54,19 @@ public class WeaponUseTreeGrid extends TreeGrid {
      * Display a header giving the meaning of the different columns.
      */
     protected List<WidgetOrText> getHeader() {
+        final Image openCloseAll;
+        openCloseAll = treeImages.treeClosed().createImage();
+        openCloseAll.addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent clickEvent) {
+                openAll();
+            }
+        });
+        
         VerticalPanel totalLevels = new VerticalPanel();
         totalLevels.add(new HTML("Total"));
         totalLevels.add(new HTML("Levels"));
         return Arrays.asList(
-                new WidgetOrText(""),
+                new WidgetOrText(openCloseAll),
                 new WidgetOrText("Trained"),
                 new WidgetOrText(totalLevels),
                 new WidgetOrText("Speed"),
