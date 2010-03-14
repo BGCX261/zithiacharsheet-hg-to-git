@@ -102,9 +102,9 @@ public class ArmorValue {
      * will be false.
      */
     public void setDefaultSettings() {
-        hpBlock.setAdjustments(0, 0);
-        stunBlock.setAdjustments(0, 0);
-        defPenalty.setAdjustments(0, 0);
+        hpBlock.setAdjustments(null, null);
+        stunBlock.setAdjustments(null, null);
+        defPenalty.setAdjustments(null, null);
         armorType.setValue(ArmorType.NONE);
     }
 
