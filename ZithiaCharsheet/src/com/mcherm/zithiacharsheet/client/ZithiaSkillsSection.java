@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.mcherm.zithiacharsheet.client.model.SkillList;
 import com.mcherm.zithiacharsheet.client.model.SkillValue;
@@ -72,9 +73,10 @@ public class ZithiaSkillsSection extends VerticalPanel {
                 }
             }
         });
-
-        this.add(addSkillButton);
-        this.add(deleteSkillButton);
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        horizontalPanel.add(addSkillButton);
+        horizontalPanel.add(deleteSkillButton);
+        this.add(horizontalPanel);
     }
 
 }
