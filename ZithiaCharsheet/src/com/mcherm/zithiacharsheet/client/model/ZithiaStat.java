@@ -21,6 +21,7 @@ import com.mcherm.zithiacharsheet.client.model.StatCost.HpStunStatCost;
 import com.mcherm.zithiacharsheet.client.model.StatCost.MoveStatCost;
 import com.mcherm.zithiacharsheet.client.model.StatCost.NormalStatCost;
 import com.mcherm.zithiacharsheet.client.model.StatCost.SpdStatCost;
+import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 
 
 public enum ZithiaStat {

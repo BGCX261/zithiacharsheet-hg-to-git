@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.model.ArmorType;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 
 
@@ -30,6 +31,16 @@ public class CombatValuesSection extends VerticalPanel {
 
     public CombatValuesSection(final ZithiaCharacter zithiaCharacter) {
         addStyleName("combatValuesSection");
+        add(new SettableEnumField<ArmorType>(zithiaCharacter.getArmorValue().getArmorType()));
+        HorizontalPanel armorEffects = new HorizontalPanel();
+        armorEffects.add(new HTML("Blocks&nbsp;"));
+        armorEffects.add(new TweakableIntField(zithiaCharacter.getArmorValue().getHpBlock()));
+        armorEffects.add(new HTML("/"));
+        armorEffects.add(new TweakableIntField(zithiaCharacter.getArmorValue().getStunBlock()));
+        armorEffects.add(new HTML("&nbsp;"));
+        armorEffects.add(new TweakableIntField(zithiaCharacter.getArmorValue().getDefPenalty()));
+        armorEffects.add(new HTML("to dex."));
+        add(armorEffects);
         HorizontalPanel offenseDefense = new HorizontalPanel();
         offenseDefense.add(new Label("Off:"));
         offenseDefense.add(new TweakableIntField(zithiaCharacter.getCombatValues().getOffense()));

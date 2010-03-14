@@ -70,13 +70,20 @@ public class JSONDeserializer {
         settableStringValue.setValue(actualValue);
     }
     
-    protected void updateFromField(JSONObject parent, String fieldName, SettableEnumValue<Race> settableRaceValue) {
+    protected void updateFromFieldRace(JSONObject parent, String fieldName, SettableEnumValue<Race> settableRaceValue) {
         JSONValue valueValue = notNull(parent.get(fieldName));
         JSONString valueString = notNull(valueValue.isString());
         String raceName = valueString.stringValue();
         settableRaceValue.setValue(Race.valueOf(raceName));
     }
     
+    protected void updateFromFieldArmorType(JSONObject parent, String fieldName, SettableEnumValue<ArmorType> settableArmorTypeValue) {
+        JSONValue valueValue = notNull(parent.get(fieldName));
+        JSONString valueString = notNull(valueValue.isString());
+        String armorTypeName = valueString.stringValue();
+        settableArmorTypeValue.setValue(ArmorType.valueOf(armorTypeName));
+    }
+
     protected void updateFromField(JSONObject parent, String fieldName, TweakableIntValue tweakableIntValue) {
         JSONValue value = parent.get(fieldName);
         if (value == null) {
@@ -246,7 +253,7 @@ public class JSONDeserializer {
             raceValue.getRace().setValue(Race.Human);
         } else {
             JSONObject fieldObject = notNull(fieldValue.isObject());
-            updateFromField(fieldObject, "race", raceValue.getRace());
+            updateFromFieldRace(fieldObject, "race", raceValue.getRace());
         }
     }
 
@@ -262,6 +269,22 @@ public class JSONDeserializer {
             updateFromField(fieldObject, "defense", combatValues.getDefense());
         }
     }
+
+    protected void updateFromField(JSONObject inputObject, String fieldName, ArmorValue armorValue) {
+        JSONValue fieldValue = inputObject.get(fieldName);
+        if (fieldValue == null) {
+            // If omitted, then all fields take default values
+            armorValue.setDefaultSettings();
+        } else {
+            JSONObject fieldObject = notNull(fieldValue.isObject());
+            updateFromFieldArmorType(fieldObject, "armorType", armorValue.getArmorType());
+            updateFromField(fieldObject, "hpBlock", armorValue.getHpBlock());
+            updateFromField(fieldObject, "stunBlock", armorValue.getStunBlock());
+            updateFromField(fieldObject, "defPenalty", armorValue.getDefPenalty());
+        }
+    }
+
+
 
     protected void updateFromField(JSONObject inputObject, String fieldName, Names names) {
         JSONValue fieldValue = notNull(inputObject.get(fieldName));
@@ -291,6 +314,7 @@ public class JSONDeserializer {
         updateFromField(inputObject, "talentList", zithiaCharacter.getTalentList());
         updateFromField(inputObject, "costs", zithiaCharacter.getCosts());
         updateFromField(inputObject, "combatValues", zithiaCharacter.getCombatValues());
+        updateFromField(inputObject, "armorValue", zithiaCharacter.getArmorValue());
         updateFromField(inputObject, "notes", zithiaCharacter.getCharacterNotes());
         zithiaCharacter.changeStatsOnRaceUpdate(true);
     }

@@ -29,6 +29,7 @@ public class ZithiaCharacter implements Disposable {
 
     private final Disposer disposer = new Disposer();
     private final RaceValue raceValue;
+    private final ArmorValue armorValue;
     private final StatValues statValues;
     private final SkillList skillList;
     private final WeaponTraining weaponTraining;
@@ -44,7 +45,8 @@ public class ZithiaCharacter implements Disposable {
      */
     public ZithiaCharacter() {
         raceValue = new RaceValue();
-        statValues = new StatValues(raceValue);
+        armorValue = new ArmorValue();
+        statValues = new StatValues(raceValue, armorValue);
         skillList = new SkillList(statValues);
         addNewSkill(SkillCatalog.get("climbing"));
         addNewSkill(SkillCatalog.get("stealth"));
@@ -109,6 +111,10 @@ public class ZithiaCharacter implements Disposable {
 
     public CombatValues getCombatValues() {
         return combatValues;
+    }
+
+    public ArmorValue getArmorValue() {
+        return armorValue;
     }
     
     public Names getNames() {
