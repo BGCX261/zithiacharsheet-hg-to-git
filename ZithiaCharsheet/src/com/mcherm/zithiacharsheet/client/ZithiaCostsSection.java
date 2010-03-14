@@ -46,7 +46,7 @@ public class ZithiaCostsSection extends VerticalPanel {
         costGrid.setWidget(1, 1, new TweakableIntField(costs.getStatCost()));
         costGrid.setText(2, 0, "Skills:");
         costGrid.setWidget(2, 1, new TweakableIntField(costs.getSkillCost()));
-        costGrid.setText(3, 0, "Weapons:");
+        costGrid.setText(3, 0, "Weap:");
         costGrid.setWidget(3, 1, new TweakableIntField(costs.getWeaponSkillCost()));
         costGrid.setText(4, 0, "Other:");
         costGrid.setWidget(4, 1, new TweakableIntField(costs.getTalentCost()));
