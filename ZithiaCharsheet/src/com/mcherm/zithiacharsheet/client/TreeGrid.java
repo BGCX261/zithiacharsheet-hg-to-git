@@ -21,7 +21,6 @@ import java.util.List;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -43,8 +42,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class TreeGrid extends Composite {
 
     private final int numColumns;
-    private final TreeImages treeImages;
+    protected final TreeImages treeImages;
     private final FlexTable table;
+    private final TreeGridBranchLiveRoot liveRoot;
 
     public TreeGrid(TreeGridItem rootItem, int numColumns, final TreeImages treeImages) {
         this.numColumns = numColumns;
@@ -56,7 +56,7 @@ public class TreeGrid extends Composite {
             createHeader(header);
             row += 1;
         }
-        new TreeGridBranchLiveRoot(rootItem, row);
+        liveRoot = new TreeGridBranchLiveRoot(rootItem, row);
         initWidget(table);
     }
 
@@ -246,6 +246,14 @@ public class TreeGrid extends Composite {
                 }
             }
             updateTreeImage();
+        }
+
+        /** Displays all descendants. */
+        public void openDescendants() {
+            openChildren();
+            for (TreeGridItemLiveBranch child : children) {
+                child.openDescendants();
+            }
         }
 
         /** Returns false if any parent is collapsed; true if all are open. */
@@ -494,6 +502,13 @@ public class TreeGrid extends Composite {
                 table.setText(row, col, widgetOrText.getText());
             }
         }
+    }
+
+    /**
+     * Calling this will open all rows in the tree grid.
+     */
+    public void openAll() {
+        liveRoot.openDescendants();
     }
 
 }

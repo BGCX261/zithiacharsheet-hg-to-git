@@ -111,8 +111,8 @@ public class JSONSerializer extends JSONSerializerBase {
         }
     }
 
-    protected void serialize(String fieldName, SettableEnumValue<Race> race) {
-        emitDictItem(fieldName, race.getValue().name());
+    protected void serialize(String fieldName, SettableEnumValue<?> settableEnumValue) {
+        emitDictItem(fieldName, settableEnumValue.getValue().name());
     }
 
     protected void serialize(StatValue statValue) {
@@ -247,6 +247,26 @@ public class JSONSerializer extends JSONSerializerBase {
         serialize("player", names.getPlayerName());
         emitEndDict();
     }
+
+    protected void serialize(String fieldName, CombatValues combatValues) {
+        emitStartDictItem(fieldName);
+        emitStartDict();
+        serialize("offense", combatValues.getOffense());
+        serialize("defense", combatValues.getDefense());
+        emitEndDict();
+    }
+
+    protected void serialize(String fieldName, ArmorValue armorValue) {
+        if (! armorValue.hasDefaultSettings()) {
+            emitStartDictItem(fieldName);
+            emitStartDict();
+            serialize("armorType", armorValue.getArmorType());
+            serialize("hpBlock", armorValue.getHpBlock());
+            serialize("stunBlock", armorValue.getStunBlock());
+            serialize("defPenalty", armorValue.getDefPenalty());
+            emitEndDict();
+        }
+    }
     
     protected void serialize(String fieldName, CharacterNotes notes) {
         if (notes.getBackground().getValue().length() != 0) {
@@ -266,6 +286,8 @@ public class JSONSerializer extends JSONSerializerBase {
         serialize("weaponTraining", zithiaCharacter.getWeaponTraining());
         serialize("talentList", zithiaCharacter.getTalentList());
         serialize("costs", zithiaCharacter.getCosts());
+        serialize("combatValues", zithiaCharacter.getCombatValues());
+        serialize("armorValue", zithiaCharacter.getArmorValue());
         serialize("notes", zithiaCharacter.getCharacterNotes());
         emitEndDict();
     }

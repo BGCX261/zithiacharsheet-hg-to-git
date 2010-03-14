@@ -22,7 +22,7 @@ public interface StatCost {
     /**
      * Returns the cost to raise the stat that many points, or
      * throws an exception if its in the range where raising
-     * it just doesn't make selse.
+     * it just doesn't make sense.
      * 
      * @param pointsRaised the number of points the stat has
      *   been raised from its base value
@@ -68,7 +68,7 @@ public interface StatCost {
     static class HpStunStatCost extends NormalStatCost {
         @Override
         public int getCost(int pointsRaised) {
-            if (pointsRaised >= 10) {
+            if (pointsRaised >= 0) {
                 return pointsRaised * 2;
             } else {
                 return super.getCost(pointsRaised);

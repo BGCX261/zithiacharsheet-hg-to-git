@@ -96,6 +96,10 @@ input.settableInt {
   width: 130px;
 }
 
+.combatValuesSection {
+  border: 1px solid black;
+}
+
 table.characterList {
   height: auto !important;
 }

@@ -30,7 +30,7 @@ public class StatValues implements Iterable<StatValue> {
     private final SummableList<StatValue> stats;
     private final StatValue[] statValueArray;
     
-    public StatValues(RaceValue raceValue) {
+    public StatValues(RaceValue raceValue, ArmorValue armorValues) {
         stats = new SummableList<StatValue>(new Extractor<StatValue>() {
             public ObservableInt extractValue(StatValue item) {
                 return item.getCost();
@@ -38,7 +38,13 @@ public class StatValues implements Iterable<StatValue> {
         });
         statValueArray = new StatValue[ZithiaStat.getNumStats()];
         for (final ZithiaStat stat : ZithiaStat.values()) {
-            StatValue statValue = new StatValue(raceValue, stat);
+            StatValue statValue;
+            if (stat == ZithiaStat.DEX) {
+                statValue = StatValue.newDexStatValue(
+                        raceValue, stat, armorValues, statValueArray[ZithiaStat.STR.ordinal()]);
+            } else {
+                statValue = new StatValue(raceValue, stat);
+            }
             stats.add(statValue);
             statValueArray[stat.ordinal()] = statValue;
         }

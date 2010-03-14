@@ -56,6 +56,9 @@
     <copy todir="war/WEB-INF/classes">
       <fileset dir="src" excludes="**/*.java"/>
     </copy>
+    <!--
+    ==== Commented out because it doesn't work on my windows PC. ====
+    ==== I don't know what it's supposed to be there for anyway. ====
     <taskdef
        name="datanucleusenhancer"
        classpathref="tools.class.path"
@@ -65,6 +68,7 @@
        failonerror="true">
       <fileset dir="war/WEB-INF/classes" includes="**/*.class" />
     </datanucleusenhancer>
+    -->
   </target>
 
   <target name="gwtc" depends="javac" description="GWT compile to JavaScript">
