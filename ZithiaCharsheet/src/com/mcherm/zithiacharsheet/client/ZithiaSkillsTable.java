@@ -35,8 +35,8 @@ public class ZithiaSkillsTable extends FlexTable implements Disposable {
         this.addStyleName("skills");
         int row = 0;
         // -- Draw Header --
-        setText(row, 0, "Checkbox");
-        getFlexCellFormatter().addStyleName(row, 0, "checkBox");
+        setText(row, 0, "");
+        getFlexCellFormatter().addStyleName(row, 0, "checkBoxCol");
         setText(row, 1, "Cost");
         getFlexCellFormatter().addStyleName(row, 1, "costCol");
         setText(row, 2, "Skill");
@@ -70,13 +70,14 @@ public class ZithiaSkillsTable extends FlexTable implements Disposable {
         if (rowsDisposer != null) {
             rowsDisposer.dispose();
         }
-        row++;
+
 
         // -- Re-insert all skills as rows --
+        row = 1;
         rowsDisposer = new Disposer();
         for (final SkillValue skillValue : skills) {
             //---Checkbox for row selection--//
-            getFlexCellFormatter().addStyleName(row, 0, "checkBox");
+            getFlexCellFormatter().addStyleName(row, 0, "checkBoxCol");
             setWidget(row, 0, new CheckBox());
             // -- Name --
             getFlexCellFormatter().addStyleName(row, 2, "nameCol");

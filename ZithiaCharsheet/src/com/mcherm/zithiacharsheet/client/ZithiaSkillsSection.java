@@ -19,9 +19,14 @@ package com.mcherm.zithiacharsheet.client;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.mcherm.zithiacharsheet.client.model.SkillList;
+import com.mcherm.zithiacharsheet.client.model.SkillValue;
 import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
 import com.mcherm.zithiacharsheet.client.model.ZithiaSkill;
+
+import java.util.ArrayList;
 
 
 /**
@@ -29,27 +34,42 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaSkill;
  */
 public class ZithiaSkillsSection extends VerticalPanel {
     private final ZithiaSkillsTable zithiaSkillsTable;
-    private final SelectSkillDialog testDialog;
+    private final SelectSkillDialog addSkillDialog;
 
-        
+
     public ZithiaSkillsSection(final ZithiaCharacter zithiaCharacter) {
         this.addStyleName("skills");
         zithiaSkillsTable = new ZithiaSkillsTable(zithiaCharacter);
         this.add(zithiaSkillsTable);
-        testDialog = new SelectSkillDialog(new SkillCatalogDisplay.SkillSelectCallback() {
+        addSkillDialog = new SelectSkillDialog(new SkillCatalogDisplay.SkillSelectCallback() {
             public void newSkillSelected(ZithiaSkill skill) {
+                addSkillDialog.hide();
                 zithiaCharacter.addNewSkill(skill);
-                testDialog.hide();
+
             }
         });
         Button addSkillButton = new Button("Add Skill", new ClickHandler() {
             public void onClick(ClickEvent event) {
-                testDialog.center();
+                addSkillDialog.center();
             }
         });
         Button deleteSkillButton = new Button("Delete Skill", new ClickHandler() {
             public void onClick(ClickEvent event) {
-                testDialog.center();
+                int row = 1;
+                CheckBox checkBox;
+                SkillList skills = zithiaCharacter.getSkillList();
+                ArrayList<SkillValue> deleteSkills = new ArrayList<SkillValue>();
+
+                for (final SkillValue skillValue : skills) {
+                    checkBox = (CheckBox) zithiaSkillsTable.getWidget (row, 0);
+                    if (checkBox.getValue()){
+                        deleteSkills.add(skillValue);
+                    }
+                    row++;
+                }
+                for (final SkillValue deleteSkill: deleteSkills){
+                    skills.remove(deleteSkill);
+                }
             }
         });
 
