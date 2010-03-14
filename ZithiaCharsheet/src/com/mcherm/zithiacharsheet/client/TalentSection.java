@@ -18,14 +18,14 @@ package com.mcherm.zithiacharsheet.client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 import com.mcherm.zithiacharsheet.client.model.TalentList;
 import com.mcherm.zithiacharsheet.client.model.TalentValue;
 import com.mcherm.zithiacharsheet.client.modeler.Disposable;
 import com.mcherm.zithiacharsheet.client.modeler.Disposer;
 import com.mcherm.zithiacharsheet.client.modeler.Observable;
+
+import java.util.ArrayList;
 
 
 /**
@@ -44,7 +44,33 @@ public class TalentSection extends VerticalPanel implements Disposable {
                 talentList.add(new TalentValue());
             }
         });
-        this.add(addSkillButton);
+        Button deleteSkillButton = new Button ("Delete", new ClickHandler(){
+            public void onClick (ClickEvent event){
+                int row = 1;
+                CheckBox checkBox;
+
+                ArrayList<TalentValue> deleteSkills = new ArrayList<TalentValue>();
+
+                for (final TalentValue talentValue : talentList) {
+                    checkBox = (CheckBox) talentTable.getWidget (row, 0);
+                    if (checkBox.getValue()){
+                        deleteSkills.add(talentValue);
+                    }
+                    row++;
+                }
+                for (final TalentValue deleteSkill: deleteSkills){
+                    talentList.remove(deleteSkill);
+                }
+
+
+            }
+        });
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        horizontalPanel.add(addSkillButton);
+        horizontalPanel.add(deleteSkillButton);
+        this.add(horizontalPanel);
+        
+        this.add(horizontalPanel);
     }
 
 
@@ -59,10 +85,13 @@ public class TalentSection extends VerticalPanel implements Disposable {
             this.addStyleName("talents");
             int row = 0;
             // -- Draw Header --
-            setText(row, 0, "Cost");
-            getFlexCellFormatter().addStyleName(row, 0, "costCol");
-            setText(row, 1, "Description");
-            getFlexCellFormatter().addStyleName(row, 1, "nameCol");
+            setText(row, 0, "");
+            getFlexCellFormatter().addStyleName(row, 0, "checkBoxCol");
+
+            setText(row, 1, "Cost");
+            getFlexCellFormatter().addStyleName(row, 1, "costCol");
+            setText(row, 2, "Description");
+            getFlexCellFormatter().addStyleName(row, 2, "nameCol");
             getRowFormatter().addStyleName(row, "header");
             // -- Fill in Talents --
             repopulateTalentTable(talentList);
@@ -89,12 +118,15 @@ public class TalentSection extends VerticalPanel implements Disposable {
             // -- Re-insert all talents as rows --
             contentDisposer = new Disposer();
             for (final TalentValue talentValue : talents) {
+                //- Checkbox --
+                getFlexCellFormatter().addStyleName(row, 0, "checkBoxCol");
+                setWidget(row, 0, new CheckBox());
                 // -- Cost --
-                getFlexCellFormatter().addStyleName(row, 0, "costCol");
-                setWidget(row, 0, contentDisposer.track(new SettableIntField(talentValue.getCost())));
+                getFlexCellFormatter().addStyleName(row, 1, "costCol");
+                setWidget(row, 1, contentDisposer.track(new SettableIntField(talentValue.getCost())));
                 // -- Name --
-                getFlexCellFormatter().addStyleName(row, 1, "descriptionCol");
-                setWidget(row, 1, contentDisposer.track(new SettableStringField(talentValue.getDescription())));
+                getFlexCellFormatter().addStyleName(row, 2, "descriptionCol");
+                setWidget(row, 2, contentDisposer.track(new SettableStringField(talentValue.getDescription())));
                 // -- Continue loop --
                 row++;
             }
