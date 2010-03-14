@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.user.client.ui.ListBox;
 import com.mcherm.zithiacharsheet.client.modeler.Disposable;
 import com.mcherm.zithiacharsheet.client.modeler.Disposer;
+import com.mcherm.zithiacharsheet.client.modeler.EnumWithName;
 import com.mcherm.zithiacharsheet.client.modeler.Observable.Observer;
 import com.mcherm.zithiacharsheet.client.modeler.SettableEnumValue;
 
@@ -53,7 +54,15 @@ public class SettableEnumField<T extends Enum<T>> extends ListBox implements Dis
             for (T possibleValue : enumClass.getEnumConstants()) {
                 indexToEnumMap.put(index, possibleValue);
                 enumToIndexMap.put(possibleValue, index);
-                this.addItem(possibleValue.name());
+                String displayName;
+                if (possibleValue instanceof EnumWithName) {
+                    // If it has display names, use those
+                    displayName = ((EnumWithName) possibleValue).getName();
+                } else {
+                    // Otherwise use the enum's java identifier as a name
+                    displayName = possibleValue.name();
+                }
+                this.addItem(displayName);
                 index++;
             }
         }

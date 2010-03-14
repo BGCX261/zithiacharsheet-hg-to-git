@@ -17,6 +17,7 @@ package com.mcherm.zithiacharsheet.client.model;
 
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue;
 import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation1;
+import com.mcherm.zithiacharsheet.client.modeler.EquationIntValue.Equation3;
 import com.mcherm.zithiacharsheet.client.modeler.ObservableInt;
 import com.mcherm.zithiacharsheet.client.modeler.TweakableIntValue;
 
@@ -30,18 +31,27 @@ public class CombatValues {
     private final EquationIntValue offense;
     private final EquationIntValue defense;
 
-    public CombatValues(StatValues statValues) {
+    public CombatValues(StatValues statValues, ArmorValue armorValue) {
         ObservableInt dexValue = statValues.getStat(ZithiaStat.DEX).getValue();
-        offense = new EquationIntValue(dexValue, new Equation1() {
-            public int getValue(int dexValue) {
-                return (dexValue + 1) / 3;
+        offense = new EquationIntValue(
+            dexValue,
+            new Equation1() {
+                public int getValue(int dex) {
+                    return (dex + 1) / 3;
+                }
             }
-        });
-        defense = new EquationIntValue(dexValue, new Equation1() {
-            public int getValue(int dexValue) {
-                return (dexValue - 1) / 3;
+        );
+        ObservableInt defPenalty = armorValue.getDefPenalty();
+        ObservableInt strValue = statValues.getStat(ZithiaStat.STR).getValue();
+        defense = new EquationIntValue(
+            dexValue, defPenalty, strValue,
+            new Equation3() {
+                public int getValue(int dex, int defPenalty, int str) {
+                    int normalDefense = (dex - 1) / 3;
+                    return normalDefense - ArmorType.strAdjustedArmorPenalty(str, defPenalty);
+                }
             }
-        });
+        );
     }
 
     public TweakableIntValue getOffense() {

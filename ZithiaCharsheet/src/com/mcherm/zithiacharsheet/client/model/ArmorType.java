@@ -15,10 +15,13 @@
  */
 package com.mcherm.zithiacharsheet.client.model;
 
+import com.mcherm.zithiacharsheet.client.modeler.EnumWithName;
+
+
 /**
  * An instance of this represents a type of armor that can be purchased.
  */
-public enum ArmorType {
+public enum ArmorType implements EnumWithName {
     NONE("Normal Clothing", 0, 0, 0),
     LEATHER_CLOTHS("Leather Clothing", 0, 1, 1),
     QUILTED("Quilted", 0, 3, 1),
@@ -66,5 +69,32 @@ public enum ArmorType {
     /** Penalty to def and dex rolls, before mitigation by high Str. */
     public int getDefPenalty() {
         return defPenalty;
+    }
+
+    /**
+     * This contains the formula to determine how strength mitigates
+     * dex penalty. Armor penalty is a positive number which will be
+     * subtracted from the defense and dex roll.
+     *
+     * @param str the strength score
+     * @param armorPenalty the armor penalty based on armor type
+     * @return the armor penalty once str is taken into account
+     */
+    public static int strAdjustedArmorPenalty(int str, int armorPenalty) {
+        int adjustedPenalty;
+        if (str <= 4) {
+            adjustedPenalty = armorPenalty * 2;
+        } else if (str <= 10) {
+            adjustedPenalty = armorPenalty;
+        } else if (str <= 15) {
+            adjustedPenalty = armorPenalty - 1;
+        } else if (str <= 20) {
+            adjustedPenalty = armorPenalty - 2;
+        } else if (str <= 25) {
+            adjustedPenalty = armorPenalty -3;
+        } else {
+            adjustedPenalty = armorPenalty - 4;
+        }
+        return Math.max(0, adjustedPenalty);
     }
 }

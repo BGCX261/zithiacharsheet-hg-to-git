@@ -31,16 +31,6 @@ public class CombatValuesSection extends VerticalPanel {
 
     public CombatValuesSection(final ZithiaCharacter zithiaCharacter) {
         addStyleName("combatValuesSection");
-        add(new SettableEnumField<ArmorType>(zithiaCharacter.getArmorValue().getArmorType()));
-        HorizontalPanel armorEffects = new HorizontalPanel();
-        armorEffects.add(new HTML("Blocks&nbsp;"));
-        armorEffects.add(new TweakableIntField(zithiaCharacter.getArmorValue().getHpBlock()));
-        armorEffects.add(new HTML("/"));
-        armorEffects.add(new TweakableIntField(zithiaCharacter.getArmorValue().getStunBlock()));
-        armorEffects.add(new HTML("&nbsp;"));
-        armorEffects.add(new TweakableIntField(zithiaCharacter.getArmorValue().getDefPenalty()));
-        armorEffects.add(new HTML("to dex."));
-        add(armorEffects);
         HorizontalPanel offenseDefense = new HorizontalPanel();
         offenseDefense.add(new Label("Off:"));
         offenseDefense.add(new TweakableIntField(zithiaCharacter.getCombatValues().getOffense()));
@@ -48,6 +38,17 @@ public class CombatValuesSection extends VerticalPanel {
         offenseDefense.add(new Label("Def:"));
         offenseDefense.add(new TweakableIntField(zithiaCharacter.getCombatValues().getDefense()));
         add(offenseDefense);
-        add(new HTML("<span id='toHit'>Hits Def: 3D6 + Off - 10</span>"));
+        add(new HTML("<span id='toHit'>Hits Def: 3D6 + Off - 10</span><br />Armor:"));
+        add(new SettableEnumField<ArmorType>(zithiaCharacter.getArmorValue().getArmorType()));
+        HorizontalPanel armorBlock = new HorizontalPanel();
+        armorBlock.add(new TweakableIntField(zithiaCharacter.getArmorValue().getHpBlock()));
+        armorBlock.add(new HTML("hp /"));
+        armorBlock.add(new TweakableIntField(zithiaCharacter.getArmorValue().getStunBlock()));
+        armorBlock.add(new HTML("stun"));
+        add(armorBlock);
+        HorizontalPanel defPenalty = new HorizontalPanel();
+        defPenalty.add(new Label("Dex penalty:"));
+        defPenalty.add(new TweakableIntField(zithiaCharacter.getArmorValue().getDefPenalty()));
+        add(defPenalty);
     }
 }

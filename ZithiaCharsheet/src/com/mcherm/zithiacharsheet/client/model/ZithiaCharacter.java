@@ -53,7 +53,7 @@ public class ZithiaCharacter implements Disposable {
         weaponTraining = WeaponTraining.createAllCombatTraining();
         talentList = new TalentList();
         zithiaCosts = new ZithiaCosts(raceValue, statValues, skillList, weaponTraining, talentList);
-        combatValues = new CombatValues(statValues);
+        combatValues = new CombatValues(statValues, armorValue);
         names = new Names();
         characterNotes = new CharacterNotes();
 

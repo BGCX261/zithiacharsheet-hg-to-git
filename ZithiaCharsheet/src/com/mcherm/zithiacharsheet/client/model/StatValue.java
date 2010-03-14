@@ -65,7 +65,7 @@ public class StatValue {
      */
     public static StatValue newDexStatValue(final RaceValue raceValue,
                                             final ZithiaStat stat,
-                                            final ArmorValue armorValues,
+                                            final ArmorValue armorValue,
                                             final StatValue strValue)
     {
         if (stat != ZithiaStat.DEX) {
@@ -76,11 +76,11 @@ public class StatValue {
         }
         SettableIntValue value = new SettableIntValueImpl(stat.getDefaultValue());
         TweakableIntValue roll = new EquationIntValue(
-                value, armorValues.getDefPenalty(), strValue.getValue(),
+                value, armorValue.getDefPenalty(), strValue.getValue(),
                 new Equation3() {
                     public int getValue(int dex, int defPenalty, int str) {
                         int normalRoll = stat.getRoll(dex);
-                        return normalRoll - DexStatValue.strAdjustedArmorPenalty(str, defPenalty);
+                        return normalRoll - ArmorType.strAdjustedArmorPenalty(str, defPenalty);
                     }
                 }
         );
@@ -100,23 +100,6 @@ public class StatValue {
             super(stat, value, roll, cost);
         }
 
-        public static int strAdjustedArmorPenalty(int str, int armorPenalty) {
-            int adjustedPenalty;
-            if (str <= 4) {
-                adjustedPenalty = armorPenalty * 2;
-            } else if (str <= 10) {
-                adjustedPenalty = armorPenalty;
-            } else if (str <= 15) {
-                adjustedPenalty = armorPenalty - 1;
-            } else if (str <= 20) {
-                adjustedPenalty = armorPenalty - 2;
-            } else if (str <= 25) {
-                adjustedPenalty = armorPenalty -3;
-            } else {
-                adjustedPenalty = armorPenalty - 4;
-            }
-            return Math.max(0, adjustedPenalty);
-        }
     }
 
 
