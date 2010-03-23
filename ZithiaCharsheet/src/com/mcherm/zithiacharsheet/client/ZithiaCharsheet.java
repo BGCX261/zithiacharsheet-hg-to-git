@@ -61,9 +61,12 @@ public class ZithiaCharsheet extends Grid {
     public ZithiaCharsheet() {
         // -- Set up 2 columns, with specific numbers of items in each --
         super(1,2); // initialize to a 2-column, 1 row grid
+        addStyleName("wholePage");
         final Grid leftSide = new Grid(5,1);
+        leftSide.addStyleName("narrowSide");
         setWidget(0, 0, leftSide);
         final Grid rightSide = new Grid(4,1);
+        rightSide.addStyleName("wideSide");
         setWidget(0, 1, rightSide);
         
         // -- Create the character --

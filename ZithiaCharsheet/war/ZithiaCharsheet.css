@@ -33,23 +33,37 @@ h1 {
   margin: 15px 6px 6px;
 }
 
-table.stats, table.skills {
+.wholePage {
+  width: 686px  !important;
+}
+.narrowSide {
+  width: 189px;
+}
+.wideSide {
+  width: 497px;
+}
+
+table.stats, table.skills, table.talents {
   border: 1px solid black;
   border-collapse: collapse;
 }
 
-table.stats td, table.skills td {
+table.stats td, table.skills td, table.talents td {
   border: 1px solid black;
   padding: 2px;
 }
 
-table.stats .header td, table.skills .header td {
+table.stats .header td, table.skills .header td, table.talents .header td {
   background: #AAAAAA;
 }
 
 
 table.skills td.nameCol {
   width: 334px;
+}
+
+table.talents td.nameCol {
+  width: 438px;
 }
 
 table.skillCatalog, table.skillCatalog table {

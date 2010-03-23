@@ -36,7 +36,7 @@ public class TalentSection extends VerticalPanel implements Disposable {
 
         
     public TalentSection(final TalentList talentList) {
-        this.addStyleName("skills");
+        this.addStyleName("talents");
         final TalentTable talentTable = disposer.track(new TalentTable(talentList));
         this.add(talentTable);
         Button addSkillButton = new Button("Add", new ClickHandler() {

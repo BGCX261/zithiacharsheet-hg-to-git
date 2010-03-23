@@ -26,8 +26,8 @@ import com.mcherm.zithiacharsheet.client.model.ZithiaCharacter;
  */
 public class ZithiaWeaponSkillsSection extends TabPanel {
     public ZithiaWeaponSkillsSection(final ZithiaCharacter zithiaCharacter) {
-        add(new WeaponUseTreeGrid(zithiaCharacter), "Use");
-        add(new WeaponCostTreeGrid(zithiaCharacter), "Cost");
+        add(new WeaponUseTreeGrid(zithiaCharacter), "Weapons");
+        add(new WeaponCostTreeGrid(zithiaCharacter), "Edit");
         selectTab(0);
     }
 }
